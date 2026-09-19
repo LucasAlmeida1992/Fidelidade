@@ -339,7 +339,7 @@ body::before {
 
 
 /* =========================================================
-   GRID DOS CARIMBOS
+   GRID DOS CARIMBOS (COM LINHA DO TEMPO)
    ========================================================= */
 
 .stamps-grid {
@@ -347,6 +347,20 @@ body::before {
     justify-content: space-between;
     margin: 20px 0;
     gap: 10px;
+    position: relative;
+}
+
+/* Linha conectora ao fundo simulando linha do tempo */
+.stamps-grid::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 25px;
+    right: 25px;
+    height: 2px;
+    background: #28313f;
+    transform: translateY(-50%);
+    z-index: 0;
 }
 
 
@@ -371,6 +385,8 @@ body::before {
     text-align: center;
     padding: 8px;
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
 }
 
 .stamp-slot:hover {
@@ -398,7 +414,7 @@ body::before {
 
 
 /* =========================================================
-   ÍCONES DOS CARIMBOS (SVG EMBUTIDO)
+   ÍCONES DO GOOGLE MATERIAL ICONS
    ========================================================= */
 
 .stamp-slot .icon {
@@ -410,19 +426,18 @@ body::before {
     margin-bottom: 6px;
 }
 
-.stamp-slot .icon svg {
-    width: 100%;
-    height: 100%;
-    fill: #858e9d;
+.stamp-slot .icon .material-icons {
+    font-size: 24px;
+    color: #858e9d;
     opacity: 0.6;
-    transition: fill 0.3s, opacity 0.3s, filter 0.3s;
+    transition: color 0.3s, opacity 0.3s, text-shadow 0.3s;
 }
 
-/* Quando o carimbo estiver ativo, o ícone brilha intensamente */
-.stamp-slot.active .icon svg {
-    fill: #ffffff;
+/* Quando o carimbo estiver ativo, o ícone do Google brilha intensamente */
+.stamp-slot.active .icon .material-icons {
+    color: #ffffff;
     opacity: 1;
-    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
 }
 
 

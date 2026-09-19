@@ -237,13 +237,7 @@ body {
     border: 1px solid var(--gold-color);
 }
 
-.slot-number {
-    font-size: 10px;
-    color: var(--text-muted);
-    font-weight: 600;
-}
-
-.icon {
+.emoji-icon {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -251,15 +245,15 @@ body {
     font-size: 22px;
 }
 
-.stamp-slot.active .icon {
+.stamp-slot.active .emoji-icon {
     color: var(--primary-color);
 }
 
-.stamp-slot.reward-slot.active .icon {
+.stamp-slot.reward-slot.active .emoji-icon {
     color: var(--gold-color);
 }
 
-.slot-label {
+.label {
     font-size: 10px;
     color: var(--text-muted);
     text-align: center;
@@ -366,7 +360,7 @@ body {
     margin-bottom: 4px;
 }
 
-.admin-header h2 {
+.admin-title {
     font-size: 15px;
     font-weight: 600;
 }
@@ -421,6 +415,13 @@ body {
     border-radius: 6px;
     cursor: pointer;
     border: 1px solid var(--border-color);
+}
+
+.btn-full {
+    width: 100%;
+    margin-top: 8px;
+    background: #202024;
+    color: #fff;
 }
 
 .btn-code-admin {

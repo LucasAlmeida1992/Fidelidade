@@ -274,7 +274,7 @@ body::before {
 }
 
 .discount-banner h3 {
-    color: #fb0532;
+    color: #ffffff; /* Alterado para branco conforme solicitado */
     font-size: 15px;
     font-family: 'Oswald', sans-serif;
     margin-top: 4px;

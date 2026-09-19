@@ -1,1255 +1,393 @@
 // ==========================================
-// CARTÃO FIDELIDADE - LUCAS FRANCA TATTOO
-// SCRIPT.JS
+// CONFIGURAÇÃO DA API (GOOGLE APPS SCRIPT)
 // ==========================================
+// Substitua pela URL do seu Web App implantado no Google Sheets
+const API_URL = "COLOQUE_SUA_URL_DO_APPS_SCRIPT_AQUI";
 
-
-// ==========================================
-// URL DA API - GOOGLE APPS SCRIPT
-// ==========================================
-
-const API_URL =
-    "https://script.google.com/macros/s/AKfycbz-ohIZL5xvFQvPSgtvJw8Js2S71lCW00kFGcmj3TcymFucYbonbNrNRx_Fn7vpdDYF/exec";
-
-
-// ==========================================
-// CONFIGURAÇÕES
-// ==========================================
-
-const LIMITE_CARIMBOS = 2;
-
-
-// ==========================================
-// VARIÁVEIS
-// ==========================================
-
+// Variáveis de controle da sessão atual
 let clienteAtual = null;
-let todosClientes = [];
 let pinAdminAtual = null;
+let todosClientes = [];
 
+// Elementos do DOM
+const secLogin = document.getElementById("sec-login");
+const secCartao = document.getElementById("sec-cartao");
+const secAdmin = document.getElementById("sec-admin");
+const formLogin = document.getElementById("form-login");
+const inputNome = document.getElementById("input-nome");
+const inputWhatsapp = document.getElementById("input-whatsapp");
+const cliNome = document.getElementById("cli-nome");
+const dispDesconto = document.getElementById("dispDesconto");
+const adminClientList = document.getElementById("admin-client-list");
 
-// ==========================================
-// ELEMENTOS DO HTML
-// ==========================================
-
-const secLogin =
-    document.getElementById("sec-login");
-
-const secCartao =
-    document.getElementById("sec-cartao");
-
-const secAdmin =
-    document.getElementById("sec-admin");
-
-const inputPhone =
-    document.getElementById("cli-phone");
-
-const inputName =
-    document.getElementById("cli-name");
-
-const dispNome =
-    document.getElementById("disp-nome");
-
-const dispDesconto =
-    document.getElementById("disp-desconto");
-
-
-// ==========================================
-// INICIALIZAÇÃO
-// ==========================================
-
-window.addEventListener("DOMContentLoaded", () => {
-
-    // --------------------------------------
-    // Recupera cliente salvo
-    // --------------------------------------
-
-    const localPhone =
-        localStorage.getItem("fidelidade_whatsapp");
-
-    const localName =
-        localStorage.getItem("fidelidade_nome");
-
-
-    if (localPhone) {
-
-        if (inputPhone) {
-            inputPhone.value = localPhone;
+// Ao carregar a página, verifica se já existe sessão salva no localStorage
+document.addEventListener("DOMContentLoaded", () => {
+    const clienteSalvo = localStorage.getItem("lucas_franca_cliente");
+    if (clienteSalvo) {
+        try {
+            clienteAtual = JSON.parse(clienteSalvo);
+            if (clienteAtual && clienteAtual.whatsapp) {
+                carregarDadosCliente(clienteAtual.whatsapp, clienteAtual.nome);
+            }
+        } catch (e) {
+            localStorage.removeItem("lucas_franca_cliente");
         }
-
-        if (inputName) {
-            inputName.value = localName || "";
-        }
-
-        carregarDadosCliente(
-            localPhone,
-            localName || ""
-        );
     }
-
-
-    // --------------------------------------
-    // Botão acessar cartão
-    // --------------------------------------
-
-    const btnAcessar =
-        document.getElementById("btn-acessar");
-
-    if (btnAcessar) {
-
-        btnAcessar.addEventListener(
-            "click",
-            acessarCartao
-        );
-    }
-
-
-    // --------------------------------------
-    // Botão adicionar carimbo
-    // --------------------------------------
-
-    const btnCarimbo =
-        document.getElementById(
-            "btn-adicionar-carimbo"
-        );
-
-    if (btnCarimbo) {
-
-        btnCarimbo.addEventListener(
-            "click",
-            adicionarCarimboComSenha
-        );
-    }
-
-
-    // --------------------------------------
-    // Botão sair
-    // --------------------------------------
-
-    const btnSair =
-        document.getElementById("btn-sair");
-
-    if (btnSair) {
-
-        btnSair.addEventListener(
-            "click",
-            sair
-        );
-    }
-
-
-    // --------------------------------------
-    // Botão painel admin
-    // --------------------------------------
-
-    const btnAdmin =
-        document.getElementById(
-            "btn-admin-toggle"
-        );
-
-    if (btnAdmin) {
-
-        btnAdmin.addEventListener(
-            "click",
-            promptAdmin
-        );
-    }
-
-
-    // --------------------------------------
-    // Fechar painel admin
-    // --------------------------------------
-
-    const btnFecharAdmin =
-        document.getElementById(
-            "btn-fechar-admin"
-        );
-
-    if (btnFecharAdmin) {
-
-        btnFecharAdmin.addEventListener(
-            "click",
-            fecharAdmin
-        );
-    }
-
-
-    // --------------------------------------
-    // Campo de busca
-    // --------------------------------------
-
-    const adminSearch =
-        document.getElementById(
-            "admin-search"
-        );
-
-    if (adminSearch) {
-
-        adminSearch.addEventListener(
-            "input",
-            filtrarClientes
-        );
-    }
-
 });
 
-
 // ==========================================
-// CLIENTE
-// ACESSAR CARTÃO
+// LOGIN / CADASTRO DO CLIENTE
 // ==========================================
+async function loginCliente(event) {
+    event.preventDefault();
 
-async function acessarCartao() {
+    const nome = inputNome.value.trim();
+    const whatsapp = limparWhatsApp(inputWhatsapp.value.trim());
 
-    const phone =
-        inputPhone
-            ? inputPhone.value
-                .replace(/\D/g, "")
-            : "";
-
-    const name =
-        inputName
-            ? inputName.value.trim()
-            : "";
-
-
-    if (!phone) {
-
-        alert(
-            "Digite o número do seu WhatsApp."
-        );
-
+    if (!nome || !whatsapp) {
+        alert("Preencha o nome e o WhatsApp corretamente.");
         return;
     }
 
-
-    // Salva no navegador
-
-    localStorage.setItem(
-        "fidelidade_whatsapp",
-        phone
-    );
-
-    localStorage.setItem(
-        "fidelidade_nome",
-        name
-    );
-
-
-    await carregarDadosCliente(
-        phone,
-        name
-    );
-}
-
-
-// ==========================================
-// CLIENTE
-// CARREGAR DADOS
-// ==========================================
-
-async function carregarDadosCliente(
-    phone,
-    name = ""
-) {
-
+    const btnEntrar = document.getElementById("btn-entrar");
+    
     try {
-
-        const url =
-            API_URL +
-            "?action=get_client" +
-            "&whatsapp=" +
-            encodeURIComponent(phone) +
-            "&nome=" +
-            encodeURIComponent(name);
-
-
-        console.log(
-            "Consultando API:",
-            url
-        );
-
-
-        const response =
-            await fetch(url);
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                "HTTP " +
-                response.status
-            );
+        if (btnEntrar) {
+            btnEntrar.disabled = true;
+            btnEntrar.innerText = "Acessando...";
         }
 
+        const url = `${API_URL}?action=get_client&whatsapp=${encodeURIComponent(whatsapp)}&nome=${encodeURIComponent(nome)}`;
+        const response = await fetch(url);
 
-        const data =
-            await response.json();
+        if (!response.ok) throw new Error("Erro de comunicação com o servidor.");
 
+        const data = await response.json();
 
-        console.log(
-            "Resposta cliente:",
-            data
-        );
-
-
-        if (data.success === false) {
-
-            alert(
-                data.error ||
-                "Erro ao consultar cliente."
-            );
-
+        if (!data.success) {
+            alert(data.error || "Não foi possível acessar o cartão.");
             return;
         }
 
+        clienteAtual = {
+            whatsapp: data.whatsapp,
+            nome: data.nome,
+            carimbos: data.carimbos
+        };
 
-        // ----------------------------------
-        // Mostra cartão
-        // ----------------------------------
+        // Salva na sessão local
+        localStorage.setItem("lucas_franca_cliente", JSON.stringify(clienteAtual));
 
-        if (secLogin) {
-            secLogin.classList.add("hidden");
-        }
-
-        if (secCartao) {
-            secCartao.classList.remove("hidden");
-        }
-
-
-        // ----------------------------------
-        // Cliente encontrado
-        // ----------------------------------
-
-        if (data.found) {
-
-            clienteAtual = {
-
-                whatsapp:
-                    data.whatsapp || phone,
-
-                nome:
-                    data.nome || name || "Cliente",
-
-                carimbos:
-                    Number(data.carimbos) || 0,
-
-                ultimaVisita:
-                    data.ultimaVisita || ""
-            };
-
-
-            atualizarInterfaceCartao(
-                clienteAtual.nome,
-                clienteAtual.carimbos
-            );
-
-
-        } else {
-
-            // --------------------------------
-            // Cliente novo
-            // --------------------------------
-
-            const clienteNome =
-                name ||
-                localStorage.getItem(
-                    "fidelidade_nome"
-                ) ||
-                "Cliente";
-
-
-            clienteAtual = {
-
-                whatsapp: phone,
-
-                nome: clienteNome,
-
-                carimbos: 0
-            };
-
-
-            atualizarInterfaceCartao(
-                clienteNome,
-                0
-            );
-        }
-
+        atualizarInterfaceCartao(data);
+        alternarSecao("cartao");
 
     } catch (error) {
-
-        console.error(
-            "Erro ao carregar cliente:",
-            error
-        );
-
-
-        alert(
-            "Erro ao conectar ao servidor do Cartão Fidelidade."
-        );
+        console.error("Erro no login:", error);
+        alert("Erro ao conectar com a planilha. Verifique a URL da API.");
+    } finally {
+        if (btnEntrar) {
+            btnEntrar.disabled = false;
+            btnEntrar.innerText = "Acessar Cartão";
+        }
     }
 }
 
+// Carregar dados atualizados do cliente
+async function carregarDadosCliente(whatsapp, nomePadrao) {
+    try {
+        const url = `${API_URL}?action=get_client&whatsapp=${encodeURIComponent(whatsapp)}&nome=${encodeURIComponent(nomePadrao || "")}`;
+        const response = await fetch(url);
+        if (!response.ok) return;
+
+        const data = await response.json();
+        if (data.success) {
+            clienteAtual = {
+                whatsapp: data.whatsapp,
+                nome: data.nome,
+                carimbos: data.carimbos
+            };
+            localStorage.setItem("lucas_franca_cliente", JSON.stringify(clienteAtual));
+            atualizarInterfaceCartao(data);
+            alternarSecao("cartao");
+        }
+    } catch (error) {
+        console.error("Erro ao atualizar dados do cliente:", error);
+    }
+}
+
+// Sair da conta (Logout)
+function sairCliente() {
+    localStorage.removeItem("lucas_franca_cliente");
+    clienteAtual = null;
+    formLogin.reset();
+    alternarSecao("login");
+}
 
 // ==========================================
-// ATUALIZAR CARTÃO NA TELA
+// ATUALIZAR INTERFACE DO CARTÃO
 // ==========================================
+function atualizarInterfaceCartao(data) {
+    if (!data) return;
 
-function atualizarInterfaceCartao(
-    nome,
-    carimbos
-) {
+    cliNome.innerText = data.nome;
+    const qtdCarimbos = parseInt(data.carimbos) || 0;
 
-    carimbos =
-        Number(carimbos) || 0;
+    const slot1 = document.getElementById("slot-1");
+    const slot2 = document.getElementById("slot-2");
+    const slot3 = document.getElementById("slot-3");
 
+    // Limpa estados anteriores
+    [slot1, slot2, slot3].forEach(slot => {
+        if (slot) slot.classList.remove("active");
+    });
 
-    // --------------------------------------
-    // Nome
-    // --------------------------------------
-
-    if (dispNome) {
-
-        dispNome.innerText =
-            nome || "Cliente";
+    // Slot 1 (1ª Tattoo)
+    if (slot1) {
+        const icon1 = slot1.querySelector(".icon");
+        if (qtdCarimbos >= 1) {
+            slot1.classList.add("active");
+            if (icon1) icon1.innerText = "✓";
+        } else {
+            if (icon1) icon1.innerText = "🩸";
+        }
     }
 
+    // Slot 2 (2ª Tattoo)
+    if (slot2) {
+        const icon2 = slot2.querySelector(".icon");
+        if (qtdCarimbos >= 2) {
+            slot2.classList.add("active");
+            if (icon2) icon2.innerText = "✓";
+        } else {
+            if (icon2) icon2.innerText = "🩸";
+        }
+    }
 
-    // --------------------------------------
-    // Mensagem de desconto
-    // --------------------------------------
+    // Slot 3 (Recompensa de Desconto)
+    if (slot3) {
+        const icon3 = slot3.querySelector(".icon");
+        if (qtdCarimbos >= 2) {
+            slot3.classList.add("active");
+            if (icon3) icon3.innerText = "🎁";
+        } else {
+            if (icon3) icon3.innerText = "🎁";
+        }
+    }
 
+    // Texto descritivo do banner de recompensa
     if (dispDesconto) {
-
-        if (carimbos <= 0) {
-
-            dispDesconto.innerText =
-                "Faça sua 1ª tattoo para iniciar o cartão!";
-
-        } else if (carimbos === 1) {
-
-            dispDesconto.innerText =
-                "Falta 1 tattoo para liberar 10% OFF na próxima!";
-
+        if (qtdCarimbos >= 2) {
+            dispDesconto.innerText = "🎉 Parabéns! Você completou o ciclo e tem 10% OFF na próxima tattoo!";
         } else {
-
-            dispDesconto.innerText =
-                "🎉 10% DE DESCONTO LIBERADO PARA A PRÓXIMA TATTOO!";
+            dispDesconto.innerText = `Falta ${2 - qtdCarimbos} tattoo para garantir seu desconto!`;
         }
     }
-
-
-    // --------------------------------------
-    // SLOT 1
-    // --------------------------------------
-
-    atualizarSlot(
-        "slot-1",
-        carimbos >= 1,
-        "✅",
-        "⭕"
-    );
-
-
-    // --------------------------------------
-    // SLOT 2
-    // --------------------------------------
-
-    atualizarSlot(
-        "slot-2",
-        carimbos >= 2,
-        "✅",
-        "⭕"
-    );
-
-
-    // --------------------------------------
-    // SLOT 3 / PRÊMIO
-    // --------------------------------------
-
-    atualizarSlot(
-        "slot-3",
-        carimbos >= 2,
-        "🏆",
-        "🎁"
-    );
 }
 
-
 // ==========================================
-// ATUALIZAR SLOT
+// ADICIONAR CARIMBO (AÇÃO DO TATUADOR)
 // ==========================================
-
-function atualizarSlot(
-    id,
-    ativo,
-    iconeAtivo,
-    iconeInativo
-) {
-
-    const slot =
-        document.getElementById(id);
-
-
-    if (!slot) return;
-
-
-    slot.className =
-        ativo
-            ? "stamp-slot active"
-            : "stamp-slot";
-
-
-    const icon =
-        slot.querySelector(".icon");
-
-
-    if (icon) {
-
-        icon.innerText =
-            ativo
-                ? iconeAtivo
-                : iconeInativo;
-    }
-}
-
-
-// ==========================================
-// ADICIONAR CARIMBO
-// ==========================================
-
 async function adicionarCarimboComSenha() {
-
     if (!clienteAtual) {
-
-        alert(
-            "Nenhum cliente está carregado."
-        );
-
+        alert("Nenhum cliente carregado.");
         return;
     }
 
-
-    const pin =
-        prompt(
-            "Digite a Senha do Tatuador:"
-        );
-
-
+    const pin = prompt("Digite a Senha do Tatuador:");
     if (!pin) return;
 
+    const btnCarimbo = document.getElementById("btn-adicionar-carimbo");
 
     try {
-
-        const url =
-            API_URL +
-            "?action=add_stamp" +
-            "&whatsapp=" +
-            encodeURIComponent(
-                clienteAtual.whatsapp
-            ) +
-            "&nome=" +
-            encodeURIComponent(
-                clienteAtual.nome || ""
-            ) +
-            "&pin=" +
-            encodeURIComponent(pin);
-
-
-        console.log(
-            "Adicionando carimbo:",
-            url
-        );
-
-
-        const response =
-            await fetch(url);
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                "HTTP " +
-                response.status
-            );
+        if (btnCarimbo) {
+            btnCarimbo.disabled = true;
+            btnCarimbo.innerText = "Processando...";
         }
 
+        const url = `${API_URL}?action=add_stamp&whatsapp=${encodeURIComponent(clienteAtual.whatsapp)}&nome=${encodeURIComponent(clienteAtual.nome || "")}&pin=${encodeURIComponent(pin)}`;
+        
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Erro HTTP: " + response.status);
 
-        const data =
-            await response.json();
-
-
-        console.log(
-            "Resposta carimbo:",
-            data
-        );
-
-
-        // ----------------------------------
-        // Erro
-        // ----------------------------------
+        const data = await response.json();
 
         if (!data.success) {
-
-            alert(
-                data.error ||
-                "Senha incorreta!"
-            );
-
+            alert(data.error || "Senha incorreta!");
             return;
         }
 
-
-        // ----------------------------------
-        // Desconto resgatado
-        // ----------------------------------
-
         if (data.cicloResetado) {
-
-            alert(
-                "🎉 Desconto resgatado com sucesso!\n\n" +
-                "O ciclo do cartão foi reiniciado."
-            );
-
-
-        // ----------------------------------
-        // Desconto liberado
-        // ----------------------------------
-
+            alert("🎉 Desconto resgatado com sucesso!\n\nO ciclo do cartão foi reiniciado.");
         } else if (data.descontoLiberado) {
-
-            alert(
-                "🎉 Carimbo adicionado!\n\n" +
-                "10% de desconto liberado para a próxima tattoo."
-            );
-
-
-        // ----------------------------------
-        // Carimbo normal
-        // ----------------------------------
-
+            alert("🎉 Carimbo adicionado!\n\n10% de desconto liberado para a próxima tattoo.");
         } else {
-
-            alert(
-                "✅ Carimbo adicionado com sucesso!"
-            );
+            alert("✅ Carimbo adicionado com sucesso!");
         }
 
-
-        // ----------------------------------
-        // Atualiza cartão
-        // ----------------------------------
-
-        await carregarDadosCliente(
-            clienteAtual.whatsapp,
-            clienteAtual.nome
-        );
-
+        await carregarDadosCliente(clienteAtual.whatsapp, clienteAtual.nome);
 
     } catch (error) {
-
-        console.error(
-            "Erro ao adicionar carimbo:",
-            error
-        );
-
-
-        alert(
-            "Erro ao registrar carimbo."
-        );
+        console.error("Erro ao adicionar carimbo:", error);
+        alert("Erro ao registrar carimbo.");
+    } finally {
+        if (btnCarimbo) {
+            btnCarimbo.disabled = false;
+            btnCarimbo.innerText = "+ Adicionar Carimbo";
+        }
     }
 }
 
-
 // ==========================================
-// PAINEL ADMIN
-// LOGIN
+// PAINEL ADMINISTRATIVO
 // ==========================================
-
-async function promptAdmin() {
-
-    const pin =
-        prompt(
-            "Digite a senha de Administrador:"
-        );
-
-
+async function abrirModalAdmin() {
+    const pin = prompt("Digite a Senha do Administrador:");
     if (!pin) return;
 
-
     try {
+        const url = `${API_URL}?action=get_all&pin=${encodeURIComponent(pin)}`;
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Erro HTTP: " + response.status);
 
-        const url =
-            API_URL +
-            "?action=get_all" +
-            "&pin=" +
-            encodeURIComponent(pin);
-
-
-        console.log(
-            "Consultando painel admin:",
-            url
-        );
-
-
-        const response =
-            await fetch(url);
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                "HTTP " +
-                response.status
-            );
-        }
-
-
-        const data =
-            await response.json();
-
-
-        console.log(
-            "Resposta admin:",
-            data
-        );
-
-
-        // ----------------------------------
-        // Senha / API
-        // ----------------------------------
+        const data = await response.json();
 
         if (!data.success) {
-
-            alert(
-                data.error ||
-                "Senha incorreta!"
-            );
-
+            alert(data.error || "Senha incorreta.");
             return;
         }
 
-
-        // ----------------------------------
-        // IMPORTANTE:
-        // A API retorna:
-        //
-        // {
-        //   success: true,
-        //   clients: [...]
-        // }
-        //
-        // ----------------------------------
-
-        todosClientes =
-            Array.isArray(data.clients)
-                ? data.clients
-                : [];
-
-
-        // Guarda PIN para os botões
         pinAdminAtual = pin;
-
-
-        // ----------------------------------
-        // Renderiza
-        // ----------------------------------
-
-        renderizarClientesAdmin(
-            todosClientes
-        );
-
-
-        // ----------------------------------
-        // Abre painel
-        // ----------------------------------
-
-        if (secAdmin) {
-
-            secAdmin.classList.remove(
-                "hidden"
-            );
-        }
-
+        todosClientes = Array.isArray(data.clients) ? data.clients : [];
+        
+        renderizarClientesAdmin(todosClientes);
+        
+        if (secAdmin) secAdmin.classList.remove("hidden");
+        const adminSearch = document.getElementById("admin-search");
+        if (adminSearch) adminSearch.value = "";
 
     } catch (error) {
-
-        console.error(
-            "Erro painel admin:",
-            error
-        );
-
-
-        alert(
-            "Erro ao buscar dados do painel admin."
-        );
+        console.error("Erro ao abrir painel admin:", error);
+        alert("Erro ao autenticar painel administrativo.");
     }
 }
-
-
-// ==========================================
-// RENDERIZAR CLIENTES NO ADMIN
-// ==========================================
-
-function renderizarClientesAdmin(
-    lista
-) {
-
-    const container =
-        document.getElementById(
-            "lista-clientes-admin"
-        );
-
-
-    if (!container) {
-
-        console.error(
-            "Elemento lista-clientes-admin não encontrado."
-        );
-
-        return;
-    }
-
-
-    container.innerHTML = "";
-
-
-    // --------------------------------------
-    // Nenhum cliente
-    // --------------------------------------
-
-    if (
-        !Array.isArray(lista) ||
-        lista.length === 0
-    ) {
-
-        container.innerHTML =
-            '<p style="color:#aaa; font-size:12px; text-align:center;">' +
-            "Nenhum cliente cadastrado." +
-            "</p>";
-
-        return;
-    }
-
-
-    // --------------------------------------
-    // Clientes
-    // --------------------------------------
-
-    lista.forEach(
-        (cliente) => {
-
-            const item =
-                document.createElement(
-                    "div"
-                );
-
-
-            item.className =
-                "client-item";
-
-
-            const nome =
-                cliente.nome ||
-                "Cliente";
-
-
-            const whatsapp =
-                String(
-                    cliente.whatsapp || ""
-                );
-
-
-            const carimbos =
-                Number(
-                    cliente.carimbos
-                ) || 0;
-
-
-            item.innerHTML = `
-
-                <div class="client-info">
-
-                    <strong>
-                        ${escapeHTML(nome)}
-                    </strong>
-
-                    <span>
-                        ${escapeHTML(whatsapp)}
-                        |
-                        ${carimbos}/2 carimbos
-                    </span>
-
-                </div>
-
-                <div>
-
-                    <button
-                        type="button"
-                        class="btn-sm btn-add-admin"
-                    >
-                        + Carimbo
-                    </button>
-
-                </div>
-
-            `;
-
-
-            // --------------------------------
-            // Botão carimbo
-            // --------------------------------
-
-            const botao =
-                item.querySelector(
-                    ".btn-add-admin"
-                );
-
-
-            if (botao) {
-
-                botao.addEventListener(
-                    "click",
-                    () => {
-
-                        carimboDiretoAdmin(
-                            whatsapp,
-                            nome
-                        );
-                    }
-                );
-            }
-
-
-            container.appendChild(
-                item
-            );
-        }
-    );
-}
-
-
-// ==========================================
-// FILTRAR CLIENTES
-// ==========================================
-
-function filtrarClientes() {
-
-    const campo =
-        document.getElementById(
-            "admin-search"
-        );
-
-
-    const termo =
-        campo
-            ? campo.value
-                .toLowerCase()
-                .trim()
-            : "";
-
-
-    const filtrados =
-        todosClientes.filter(
-            (cliente) => {
-
-                const nome =
-                    String(
-                        cliente.nome || ""
-                    ).toLowerCase();
-
-
-                const whatsapp =
-                    String(
-                        cliente.whatsapp || ""
-                    );
-
-
-                return (
-                    nome.includes(termo) ||
-                    whatsapp.includes(termo)
-                );
-            }
-        );
-
-
-    renderizarClientesAdmin(
-        filtrados
-    );
-}
-
-
-// ==========================================
-// CARIMBO PELO ADMIN
-// ==========================================
-
-async function carimboDiretoAdmin(
-    whatsapp,
-    nome
-) {
-
-    let pin =
-        pinAdminAtual;
-
-
-    // --------------------------------------
-    // Se não tiver PIN salvo
-    // --------------------------------------
-
-    if (!pin) {
-
-        pin =
-            prompt(
-                "Confirme a senha Admin:"
-            );
-
-
-        if (!pin) return;
-    }
-
-
-    try {
-
-        const url =
-            API_URL +
-            "?action=add_stamp" +
-            "&whatsapp=" +
-            encodeURIComponent(
-                whatsapp
-            ) +
-            "&nome=" +
-            encodeURIComponent(
-                nome || ""
-            ) +
-            "&pin=" +
-            encodeURIComponent(pin);
-
-
-        const response =
-            await fetch(url);
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                "HTTP " +
-                response.status
-            );
-        }
-
-
-        const data =
-            await response.json();
-
-
-        console.log(
-            "Resposta carimbo admin:",
-            data
-        );
-
-
-        if (!data.success) {
-
-            alert(
-                data.error ||
-                "Senha incorreta!"
-            );
-
-            return;
-        }
-
-
-        // ----------------------------------
-        // Mensagem
-        // ----------------------------------
-
-        if (data.cicloResetado) {
-
-            alert(
-                "🎉 Desconto resgatado!\n\n" +
-                "O ciclo do cliente foi reiniciado."
-            );
-
-        } else if (data.descontoLiberado) {
-
-            alert(
-                "🎉 Carimbo atualizado!\n\n" +
-                "10% de desconto liberado."
-            );
-
-        } else {
-
-            alert(
-                "✅ Carimbo atualizado!"
-            );
-        }
-
-
-        // ----------------------------------
-        // Recarrega lista
-        // ----------------------------------
-
-        await atualizarPainelAdmin();
-
-
-    } catch (error) {
-
-        console.error(
-            "Erro carimbo admin:",
-            error
-        );
-
-
-        alert(
-            "Erro ao registrar carimbo."
-        );
-    }
-}
-
-
-// ==========================================
-// ATUALIZAR PAINEL ADMIN
-// ==========================================
-
-async function atualizarPainelAdmin() {
-
-    if (!pinAdminAtual) {
-        return;
-    }
-
-
-    try {
-
-        const url =
-            API_URL +
-            "?action=get_all" +
-            "&pin=" +
-            encodeURIComponent(
-                pinAdminAtual
-            );
-
-
-        const response =
-            await fetch(url);
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                "HTTP " +
-                response.status
-            );
-        }
-
-
-        const data =
-            await response.json();
-
-
-        if (!data.success) {
-
-            alert(
-                data.error ||
-                "Não foi possível atualizar o painel."
-            );
-
-            return;
-        }
-
-
-        todosClientes =
-            Array.isArray(data.clients)
-                ? data.clients
-                : [];
-
-
-        renderizarClientesAdmin(
-            todosClientes
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "Erro atualizando admin:",
-            error
-        );
-    }
-}
-
-
-// ==========================================
-// FECHAR PAINEL ADMIN
-// ==========================================
 
 function fecharAdmin() {
+    if (secAdmin) secAdmin.classList.add("hidden");
+    pinAdminAtual = null;
+}
 
-    if (secAdmin) {
+function renderizarClientesAdmin(lista) {
+    if (!adminClientList) return;
 
-        secAdmin.classList.add(
-            "hidden"
-        );
+    adminClientList.innerHTML = "";
+
+    if (lista.length === 0) {
+        adminClientList.innerHTML = `<p style="text-align: center; color: #777; padding: 15px;">Nenhum cliente encontrado.</p>`;
+        return;
+    }
+
+    lista.forEach(cli => {
+        const div = document.createElement("div");
+        div.className = "client-item";
+        div.innerHTML = `
+            <div class="client-info">
+                <strong>${escapeHTML(cli.nome)}</strong>
+                <span>WhatsApp: ${escapeHTML(cli.whatsapp)} | Carimbos: <strong>${cli.carimbos}/2</strong></span>
+                <span style="color: #666; font-size: 10px;">Última visita: ${escapeHTML(cli.ultimaVisita)}</span>
+            </div>
+            <button class="btn-sm" onclick="adicionarCarimboAdmin('${cli.whatsapp}', '${escapeHTML(cli.nome)}')">+ Carimbo</button>
+        `;
+        adminClientList.appendChild(div);
+    });
+}
+
+function filtrarClientes() {
+    const adminSearch = document.getElementById("admin-search");
+    if (!adminSearch) return;
+
+    const termo = adminSearch.value.toLowerCase().trim();
+
+    const filtrados = todosClientes.filter(cli => {
+        const nome = (cli.nome || "").toLowerCase();
+        const whats = (cli.whatsapp || "").toLowerCase();
+        return nome.includes(termo) || whats.includes(termo);
+    });
+
+    renderizarClientesAdmin(filtrados);
+}
+
+async function adicionarCarimboAdmin(whatsapp, nome) {
+    if (!pinAdminAtual) return;
+
+    try {
+        const url = `${API_URL}?action=add_stamp&whatsapp=${encodeURIComponent(whatsapp)}&nome=${encodeURIComponent(nome)}&pin=${encodeURIComponent(pinAdminAtual)}`;
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Erro HTTP: " + response.status);
+
+        const data = await response.json();
+
+        if (!data.success) {
+            alert(data.error || "Erro ao adicionar carimbo.");
+            return;
+        }
+
+        alert(`Carimbo adicionado para ${nome}!`);
+        await atualizarPainelAdmin();
+
+    } catch (error) {
+        console.error("Erro no admin ao adicionar carimbo:", error);
+        alert("Erro ao processar solicitação.");
     }
 }
 
+async function atualizarPainelAdmin() {
+    if (!pinAdminAtual) return;
 
-// ==========================================
-// SAIR
-// ==========================================
+    try {
+        const url = `${API_URL}?action=get_all&pin=${encodeURIComponent(pinAdminAtual)}`;
+        const response = await fetch(url);
+        if (!response.ok) return;
 
-function sair() {
-
-    localStorage.removeItem(
-        "fidelidade_whatsapp"
-    );
-
-    localStorage.removeItem(
-        "fidelidade_nome"
-    );
-
-
-    clienteAtual = null;
-
-
-    if (secCartao) {
-
-        secCartao.classList.add(
-            "hidden"
-        );
-    }
-
-
-    if (secLogin) {
-
-        secLogin.classList.remove(
-            "hidden"
-        );
-    }
-
-
-    if (inputPhone) {
-        inputPhone.value = "";
-    }
-
-
-    if (inputName) {
-        inputName.value = "";
+        const data = await response.json();
+        if (data.success) {
+            todosClientes = Array.isArray(data.clients) ? data.clients : [];
+            const adminSearch = document.getElementById("admin-search");
+            if (adminSearch && adminSearch.value.trim() !== "") {
+                filtrarClientes();
+            } else {
+                renderizarClientesAdmin(todosClientes);
+            }
+        }
+    } catch (error) {
+        console.error("Erro atualizando admin:", error);
     }
 }
 
-
 // ==========================================
-// ESCAPAR HTML
-// Evita quebrar o painel com nomes
-// contendo caracteres especiais.
+// UTILITÁRIOS
 // ==========================================
+function limparWhatsApp(num) {
+    if (!num) return "";
+    return String(num).replace(/\D/g, "");
+}
 
-function escapeHTML(value) {
-
-    return String(value)
+function escapeHTML(str) {
+    if (!str) return "";
+    return String(str)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+}
+
+function alternarSecao(secao) {
+    if (secao === "login") {
+        if (secLogin) secLogin.classList.remove("hidden");
+        if (secCartao) secCartao.classList.add("hidden");
+        if (secAdmin) secAdmin.classList.add("hidden");
+    } else if (secao === "cartao") {
+        if (secLogin) secLogin.classList.add("hidden");
+        if (secCartao) secCartao.classList.remove("hidden");
+    }
 }

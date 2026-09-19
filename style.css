@@ -1,8 +1,17 @@
+/* =========================================================
+   RESET
+   ========================================================= */
+
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
+
+
+/* =========================================================
+   BODY
+   ========================================================= */
 
 body {
     background-image: url('imagemfundoold mobile.webp');
@@ -10,351 +19,671 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    color: #e0e0e0;
+
+    color: #e8eaf0;
     font-family: 'Poppins', sans-serif;
+
     display: flex;
     justify-content: center;
     align-items: center;
+
     min-height: 100vh;
     padding: 20px;
+
     position: relative;
 }
 
-/* Camada escura por cima da imagem de fundo para dar legibilidade */
+/* Overlay um pouco mais transparente que o atual */
 body::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.75);
+    inset: 0;
+
+    background: rgba(3, 5, 10, 0.68);
+
     z-index: -1;
 }
 
-/* Para telas maiores (Desktops / Laptops), muda para a imagem de desktop */
+
+/* Desktop */
 @media (min-width: 768px) {
     body {
         background-image: url('imagemfundoold desktop.webp');
     }
 }
 
+
+/* =========================================================
+   UTILITÁRIO
+   ========================================================= */
+
 .hidden {
     display: none !important;
 }
 
+
+/* =========================================================
+   CONTAINER PRINCIPAL
+   ========================================================= */
+
 .app-container {
     width: 100%;
     max-width: 440px;
-    background: #161616;
+
+    background:
+        linear-gradient(
+            145deg,
+            #11151d 0%,
+            #0b0e14 100%
+        );
+
     border-radius: 20px;
-    border: 1px solid #262626;
+
+    border: 1px solid #252d3a;
+
     padding: 30px 24px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.75),
+        0 0 0 1px rgba(255,255,255,0.015);
+
     height: fit-content;
+
+    position: relative;
+    overflow: hidden;
 }
 
-/* HEADER */
+/* brilho muito discreto no topo */
+.app-container::before {
+    content: '';
+    position: absolute;
+
+    top: 0;
+    left: 10%;
+    right: 10%;
+
+    height: 1px;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(251, 5, 50, 0.45),
+        transparent
+    );
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
 .header {
     text-align: center;
+
     margin-bottom: 25px;
+
     position: relative;
+
     padding-top: 5px;
 }
 
 .header-logo {
     max-width: 130px;
     height: auto;
+
     display: block;
+
     margin: 0 auto 8px auto;
 }
 
 .header p {
-    color: #777;
+    color: #9aa2b2;
+
     font-size: 11px;
-    letter-spacing: 2px;
+
+    letter-spacing: 2.5px;
+
     text-transform: uppercase;
+
     font-weight: 600;
 }
 
+
+/* =========================================================
+   BOTÃO CONFIGURAÇÕES
+   ========================================================= */
+
 .btn-admin-toggle {
     position: absolute;
+
     right: -4px;
     top: -2px;
-    background: #222;
-    border: 1px solid #333;
+
+    background: #171c25;
+
+    border: 1px solid #303948;
+
     width: 32px;
     height: 32px;
+
     border-radius: 50%;
-    color: #888;
+
+    color: #9da5b5;
+
     font-size: 14px;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     cursor: pointer;
-    transition: all 0.2s;
+
+    transition: all 0.2s ease;
 }
 
 .btn-admin-toggle:hover {
     color: #fff;
-    border-color: #555;
+
+    border-color: #fb0532;
+
+    background: #1d2029;
+
+    box-shadow:
+        0 0 12px rgba(251, 5, 50, 0.15);
 }
 
-/* CAMPOS E FORMULÁRIOS */
+
+/* =========================================================
+   CAMPOS E FORMULÁRIOS
+   ========================================================= */
+
 .card-box {
-    background: #1c1c1c;
+    background: #11151b;
+
     border-radius: 14px;
+
     padding: 22px;
+
     margin-bottom: 20px;
-    border: 1px solid #282828;
+
+    border: 1px solid #28313f;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.015);
 }
 
 .input-group {
     margin-bottom: 16px;
+
     text-align: left;
 }
 
 .input-group label {
     display: block;
+
     font-size: 11px;
-    color: #888;
+
+    color: #8c95a5;
+
     margin-bottom: 6px;
+
     text-transform: uppercase;
+
     letter-spacing: 0.5px;
 }
 
 .input-group input {
     width: 100%;
+
     padding: 12px 14px;
-    background: #111;
-    border: 1px solid #333;
+
+    background: #090c11;
+
+    border: 1px solid #303947;
+
     border-radius: 8px;
+
     color: #fff;
+
     font-size: 14px;
-    transition: border-color 0.2s;
+
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
 }
 
 .input-group input:focus {
     outline: none;
+
     border-color: #fb0532;
+
+    box-shadow:
+        0 0 0 2px rgba(251, 5, 50, 0.08);
 }
 
-/* BOTÕES */
+
+/* =========================================================
+   BOTÃO PRINCIPAL
+   ========================================================= */
+
 .btn-gold {
     width: 100%;
+
     padding: 14px;
-    background: linear-gradient(135deg, #fb0532, #d10025);
+
+    background: linear-gradient(
+        135deg,
+        #ff1744 0%,
+        #e5002d 100%
+    );
+
     border: none;
+
     border-radius: 10px;
+
     color: #fff;
+
     font-weight: 600;
+
     font-size: 13px;
+
     cursor: pointer;
+
     text-transform: uppercase;
+
     letter-spacing: 1px;
-    box-shadow: 0 4px 15px rgba(251, 5, 50, 0.2);
-    transition: opacity 0.2s, transform 0.1s;
+
+    box-shadow:
+        0 5px 18px rgba(251, 5, 50, 0.22);
+
+    transition:
+        opacity 0.2s,
+        transform 0.1s,
+        box-shadow 0.2s;
 }
 
 .btn-gold:hover {
-    opacity: 0.95;
+    opacity: 0.97;
+
+    box-shadow:
+        0 6px 22px rgba(251, 5, 50, 0.3);
 }
 
 .btn-gold:active {
     transform: scale(0.98);
 }
 
+
+/* =========================================================
+   LINKS
+   ========================================================= */
+
 .btn-link {
     width: 100%;
+
     margin-top: 14px;
+
     background: none;
+
     border: none;
-    color: #666;
+
+    color: #78808e;
+
     font-size: 12px;
+
     cursor: pointer;
+
     transition: color 0.2s;
 }
 
 .btn-link:hover {
-    color: #aaa;
+    color: #c0c5ce;
 }
+
+
+/* =========================================================
+   BOTÕES PEQUENOS
+   ========================================================= */
 
 .btn-sm {
     padding: 8px 12px;
-    background: #222;
-    color: #ccc;
-    border: 1px solid #333;
+
+    background: #171c23;
+
+    color: #c7ccd5;
+
+    border: 1px solid #303846;
+
     border-radius: 8px;
+
     font-size: 12px;
+
     cursor: pointer;
-    transition: background 0.2s;
+
+    transition:
+        background 0.2s,
+        border-color 0.2s,
+        color 0.2s;
 }
 
 .btn-sm:hover {
-    background: #2a2a2a;
+    background: #1d232c;
+
+    border-color: #454f60;
+
     color: #fff;
 }
 
 .btn-full {
     width: 100%;
+
     margin-top: 12px;
 }
 
-/* CARTÃO DE CARIMBOS */
+
+/* =========================================================
+   CARTÃO DE CARIMBOS
+   ========================================================= */
+
 .greeting-text {
     text-align: center;
+
     font-size: 13px;
-    color: #aaa;
+
+    color: #aeb5c1;
+
     margin-bottom: 20px;
 }
 
 .greeting-text strong {
     color: #fff;
+
     font-weight: 600;
 }
 
-/* ==========================================
-   NOVO DESIGN: LINHA DO TEMPO (TIMELINE)
-   ========================================== */
+
+/* =========================================================
+   GRID DOS CARIMBOS
+   ========================================================= */
+
 .stamps-grid {
     display: flex;
+
     justify-content: space-between;
-    align-items: center;
-    position: relative;
-    margin: 25px 0 30px 0;
-    padding: 0 10px;
+
+    margin: 20px 0;
+
+    gap: 10px;
 }
 
-/* Linha horizontal conectora ao fundo */
-.stamps-grid::before {
-    content: '';
-    position: absolute;
-    top: 35px; /* Alinhado ao centro dos círculos */
-    left: 35px;
-    right: 35px;
-    height: 2px;
-    background: #2d2d2d;
-    z-index: 1;
-}
+
+/* CARIMBO NORMAL */
 
 .stamp-slot {
     flex: 1;
-    position: relative;
-    z-index: 2;
-    background: transparent;
-    border: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 0;
-    transition: all 0.3s;
-}
 
-/* Círculo do passo */
-.stamp-slot .icon {
-    width: 54px;
-    height: 54px;
-    background: #1c1c1c;
-    border: 2px dashed #383838;
-    border-radius: 50%;
+    background:
+        linear-gradient(
+            145deg,
+            #151a22,
+            #10141b
+        );
+
+    border: 1px dashed #3a4351;
+
+    border-radius: 12px;
+
+    height: 105px;
+
     display: flex;
+
+    flex-direction: column;
+
     align-items: center;
+
     justify-content: center;
-    font-size: 20px;
-    margin-bottom: 8px;
+
+    text-align: center;
+
+    padding: 8px;
+
     transition: all 0.3s ease;
 }
 
-.stamp-slot .label {
-    font-size: 10px;
-    color: #777;
-    line-height: 1.2;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+
+/* HOVER */
+
+.stamp-slot:hover {
+    border-color: #596475;
+
+    transform: translateY(-1px);
 }
 
-/* Slot Ativo na Linha do Tempo */
-.stamp-slot.active .icon {
+
+/* CARIMBO ATIVO */
+
+.stamp-slot.active {
     border-color: #fb0532;
+
     border-style: solid;
-    background: #1f1417;
-    box-shadow: 0 0 15px rgba(251, 5, 50, 0.25);
-    color: #fb0532;
+
+    background:
+        linear-gradient(
+            145deg,
+            #21131a,
+            #171117
+        );
+
+    box-shadow:
+        0 0 0 1px rgba(251, 5, 50, 0.08),
+        0 0 18px rgba(251, 5, 50, 0.12);
+}
+
+
+/* ÍCONE */
+
+.stamp-slot .icon {
+    font-size: 24px;
+
+    margin-bottom: 6px;
+}
+
+
+/* TEXTO */
+
+.stamp-slot .label {
+    font-size: 10px;
+
+    color: #858e9d;
+
+    line-height: 1.2;
 }
 
 .stamp-slot.active .label {
-    color: #ccc;
-    font-weight: 600;
+    color: #e4e7ec;
 }
 
+
+/* =========================================================
+   BANNER DE BENEFÍCIO
+   ========================================================= */
+
 .discount-banner {
-    background: #1c1c1c;
-    border: 1px solid #282828;
+    background:
+        linear-gradient(
+            145deg,
+            #151a21,
+            #10141a
+        );
+
+    border: 1px solid #2d3745;
+
     border-radius: 12px;
+
     padding: 16px;
+
     text-align: center;
+
     margin-bottom: 20px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.015);
 }
 
 .discount-label {
     font-size: 10px;
-    color: #777;
+
+    color: #8992a1;
+
     text-transform: uppercase;
-    letter-spacing: 1px;
+
+    letter-spacing: 1.2px;
 }
 
 .discount-banner h3 {
     color: #ffffff;
+
     font-size: 15px;
+
     font-family: 'Oswald', sans-serif;
+
     margin-top: 4px;
+
     letter-spacing: 0.5px;
 }
 
-/* PAINEL ADMIN */
+
+/* =========================================================
+   PAINEL ADMIN
+   ========================================================= */
+
 .admin-panel {
-    background: #1c1c1c;
-    border: 1px solid #333;
+    background:
+        linear-gradient(
+            145deg,
+            #15191f,
+            #11151b
+        );
+
+    border: 1px solid #303a48;
+
     border-radius: 14px;
+
     padding: 18px;
+
     margin-top: 15px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.015);
 }
 
 .admin-title {
     color: #fff;
+
     margin-bottom: 14px;
+
     font-family: 'Oswald', sans-serif;
+
     font-size: 16px;
+
     letter-spacing: 0.5px;
+
     text-transform: uppercase;
 }
 
 .admin-client-list {
     max-height: 250px;
+
     overflow-y: auto;
+
     padding-right: 2px;
 }
 
 .client-item {
-    background: #141414;
-    border: 1px solid #222;
+    background: #0d1015;
+
+    border: 1px solid #252d38;
+
     padding: 12px;
+
     border-radius: 10px;
+
     margin-bottom: 8px;
+
     font-size: 13px;
+
     display: flex;
+
     justify-content: space-between;
+
     align-items: center;
 }
 
 .client-info strong {
     color: #fff;
+
     display: block;
+
     font-weight: 600;
 }
 
 .client-info span {
-    color: #777;
+    color: #7e8795;
+
     font-size: 11px;
+}
+
+
+/* =========================================================
+   SCROLLBAR — PAINEL
+   ========================================================= */
+
+.admin-client-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.admin-client-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.admin-client-list::-webkit-scrollbar-thumb {
+    background: #303846;
+
+    border-radius: 10px;
+}
+
+.admin-client-list::-webkit-scrollbar-thumb:hover {
+    background: #485364;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    body {
+        padding: 14px;
+    }
+
+    .app-container {
+        padding: 26px 18px;
+
+        border-radius: 18px;
+    }
+
+    .stamp-slot {
+        height: 100px;
+    }
+
+    .stamp-slot .icon {
+        font-size: 22px;
+    }
+
+    .stamp-slot .label {
+        font-size: 9px;
+    }
 }

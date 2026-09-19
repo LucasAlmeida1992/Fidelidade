@@ -3,75 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Cartão Fidelidade VIP</title>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Poppins:wght@400;600&display=swap"
+        rel="stylesheet"
+    >
+
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
 </head>
+
 <body>
 
 <div class="app-container">
+
+    <!-- ==========================================
+         HEADER
+    =========================================== -->
+
     <div class="header">
-        <button class="btn-admin-toggle" id="btn-admin-toggle" title="Painel do Tatuador">⚙️</button>
-        <h1>LUCAS FRANCA TATTOO</h1>
+
+        <button
+            class="btn-admin-toggle"
+            id="btn-admin-toggle"
+            title="Painel do Tatuador"
+        >
+            ⚙️
+        </button>
+
+        <img
+            src="logo lucas Franca.svg"
+            alt="Lucas Franca Tattoo"
+            class="logo"
+        >
+
         <p>CARTÃO FIDELIDADE VIP</p>
+
     </div>
 
-    <!-- TELA 1: LOGIN DO CLIENTE -->
+
+    <!-- ==========================================
+         TELA 1: LOGIN DO CLIENTE
+    =========================================== -->
+
     <div id="sec-login" class="card-box">
+
         <div class="input-group">
-            <label for="cli-phone">Seu WhatsApp (com DDD)</label>
-            <input type="tel" id="cli-phone" placeholder="21999999999" autocomplete="tel">
+
+            <label for="cli-phone">
+                Seu WhatsApp (com DDD)
+            </label>
+
+            <input
+                type="tel"
+                id="cli-phone"
+                placeholder="21999999999"
+                autocomplete="tel"
+            >
+
         </div>
+
+
         <div class="input-group">
-            <label for="cli-name">Seu Nome Completo</label>
-            <input type="text" id="cli-name" placeholder="Digite seu nome">
+
+            <label for="cli-name">
+                Seu Nome Completo
+            </label>
+
+            <input
+                type="text"
+                id="cli-name"
+                placeholder="Digite seu nome"
+            >
+
         </div>
-        <button class="btn-gold" id="btn-acessar">Ver Meu Cartão</button>
+
+
+        <button
+            class="btn-gold"
+            id="btn-acessar"
+        >
+            Ver Meu Cartão
+        </button>
+
     </div>
 
-    <!-- TELA 2: CARTÃO DE CARIMBOS DO CLIENTE -->
+
+    <!-- ==========================================
+         TELA 2: CARTÃO DO CLIENTE
+    =========================================== -->
+
     <div id="sec-cartao" class="hidden">
+
         <p class="greeting-text">
             Olá, <strong id="disp-nome">---</strong>!
         </p>
 
+
         <div class="stamps-grid">
+
+            <!-- CARIMBO 1 -->
+
             <div class="stamp-slot" id="slot-1">
-                <span class="icon">⭕</span>
-                <span class="label">1ª Tattoo</span>
-            </div>
-            <div class="stamp-slot" id="slot-2">
-                <span class="icon">⭕</span>
-                <span class="label">2ª Tattoo</span>
-            </div>
-            <div class="stamp-slot" id="slot-3">
-                <span class="icon">🎁</span>
-               <span class="label">3ª Tattoo • 10% OFF</span>
+
+                <div class="stamp-circle">
+
+                    <span class="icon">✓</span>
+
+                </div>
+
+                <span class="label">
+                    1ª Tattoo
+                </span>
 
             </div>
+
+
+            <!-- CARIMBO 2 -->
+
+            <div class="stamp-slot" id="slot-2">
+
+                <div class="stamp-circle">
+
+                    <span class="icon">✓</span>
+
+                </div>
+
+                <span class="label">
+                    2ª Tattoo
+                </span>
+
+            </div>
+
+
+            <!-- PRÊMIO -->
+
+            <div class="stamp-slot reward-slot" id="slot-3">
+
+                <div class="stamp-circle">
+
+                    <span class="icon">★</span>
+
+                </div>
+
+                <span class="label">
+                    3ª Tattoo
+                    <small>10% OFF</small>
+                </span>
+
+            </div>
+
         </div>
+
+
+        <!-- ======================================
+             STATUS
+        ======================================= -->
 
         <div class="discount-banner">
-            <span class="discount-label">Status do Benefício</span>
-            <h3 id="disp-desconto">Carregando...</h3>
+
+            <span class="discount-label">
+                Status do Benefício
+            </span>
+
+            <h3 id="disp-desconto">
+                Carregando...
+            </h3>
+
         </div>
 
-        <button class="btn-gold" id="btn-adicionar-carimbo">➕ Adicionar Carimbo</button>
-        <button class="btn-link" id="btn-sair">Trocar de Conta</button>
+
+        <button
+            class="btn-gold"
+            id="btn-adicionar-carimbo"
+        >
+            ✦ Adicionar Carimbo
+        </button>
+
+
+        <button
+            class="btn-link"
+            id="btn-sair"
+        >
+            Trocar de Conta
+        </button>
+
     </div>
 
-    <!-- TELA 3: PAINEL ADMIN -->
-    <div id="sec-admin" class="admin-panel hidden">
-        <h3 class="admin-title">PAINEL DO TATUADOR</h3>
+
+    <!-- ==========================================
+         TELA 3: PAINEL ADMIN
+    =========================================== -->
+
+    <div
+        id="sec-admin"
+        class="admin-panel hidden"
+    >
+
+        <h3 class="admin-title">
+            PAINEL DO TATUADOR
+        </h3>
+
+
         <div class="input-group">
-            <input type="text" id="admin-search" placeholder="Buscar por Nome ou WhatsApp...">
+
+            <input
+                type="text"
+                id="admin-search"
+                placeholder="Buscar por Nome ou WhatsApp..."
+            >
+
         </div>
-        <div id="lista-clientes-admin" class="admin-client-list">
+
+
+        <div
+            id="lista-clientes-admin"
+            class="admin-client-list"
+        >
             <!-- Lista de clientes via JS -->
         </div>
-        <button class="btn-sm btn-full" id="btn-fechar-admin">Fechar Painel</button>
+
+
+        <button
+            class="btn-sm btn-full"
+            id="btn-fechar-admin"
+        >
+            Fechar Painel
+        </button>
+
     </div>
+
 </div>
 
 </body>

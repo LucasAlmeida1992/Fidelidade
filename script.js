@@ -291,15 +291,23 @@ function renderizarClientesAdmin(lista) {
                 <strong>${escapeHTML(nome)}</strong>
                 <span>${escapeHTML(whatsapp)} | ${carimbos}/2 carimbos</span>
             </div>
-            <div>
+            <div style="display: flex; gap: 6px;">
                 <button type="button" class="btn-sm btn-add-admin">+ Carimbo</button>
+                <button type="button" class="btn-sm btn-delete-admin" style="background:#2a1114; border-color:#fb0532; color:#ff6b81; cursor:pointer;">Excluir</button>
             </div>
         `;
 
-        const botao = item.querySelector(".btn-add-admin");
-        if (botao) {
-            botao.addEventListener("click", () => {
+        const botaoCarimbo = item.querySelector(".btn-add-admin");
+        if (botaoCarimbo) {
+            botaoCarimbo.addEventListener("click", () => {
                 carimboDiretoAdmin(whatsapp, nome);
+            });
+        }
+
+        const botaoExcluir = item.querySelector(".btn-delete-admin");
+        if (botaoExcluir) {
+            botaoExcluir.addEventListener("click", () => {
+                excluirClienteAdmin(whatsapp, nome);
             });
         }
 
@@ -343,6 +351,44 @@ async function carimboDiretoAdmin(whatsapp, nome) {
     } catch (error) {
         console.error("Erro carimbo admin:", error);
         alert("Erro ao registrar carimbo.");
+    }
+}
+
+// ==========================================
+// PAINEL ADMIN - EXCLUIR CLIENTE
+// ==========================================
+async function excluirClienteAdmin(whatsapp, nome) {
+    if (!confirm(`Tem certeza que deseja excluir o cliente "${nome}" (${whatsapp})?`)) {
+        return;
+    }
+
+    let pin = pinAdminAtual;
+    if (!pin) {
+        pin = prompt("Confirme a senha Admin:");
+        if (!pin) return;
+    }
+
+    try {
+        const url = `${API_URL}?action=delete_client&whatsapp=${encodeURIComponent(whatsapp)}&pin=${encodeURIComponent(pin)}`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error("HTTP " + response.status);
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+            alert(data.error || "Erro ao excluir cliente.");
+            return;
+        }
+
+        alert(`🗑️ Cliente ${nome} excluído com sucesso!`);
+        await atualizarPainelAdmin();
+
+    } catch (error) {
+        console.error("Erro ao excluir cliente:", error);
+        alert("Erro de conexão ao tentar excluir.");
     }
 }
 

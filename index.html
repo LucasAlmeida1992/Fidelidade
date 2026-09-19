@@ -3,11 +3,15 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
     <title>Cartão Fidelidade VIP</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Poppins:wght@400;600&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Poppins:wght@400;600&display=swap"
         rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
@@ -19,16 +23,19 @@
 
     <div class="app-container">
 
-        <!-- =========================
-             CABEÇALHO
-        ========================== -->
+        <!-- =========================================
+             HEADER
+        ========================================== -->
+
         <div class="header">
 
             <button
                 class="btn-admin-toggle"
                 id="btn-admin-toggle"
                 title="Painel do Tatuador">
+
                 ⚙️
+
             </button>
 
             <img
@@ -36,15 +43,20 @@
                 alt="Lucas Franca"
                 class="header-logo">
 
-            <p>CARTÃO FIDELIDADE VIP</p>
+            <p>
+                CARTÃO FIDELIDADE VIP
+            </p>
 
         </div>
 
 
-        <!-- =========================
-             LOGIN DO CLIENTE
-        ========================== -->
-        <div id="sec-login" class="card-box">
+        <!-- =========================================
+             LOGIN
+        ========================================== -->
+
+        <div
+            id="sec-login"
+            class="card-box">
 
             <div class="input-group">
 
@@ -70,8 +82,7 @@
                 <input
                     type="text"
                     id="cli-name"
-                    placeholder="Digite seu nome"
-                    autocomplete="name">
+                    placeholder="Digite seu nome">
 
             </div>
 
@@ -79,30 +90,42 @@
             <button
                 class="btn-gold"
                 id="btn-acessar">
+
                 Ver Meu Cartão
+
             </button>
 
         </div>
 
 
-        <!-- =========================
-             CARTÃO DO CLIENTE
-        ========================== -->
-        <div id="sec-cartao" class="hidden">
+        <!-- =========================================
+             CARTÃO
+        ========================================== -->
+
+        <div
+            id="sec-cartao"
+            class="hidden">
 
             <p class="greeting-text">
+
                 Olá,
-                <strong id="disp-nome">---</strong>!
+                <strong id="disp-nome">
+                    ---
+                </strong>!
+
             </p>
 
 
             <!-- CARIMBOS -->
+
             <div class="stamps-grid">
 
-                <div class="stamp-slot" id="slot-1">
+                <div
+                    class="stamp-slot"
+                    id="slot-1">
 
                     <span class="icon">
-                        <!-- JS coloca o SVG aqui -->
+                        <!-- JS injeta o SVG -->
                     </span>
 
                     <span class="label">
@@ -112,10 +135,12 @@
                 </div>
 
 
-                <div class="stamp-slot" id="slot-2">
+                <div
+                    class="stamp-slot"
+                    id="slot-2">
 
                     <span class="icon">
-                        <!-- JS coloca o SVG aqui -->
+                        <!-- JS injeta o SVG -->
                     </span>
 
                     <span class="label">
@@ -125,7 +150,9 @@
                 </div>
 
 
-                <div class="stamp-slot" id="slot-3">
+                <div
+                    class="stamp-slot"
+                    id="slot-3">
 
                     <span class="icon">
                         🎁
@@ -140,9 +167,10 @@
             </div>
 
 
-            <!-- =========================
+            <!-- =====================================
                  STATUS DO BENEFÍCIO
-            ========================== -->
+            ====================================== -->
+
             <div class="discount-banner">
 
                 <span class="discount-label">
@@ -156,9 +184,25 @@
             </div>
 
 
-            <!-- =========================
-                 NOVO BOTÃO DE CÓDIGO
-            ========================== -->
+            <!-- =====================================
+                 BOTÃO ORIGINAL
+                 NÃO REMOVER
+            ====================================== -->
+
+            <button
+                class="btn-gold"
+                id="btn-adicionar-carimbo">
+
+                Adicionar Carimbo
+
+            </button>
+
+
+            <!-- =====================================
+                 NOVO BOTÃO DO CÓDIGO
+                 ADICIONADO PELO NOVO SISTEMA
+            ====================================== -->
+
             <button
                 class="btn-code-client"
                 id="btn-abrir-resgate">
@@ -168,7 +212,10 @@
             </button>
 
 
-            <!-- TROCAR DE CONTA -->
+            <!-- =====================================
+                 SAIR
+            ====================================== -->
+
             <button
                 class="btn-link"
                 id="btn-sair">
@@ -180,9 +227,10 @@
         </div>
 
 
-        <!-- =========================
-             PAINEL DO TATUADOR
-        ========================== -->
+        <!-- =========================================
+             PAINEL ADMIN
+        ========================================== -->
+
         <div
             id="sec-admin"
             class="admin-panel hidden">
@@ -221,10 +269,11 @@
     </div>
 
 
+    <!-- =================================================
+         NOVO MODAL DO CÓDIGO DO ESTÚDIO
 
-    <!-- ==================================================
-         MODAL — CÓDIGO DO ESTÚDIO
-    =================================================== -->
+         TODO O RESTO DO SITE ACIMA CONTINUA ORIGINAL.
+    ================================================== -->
 
     <div
         id="modal-resgate"
@@ -234,6 +283,7 @@
 
 
             <!-- FECHAR -->
+
             <button
                 type="button"
                 class="modal-close"
@@ -246,8 +296,11 @@
 
 
             <!-- ÍCONE -->
+
             <div class="modal-icon">
+
                 🔐
+
             </div>
 
 
@@ -264,11 +317,9 @@
             </p>
 
 
-            <!-- INPUT DO CÓDIGO -->
             <input
                 type="text"
                 id="input-codigo-resgate"
-                class="codigo-input"
                 inputmode="numeric"
                 maxlength="4"
                 autocomplete="one-time-code"
@@ -276,17 +327,17 @@
 
 
             <p class="modal-expire">
+
                 ⏱️ O código é válido por apenas 60 segundos.
+
             </p>
 
 
-            <!-- BOTÕES -->
             <div class="modal-actions">
 
                 <button
                     type="button"
                     class="modal-cancel"
-                    id="btn-cancelar-resgate-modal"
                     onclick="fecharModalResgate()">
 
                     Cancelar

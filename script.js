@@ -1,5 +1,5 @@
 // 🚨 SUBSTITUA ABAIXO PELA URL DA SUA API NO GOOGLE APPS SCRIPT
-const API_URL = "SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI";
+const API_URL = "https://script.google.com/macros/s/AKfycbx6j4n8UfVjL1yTqw5vkeb5JAml8sxCUeBahSw7-PKjZplLFuwjO8WjZaYcECed4hNg/exec";
 
 let clienteAtual = null;
 let todosClientes = [];

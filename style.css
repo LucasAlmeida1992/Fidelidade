@@ -1,19 +1,60 @@
+/* ==========================================
+   RESET
+========================================== */
+
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
+
+/* ==========================================
+   CORES
+========================================== */
+
+:root {
+    --vermelho: #f40632;
+    --vermelho-escuro: #c90028;
+    --vermelho-claro: #ff3155;
+
+    --preto: #111;
+    --cinza-escuro: #1a1a1a;
+    --cinza-card: #222;
+    --cinza-borda: #333;
+    --cinza-texto: #aaa;
+
+    --branco: #fff;
+}
+
+
+/* ==========================================
+   BODY
+========================================== */
+
 body {
-    background: #111;
-    color: #fff;
+    background:
+        radial-gradient(
+            circle at top,
+            #211116 0%,
+            #111 45%
+        );
+
+    color: var(--branco);
+
     font-family: 'Poppins', sans-serif;
+
     display: flex;
+
     justify-content: center;
+
     align-items: flex-start;
+
     min-height: 100vh;
+
     padding: 20px;
 }
+
 
 .hidden {
     display: none !important;
@@ -25,13 +66,27 @@ body {
 ========================================== */
 
 .app-container {
+
     width: 100%;
+
     max-width: 480px;
-    background: #1a1a1a;
+
+    background:
+        linear-gradient(
+            145deg,
+            #1c1c1c,
+            #151515
+        );
+
     border-radius: 20px;
-    border: 1px solid #333;
+
+    border: 1px solid #303030;
+
     padding: 25px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.8);
+
     height: fit-content;
 }
 
@@ -41,47 +96,87 @@ body {
 ========================================== */
 
 .header {
+
     text-align: center;
+
     margin-bottom: 25px;
+
     position: relative;
 }
 
-.header h1 {
-    font-family: 'Oswald', sans-serif;
-    font-size: 24px;
-    color: #d4af37;
-    letter-spacing: 1px;
+
+.logo {
+
+    display: block;
+
+    width: min(260px, 75%);
+
+    max-height: 100px;
+
+    object-fit: contain;
+
+    margin: 0 auto 8px;
+
+    filter:
+        drop-shadow(
+            0 5px 10px rgba(0, 0, 0, 0.45)
+        );
 }
+
 
 .header p {
-    color: #888;
-    font-size: 13px;
+
+    color: #999;
+
+    font-size: 12px;
+
+    letter-spacing: 2px;
+
+    font-weight: 600;
 }
 
+
+/* ==========================================
+   BOTÃO ADMIN
+========================================== */
+
 .btn-admin-toggle {
+
     position: absolute;
+
     right: 0;
+
     top: 0;
 
     width: 36px;
+
     height: 36px;
 
     background: #222;
+
     border: 1px solid #333;
+
     border-radius: 50%;
 
     color: #777;
+
     font-size: 17px;
 
     cursor: pointer;
 
-    transition: 0.2s;
+    transition: 0.25s;
 }
 
+
 .btn-admin-toggle:hover {
-    color: #d4af37;
-    border-color: #d4af37;
-    background: #26200e;
+
+    color: var(--vermelho);
+
+    border-color: var(--vermelho);
+
+    background: #281016;
+
+    transform: rotate(20deg);
 }
 
 
@@ -90,32 +185,52 @@ body {
 ========================================== */
 
 .card-box {
-    background: #222;
-    border-radius: 12px;
+
+    background: #202020;
+
+    border-radius: 14px;
+
     padding: 20px;
+
     margin-bottom: 20px;
-    border: 1px solid #2a2a2a;
+
+    border: 1px solid #2c2c2c;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.02);
 }
 
+
 .input-group {
+
     margin-bottom: 15px;
+
     text-align: left;
 }
 
+
 .input-group label {
+
     display: block;
+
     font-size: 12px;
+
     color: #aaa;
+
     margin-bottom: 5px;
 }
 
+
 .input-group input {
+
     width: 100%;
-    padding: 12px;
+
+    padding: 13px;
 
     background: #111;
 
     border: 1px solid #444;
+
     border-radius: 8px;
 
     color: #fff;
@@ -125,61 +240,94 @@ body {
     transition: 0.2s;
 }
 
+
 .input-group input::placeholder {
+
     color: #555;
 }
 
+
 .input-group input:focus {
+
     outline: none;
-    border-color: #d4af37;
-    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.08);
+
+    border-color: var(--vermelho);
+
+    box-shadow:
+        0 0 0 2px rgba(244, 6, 50, 0.10);
 }
 
 
 /* ==========================================
-   BOTÕES
+   BOTÃO PRINCIPAL
 ========================================== */
 
 .btn-gold {
+
     width: 100%;
 
     padding: 14px;
 
-    background: linear-gradient(
-        135deg,
-        #d4af37,
-        #aa820a
-    );
+    background:
+        linear-gradient(
+            135deg,
+            var(--vermelho),
+            var(--vermelho-escuro)
+        );
 
     border: none;
-    border-radius: 8px;
 
-    color: #000;
+    border-radius: 9px;
 
-    font-weight: 600;
+    color: #fff;
+
+    font-weight: 700;
+
     font-size: 15px;
 
     cursor: pointer;
 
     text-transform: uppercase;
 
-    transition: 0.2s;
+    letter-spacing: 0.4px;
+
+    box-shadow:
+        0 6px 18px rgba(244, 6, 50, 0.18);
+
+    transition:
+        transform 0.2s,
+        filter 0.2s,
+        box-shadow 0.2s;
 }
+
 
 .btn-gold:hover {
-    filter: brightness(1.08);
+
+    filter: brightness(1.1);
+
+    box-shadow:
+        0 8px 22px rgba(244, 6, 50, 0.28);
 }
 
+
 .btn-gold:active {
+
     transform: scale(0.98);
 }
 
+
+/* ==========================================
+   LINK
+========================================== */
+
 .btn-link {
+
     width: 100%;
 
     margin-top: 10px;
 
     background: none;
+
     border: none;
 
     color: #666;
@@ -189,11 +337,19 @@ body {
     cursor: pointer;
 }
 
+
 .btn-link:hover {
+
     color: #aaa;
 }
 
+
+/* ==========================================
+   BOTÕES PEQUENOS
+========================================== */
+
 .btn-sm {
+
     padding: 7px 12px;
 
     background: #333;
@@ -213,32 +369,44 @@ body {
     transition: 0.2s;
 }
 
+
 .btn-sm:hover {
-    background: #d4af37;
-    color: #000;
-    border-color: #d4af37;
+
+    background: var(--vermelho);
+
+    color: #fff;
+
+    border-color: var(--vermelho);
 }
 
+
 .btn-full {
+
     width: 100%;
+
     margin-top: 10px;
 }
 
 
 /* ==========================================
-   CARTÃO DE CARIMBOS
+   SAUDAÇÃO
 ========================================== */
 
 .greeting-text {
+
     text-align: center;
 
     font-size: 14px;
 
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+
+    color: #ddd;
 }
 
+
 .greeting-text strong {
-    color: #d4af37;
+
+    color: var(--vermelho);
 }
 
 
@@ -247,25 +415,26 @@ body {
 ========================================== */
 
 .stamps-grid {
+
     display: flex;
 
     justify-content: space-between;
 
     margin: 25px 0;
 
-    gap: 10px;
+    gap: 12px;
 }
 
+
+/* ==========================================
+   ÁREA DE CADA CARIMBO
+========================================== */
+
 .stamp-slot {
+
     flex: 1;
 
-    background: #111;
-
-    border: 2px dashed #444;
-
-    border-radius: 12px;
-
-    min-height: 100px;
+    min-width: 0;
 
     display: flex;
 
@@ -273,34 +442,215 @@ body {
 
     align-items: center;
 
-    justify-content: center;
+    justify-content: flex-start;
 
     text-align: center;
 
-    padding: 5px;
-
-    transition: all 0.3s;
+    position: relative;
 }
 
-.stamp-slot.active {
-    border-color: #d4af37;
 
-    background: #26200e;
+/* ==========================================
+   CÍRCULO DO CARIMBO
+========================================== */
+
+.stamp-circle {
+
+    width: 88px;
+
+    height: 88px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            #171717 60%,
+            #111 100%
+        );
+
+    border: 3px dashed #484848;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    position: relative;
+
+    margin-bottom: 10px;
+
+    transition:
+        background 0.35s,
+        border 0.35s,
+        transform 0.35s,
+        box-shadow 0.35s;
 
     box-shadow:
-        0 0 15px rgba(212, 175, 55, 0.08);
+        0 5px 12px rgba(0,0,0,0.35);
 }
 
-.stamp-slot .icon {
-    font-size: 28px;
 
-    margin-bottom: 5px;
+/* Pequeno efeito de adesivo */
+
+.stamp-circle::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: -6px;
+
+    border-radius: 50%;
+
+    border: 1px solid transparent;
+
+    transition: 0.35s;
 }
+
+
+/* ==========================================
+   ÍCONE
+========================================== */
+
+.stamp-circle .icon {
+
+    font-family: Arial, sans-serif;
+
+    font-size: 38px;
+
+    font-weight: 900;
+
+    line-height: 1;
+
+    color: #555;
+
+    transition:
+        color 0.35s,
+        transform 0.35s,
+        text-shadow 0.35s;
+}
+
+
+/* ==========================================
+   CARIMBO ATIVO
+========================================== */
+
+.stamp-slot.active .stamp-circle {
+
+    background:
+        radial-gradient(
+            circle at 35% 30%,
+            var(--vermelho-claro),
+            var(--vermelho) 55%,
+            var(--vermelho-escuro)
+        );
+
+    border: 4px solid var(--vermelho);
+
+    box-shadow:
+        0 8px 18px rgba(244, 6, 50, 0.28),
+        inset 0 2px 5px rgba(255,255,255,0.15),
+        inset 0 -5px 10px rgba(0,0,0,0.16);
+
+    transform: rotate(-3deg);
+}
+
+
+.stamp-slot.active .stamp-circle::before {
+
+    border-color: rgba(255,255,255,0.25);
+
+    box-shadow:
+        0 0 0 3px rgba(244, 6, 50, 0.08);
+}
+
+
+.stamp-slot.active .stamp-circle .icon {
+
+    color: #fff;
+
+    text-shadow:
+        0 2px 2px rgba(0,0,0,0.25);
+
+    transform: scale(1.05);
+}
+
+
+/* ==========================================
+   ANIMAÇÃO DO CARIMBO
+========================================== */
+
+@keyframes stampPop {
+
+    0% {
+        transform: scale(0.65) rotate(-12deg);
+        opacity: 0;
+    }
+
+    65% {
+        transform: scale(1.08) rotate(3deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1) rotate(-3deg);
+        opacity: 1;
+    }
+}
+
+
+.stamp-slot.active .stamp-circle {
+
+    animation:
+        stampPop 0.45s ease-out;
+}
+
+
+/* ==========================================
+   LABEL
+========================================== */
 
 .stamp-slot .label {
+
     font-size: 10px;
 
-    color: #aaa;
+    color: #999;
+
+    line-height: 1.3;
+
+    font-weight: 600;
+
+    max-width: 100px;
+}
+
+
+.stamp-slot.active .label {
+
+    color: #fff;
+}
+
+
+.stamp-slot .label small {
+
+    display: block;
+
+    color: var(--vermelho);
+
+    font-size: 9px;
+
+    margin-top: 2px;
+}
+
+
+/* ==========================================
+   PRÊMIO
+========================================== */
+
+.reward-slot .stamp-circle .icon {
+
+    font-size: 34px;
 }
 
 
@@ -309,29 +659,44 @@ body {
 ========================================== */
 
 .discount-banner {
-    background: #26200e;
 
-    border: 1px solid #d4af37;
+    background:
+        linear-gradient(
+            135deg,
+            #241117,
+            #1d1013
+        );
 
-    border-radius: 10px;
+    border: 1px solid var(--vermelho);
+
+    border-radius: 12px;
 
     padding: 15px;
 
     text-align: center;
 
     margin-bottom: 20px;
+
+    box-shadow:
+        0 5px 15px rgba(244, 6, 50, 0.08);
 }
+
 
 .discount-label {
+
     font-size: 11px;
 
-    color: #aaa;
+    color: #999;
 
     text-transform: uppercase;
+
+    letter-spacing: 1px;
 }
 
+
 .discount-banner h3 {
-    color: #d4af37;
+
+    color: var(--vermelho);
 
     font-size: 16px;
 
@@ -348,9 +713,10 @@ body {
 ========================================== */
 
 .admin-panel {
+
     background: #151515;
 
-    border: 1px solid #d4af37;
+    border: 1px solid var(--vermelho);
 
     border-radius: 12px;
 
@@ -362,8 +728,10 @@ body {
         0 8px 25px rgba(0, 0, 0, 0.4);
 }
 
+
 .admin-title {
-    color: #d4af37;
+
+    color: var(--vermelho);
 
     margin-bottom: 10px;
 
@@ -380,6 +748,7 @@ body {
 ========================================== */
 
 .admin-client-list {
+
     max-height: 300px;
 
     overflow-y: auto;
@@ -388,32 +757,40 @@ body {
 }
 
 
-/* Barra de rolagem */
-
 .admin-client-list::-webkit-scrollbar {
+
     width: 5px;
 }
 
+
 .admin-client-list::-webkit-scrollbar-track {
+
     background: #111;
+
     border-radius: 10px;
 }
+
 
 .admin-client-list::-webkit-scrollbar-thumb {
+
     background: #444;
+
     border-radius: 10px;
 }
 
+
 .admin-client-list::-webkit-scrollbar-thumb:hover {
-    background: #d4af37;
+
+    background: var(--vermelho);
 }
 
 
 /* ==========================================
-   CLIENTE NO ADMIN
+   CLIENTE ADMIN
 ========================================== */
 
 .client-item {
+
     background: #222;
 
     padding: 12px;
@@ -437,17 +814,24 @@ body {
     transition: 0.2s;
 }
 
+
 .client-item:hover {
+
     border-color: #444;
 }
 
+
 .client-info {
+
     min-width: 0;
+
     flex: 1;
 }
 
+
 .client-info strong {
-    color: #d4af37;
+
+    color: var(--vermelho);
 
     display: block;
 
@@ -458,7 +842,9 @@ body {
     white-space: nowrap;
 }
 
+
 .client-info span {
+
     color: #aaa;
 
     font-size: 11px;
@@ -476,41 +862,71 @@ body {
 @media (max-width: 480px) {
 
     body {
+
         padding: 10px;
     }
 
+
     .app-container {
+
         padding: 20px;
 
         border-radius: 16px;
     }
 
-    .header h1 {
-        font-size: 21px;
+
+    .logo {
+
+        width: min(230px, 72%);
+
+        max-height: 85px;
     }
 
+
+    .header p {
+
+        font-size: 10px;
+
+        letter-spacing: 1.5px;
+    }
+
+
     .stamps-grid {
+
         gap: 6px;
     }
 
-    .stamp-slot {
-        min-height: 90px;
+
+    .stamp-circle {
+
+        width: 76px;
+
+        height: 76px;
     }
 
-    .stamp-slot .icon {
-        font-size: 24px;
+
+    .stamp-circle .icon {
+
+        font-size: 32px;
     }
+
 
     .stamp-slot .label {
+
         font-size: 9px;
     }
 
+
     .client-item {
+
         padding: 10px;
     }
 
+
     .btn-sm {
+
         padding: 7px 9px;
+
         font-size: 10px;
     }
 }

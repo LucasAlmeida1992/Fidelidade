@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartão Fidelidade VIP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <button class="btn-admin-toggle" id="btn-admin-toggle" title="Painel do Tatuador">⚙️</button>
+        <h1>LUCAS FRANCA TATTOO</h1>
+        <p>CARTÃO FIDELIDADE VIP</p>
+    </div>
+
+    <!-- TELA 1: LOGIN DO CLIENTE -->
+    <div id="sec-login" class="card-box">
+        <div class="input-group">
+            <label for="cli-phone">Seu WhatsApp (com DDD)</label>
+            <input type="tel" id="cli-phone" placeholder="21999999999" autocomplete="tel">
+        </div>
+        <div class="input-group">
+            <label for="cli-name">Seu Nome Completo</label>
+            <input type="text" id="cli-name" placeholder="Digite seu nome">
+        </div>
+        <button class="btn-gold" id="btn-acessar">Ver Meu Cartão</button>
+    </div>
+
+    <!-- TELA 2: CARTÃO DE CARIMBOS DO CLIENTE -->
+    <div id="sec-cartao" class="hidden">
+        <p class="greeting-text">
+            Olá, <strong id="disp-nome">---</strong>!
+        </p>
+
+        <div class="stamps-grid">
+            <div class="stamp-slot" id="slot-1">
+                <span class="icon">⭕</span>
+                <span class="label">1ª Tattoo</span>
+            </div>
+            <div class="stamp-slot" id="slot-2">
+                <span class="icon">⭕</span>
+                <span class="label">2ª Tattoo</span>
+            </div>
+            <div class="stamp-slot" id="slot-3">
+                <span class="icon">🎁</span>
+                <span class="label">3ª (10% OFF)</span>
+            </div>
+        </div>
+
+        <div class="discount-banner">
+            <span class="discount-label">Status do Benefício</span>
+            <h3 id="disp-desconto">Carregando...</h3>
+        </div>
+
+        <button class="btn-gold" id="btn-adicionar-carimbo">➕ Adicionar Carimbo</button>
+        <button class="btn-link" id="btn-sair">Trocar de Conta</button>
+    </div>
+
+    <!-- TELA 3: PAINEL ADMIN -->
+    <div id="sec-admin" class="admin-panel hidden">
+        <h3 class="admin-title">PAINEL DO TATUADOR</h3>
+        <div class="input-group">
+            <input type="text" id="admin-search" placeholder="Buscar por Nome ou WhatsApp...">
+        </div>
+        <div id="lista-clientes-admin" class="admin-client-list">
+            <!-- Lista de clientes via JS -->
+        </div>
+        <button class="btn-sm btn-full" id="btn-fechar-admin">Fechar Painel</button>
+    </div>
+</div>
+
+</body>
+</html>

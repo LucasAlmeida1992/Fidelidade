@@ -411,14 +411,15 @@ body::before {
 }
 
 .stamp-slot .icon img {
-    width: 26px;
-    height: 26px;
+    width: 24px;
+    height: 24px;
     object-fit: contain;
     display: block;
-    opacity: 0.6; /* Mais suave nos slots pendentes */
+    opacity: 0.5;
+    filter: brightness(0) invert(1);
 }
 
-/* Quando ativo, o ícone brilha com total opacidade */
+/* Quando o carimbo estiver ativo, o ícone brilha com total opacidade */
 .stamp-slot.active .icon img {
     opacity: 1;
 }

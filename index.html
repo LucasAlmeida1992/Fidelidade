@@ -1,18 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Cartão Fidelidade VIP</title>
 
     <link
         href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Poppins:wght@400;600&display=swap"
-        rel="stylesheet">
+        rel="stylesheet"
+    >
 
     <link rel="stylesheet" href="style.css">
 
@@ -21,337 +18,291 @@
 
 <body>
 
-    <div class="app-container">
-
-        <!-- =========================================
-             HEADER
-        ========================================== -->
-
-        <div class="header">
-
-            <button
-                class="btn-admin-toggle"
-                id="btn-admin-toggle"
-                title="Painel do Tatuador">
-
-                ⚙️
-
-            </button>
-
-            <img
-                src="Lg Lucas Franca.svg"
-                alt="Lucas Franca"
-                class="header-logo">
-
-            <p>
-                CARTÃO FIDELIDADE VIP
-            </p>
-
-        </div>
-
-
-        <!-- =========================================
-             LOGIN
-        ========================================== -->
-
-        <div
-            id="sec-login"
-            class="card-box">
-
-            <div class="input-group">
-
-                <label for="cli-phone">
-                    Seu WhatsApp (com DDD)
-                </label>
-
-                <input
-                    type="tel"
-                    id="cli-phone"
-                    placeholder="21999999999"
-                    autocomplete="tel">
-
-            </div>
-
-
-            <div class="input-group">
-
-                <label for="cli-name">
-                    Seu Nome Completo
-                </label>
-
-                <input
-                    type="text"
-                    id="cli-name"
-                    placeholder="Digite seu nome">
-
-            </div>
-
-
-            <button
-                class="btn-gold"
-                id="btn-acessar">
-
-                Ver Meu Cartão
-
-            </button>
-
-        </div>
-
-
-        <!-- =========================================
-             CARTÃO
-        ========================================== -->
-
-        <div
-            id="sec-cartao"
-            class="hidden">
-
-            <p class="greeting-text">
-
-                Olá,
-                <strong id="disp-nome">
-                    ---
-                </strong>!
-
-            </p>
-
-
-            <!-- CARIMBOS -->
-
-            <div class="stamps-grid">
-
-                <div
-                    class="stamp-slot"
-                    id="slot-1">
-
-                    <span class="icon">
-                        <!-- JS injeta o SVG -->
-                    </span>
-
-                    <span class="label">
-                        1ª Tattoo
-                    </span>
-
-                </div>
-
-
-                <div
-                    class="stamp-slot"
-                    id="slot-2">
-
-                    <span class="icon">
-                        <!-- JS injeta o SVG -->
-                    </span>
-
-                    <span class="label">
-                        2ª Tattoo
-                    </span>
-
-                </div>
-
-
-                <div
-                    class="stamp-slot"
-                    id="slot-3">
-
-                    <span class="icon">
-                        🎁
-                    </span>
-
-                    <span class="label">
-                        3ª Tattoo • 10% OFF
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <!-- =====================================
-                 STATUS DO BENEFÍCIO
-            ====================================== -->
-
-            <div class="discount-banner">
-
-                <span class="discount-label">
-                    Status do Benefício
-                </span>
-
-                <h3 id="disp-desconto">
-                    Carregando...
-                </h3>
-
-            </div>
-
-
-            <!-- =====================================
-                 BOTÃO ORIGINAL
-                 NÃO REMOVER
-            ====================================== -->
-
-            <button
-                class="btn-gold"
-                id="btn-adicionar-carimbo">
-
-                Adicionar Carimbo
-
-            </button>
-
-
-            <!-- =====================================
-                 NOVO BOTÃO DO CÓDIGO
-                 ADICIONADO PELO NOVO SISTEMA
-            ====================================== -->
-
-            <button
-                class="btn-code-client"
-                id="btn-abrir-resgate">
-
-                🔑 Digitar Código do Estúdio
-
-            </button>
-
-
-            <!-- =====================================
-                 SAIR
-            ====================================== -->
-
-            <button
-                class="btn-link"
-                id="btn-sair">
-
-                Trocar de Conta
-
-            </button>
-
-        </div>
-
-
-        <!-- =========================================
-             PAINEL ADMIN
-        ========================================== -->
-
-        <div
-            id="sec-admin"
-            class="admin-panel hidden">
-
-            <h3 class="admin-title">
-                PAINEL DO TATUADOR
-            </h3>
-
-
-            <div class="input-group">
-
-                <input
-                    type="text"
-                    id="admin-search"
-                    placeholder="Buscar por Nome ou WhatsApp...">
-
-            </div>
-
-
-            <div
-                id="lista-clientes-admin"
-                class="admin-client-list">
-            </div>
-
-
-            <button
-                class="btn-sm btn-full"
-                id="btn-fechar-admin">
-
-                Fechar Painel
-
-            </button>
-
-        </div>
+<div class="app-container">
+
+    <!-- =====================================================
+         CABEÇALHO
+         ===================================================== -->
+    <div class="header">
+
+        <button
+            class="btn-admin-toggle"
+            id="btn-admin-toggle"
+            title="Painel do Tatuador"
+            type="button"
+        >
+            ⚙️
+        </button>
+
+        <img
+            src="Lg Lucas Franca.svg"
+            alt="Lucas Franca"
+            class="header-logo"
+        >
+
+        <p>CARTÃO FIDELIDADE VIP</p>
 
     </div>
 
 
-    <!-- =================================================
-         NOVO MODAL DO CÓDIGO DO ESTÚDIO
+    <!-- =====================================================
+         LOGIN DO CLIENTE
+         ===================================================== -->
+    <div
+        id="sec-login"
+        class="card-box"
+    >
 
-         TODO O RESTO DO SITE ACIMA CONTINUA ORIGINAL.
-    ================================================== -->
+        <div class="input-group">
 
+            <label for="cli-phone">
+                Seu WhatsApp (com DDD)
+            </label>
+
+            <input
+                type="tel"
+                id="cli-phone"
+                placeholder="21999999999"
+                autocomplete="tel"
+                inputmode="numeric"
+            >
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label for="cli-name">
+                Seu Nome Completo
+            </label>
+
+            <input
+                type="text"
+                id="cli-name"
+                placeholder="Digite seu nome"
+                autocomplete="name"
+            >
+
+        </div>
+
+
+        <button
+            class="btn-gold"
+            id="btn-acessar"
+            type="button"
+        >
+            Ver Meu Cartão
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         CARTÃO DO CLIENTE
+         ===================================================== -->
+    <div
+        id="sec-cartao"
+        class="hidden"
+    >
+
+        <p class="greeting-text">
+            Olá,
+            <strong id="disp-nome">---</strong>!
+        </p>
+
+
+        <!-- CARIMBOS -->
+        <div class="stamps-grid">
+
+            <!-- 1º CARIMBO -->
+            <div
+                class="stamp-slot"
+                id="slot-1"
+            >
+
+                <span class="icon">
+                    <!-- O JavaScript coloca o ícone aqui -->
+                </span>
+
+                <span class="label">
+                    1ª Tattoo
+                </span>
+
+            </div>
+
+
+            <!-- 2º CARIMBO -->
+            <div
+                class="stamp-slot"
+                id="slot-2"
+            >
+
+                <span class="icon">
+                    <!-- O JavaScript coloca o ícone aqui -->
+                </span>
+
+                <span class="label">
+                    2ª Tattoo
+                </span>
+
+            </div>
+
+
+            <!-- BENEFÍCIO -->
+            <div
+                class="stamp-slot"
+                id="slot-3"
+            >
+
+                <span class="icon">
+                    🎁
+                </span>
+
+                <span class="label">
+                    3ª Tattoo • 10% OFF
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             STATUS DO BENEFÍCIO
+             ================================================= -->
+        <div class="discount-banner">
+
+            <span class="discount-label">
+                Status do Benefício
+            </span>
+
+            <h3 id="disp-desconto">
+                Carregando...
+            </h3>
+
+        </div>
+
+
+        <!-- =================================================
+             ÚNICO BOTÃO DE AÇÃO DO CLIENTE
+
+             0 ou 1 carimbo:
+             🔑 Digitar Código do Estúdio
+
+             2 carimbos:
+             🔄 Reiniciar Cartão
+
+             O JavaScript altera o texto automaticamente.
+             ================================================= -->
+        <button
+            class="btn-gold btn-code-client"
+            id="btn-abrir-resgate"
+            type="button"
+        >
+            🔑 Digitar Código do Estúdio
+        </button>
+
+
+        <!-- TROCAR DE CONTA -->
+        <button
+            class="btn-link"
+            id="btn-sair"
+            type="button"
+        >
+            Trocar de Conta
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         MODAL DO CÓDIGO DO ESTÚDIO
+         ===================================================== -->
     <div
         id="modal-resgate"
-        class="modal-overlay hidden">
+        class="modal-overlay hidden"
+        aria-hidden="true"
+    >
 
-        <div class="resgate-modal">
+        <div
+            class="resgate-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="titulo-resgate"
+        >
 
 
             <!-- FECHAR -->
-
             <button
                 type="button"
                 class="modal-close"
                 id="btn-cancelar-resgate"
-                aria-label="Fechar">
-
+                aria-label="Fechar"
+            >
                 ×
-
             </button>
 
 
             <!-- ÍCONE -->
-
             <div class="modal-icon">
+                🔑
+            </div>
 
-                🔐
+
+            <!-- TÍTULO -->
+            <h3 id="titulo-resgate">
+                Código do Estúdio
+            </h3>
+
+
+            <!-- DESCRIÇÃO -->
+            <p class="modal-description">
+                Digite o código de 4 dígitos fornecido pelo tatuador.
+            </p>
+
+
+            <!-- INPUT DO CÓDIGO -->
+            <div class="code-input-wrap">
+
+                <input
+                    type="text"
+                    id="input-codigo-resgate"
+                    maxlength="4"
+                    minlength="4"
+                    inputmode="numeric"
+                    pattern="[0-9]*"
+                    autocomplete="one-time-code"
+                    placeholder="0000"
+                    aria-label="Código de 4 dígitos"
+                >
 
             </div>
 
 
-            <h2>
-                Código do Estúdio
-            </h2>
-
-
-            <p class="modal-description">
-
-                Digite o código de 4 dígitos
-                fornecido pelo tatuador.
-
-            </p>
-
-
-            <input
-                type="text"
-                id="input-codigo-resgate"
-                inputmode="numeric"
-                maxlength="4"
-                autocomplete="one-time-code"
-                placeholder="0000">
-
-
+            <!-- AVISO -->
             <p class="modal-expire">
-
-                ⏱️ O código é válido por apenas 60 segundos.
-
+                O código é temporário e pode ser usado uma única vez.
             </p>
 
 
+            <!-- BOTÕES -->
             <div class="modal-actions">
 
                 <button
                     type="button"
-                    class="modal-cancel"
-                    onclick="fecharModalResgate()">
-
+                    class="btn-sm modal-cancel"
+                    onclick="fecharModalResgate()"
+                >
                     Cancelar
-
                 </button>
 
 
                 <button
                     type="button"
-                    class="modal-confirm"
-                    id="btn-confirmar-resgate">
-
+                    class="btn-gold modal-confirm"
+                    id="btn-confirmar-resgate"
+                >
                     Confirmar Código
-
                 </button>
 
             </div>
@@ -360,6 +311,57 @@
 
     </div>
 
-</body>
 
+    <!-- =====================================================
+         PAINEL DO TATUADOR
+         ===================================================== -->
+    <div
+        id="sec-admin"
+        class="admin-panel hidden"
+    >
+
+        <h3 class="admin-title">
+            PAINEL DO TATUADOR
+        </h3>
+
+
+        <!-- BUSCA -->
+        <div class="input-group">
+
+            <input
+                type="text"
+                id="admin-search"
+                placeholder="Buscar por Nome ou WhatsApp..."
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <!-- LISTA DE CLIENTES -->
+        <div
+            id="lista-clientes-admin"
+            class="admin-client-list"
+        >
+            <!--
+                Os clientes serão inseridos
+                automaticamente pelo JavaScript.
+            -->
+        </div>
+
+
+        <!-- FECHAR PAINEL -->
+        <button
+            class="btn-sm btn-full"
+            id="btn-fechar-admin"
+            type="button"
+        >
+            Fechar Painel
+        </button>
+
+    </div>
+
+</div>
+
+</body>
 </html>

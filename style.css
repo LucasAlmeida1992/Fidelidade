@@ -414,7 +414,7 @@ body::before {
 
 
 /* =========================================================
-   ÍCONES DO GOOGLE MATERIAL ICONS
+   ESTILIZAÇÃO DOS ÍCONES SVG PERSONALIZADOS
    ========================================================= */
 
 .stamp-slot .icon {
@@ -426,15 +426,30 @@ body::before {
     margin-bottom: 6px;
 }
 
-.stamp-slot .icon .material-icons {
+.custom-svg-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    opacity: 0.5;
+    filter: grayscale(100%) brightness(1.5);
+    transition: all 0.3s ease;
+}
+
+/* Quando o carimbo estiver ativo, o SVG ganha destaque e brilho */
+.stamp-slot.active .custom-svg-icon {
+    opacity: 1;
+    filter: grayscale(0%) drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
+}
+
+/* Caso ainda use Material Icons (como a estrela do slot 3) */
+.stamp-slot .material-icons {
     font-size: 24px;
     color: #858e9d;
     opacity: 0.6;
     transition: color 0.3s, opacity 0.3s, text-shadow 0.3s;
 }
 
-/* Quando o carimbo estiver ativo, o ícone do Google brilha intensamente */
-.stamp-slot.active .icon .material-icons {
+.stamp-slot.active .material-icons {
     color: #ffffff;
     opacity: 1;
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);

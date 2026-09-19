@@ -3,7 +3,7 @@
 // CARTÃO FIDELIDADE - LUCAS FRANÇA TATTOO
 // ==========================================
 
-const API_URL = "https://script.google.com/macros/s/AKfycbxohv1qd-AV8vG1DKJe9l_PhC7xl8PwkUNkDFEw02xVO-hcwD-OBhDSIBfaH2aw0ANC/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyI0svNzI2nIktgvCNTm76FQmBGXk0119W0claQhsf8Jz7XvnXQ9DiT09pZJFoYsgTF/exec";
 
 // SVGs Configuráveis
 const SVG_CHECK = `<svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="currentColor"><path d="m424-312 282-282-56-56-226 226-114-114-56 56 170 170ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z"/></svg>`;

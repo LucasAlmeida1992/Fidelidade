@@ -15,24 +15,17 @@
 
 body {
     background-image: url('imagemfundoold mobile.webp');
-
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-
     color: #e8eaf0;
-
     font-family: 'Poppins', sans-serif;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
     min-height: 100vh;
-
     padding: 20px;
-
     position: relative;
 }
 
@@ -41,13 +34,9 @@ body {
 
 body::before {
     content: '';
-
     position: absolute;
-
     inset: 0;
-
     background: rgba(3, 5, 10, 0.68);
-
     z-index: -1;
 }
 
@@ -55,11 +44,9 @@ body::before {
 /* Desktop */
 
 @media (min-width: 768px) {
-
     body {
         background-image: url('imagemfundoold desktop.webp');
     }
-
 }
 
 
@@ -77,16 +64,9 @@ body::before {
    ========================================================= */
 
 .app-container {
-
     width: 100%;
-
     max-width: 440px;
-
-
-    /* Fundo principal + iluminação vermelha */
-
     background:
-
         /* brilho vermelho superior esquerdo */
         radial-gradient(
             circle at 0% 0%,
@@ -94,7 +74,6 @@ body::before {
             rgba(251, 5, 50, 0.08) 20%,
             transparent 42%
         ),
-
         /* brilho vermelho inferior direito */
         radial-gradient(
             circle at 100% 100%,
@@ -102,31 +81,20 @@ body::before {
             rgba(251, 5, 50, 0.05) 22%,
             transparent 45%
         ),
-
         /* fundo base */
         linear-gradient(
             145deg,
             #10141c 0%,
             #080b11 100%
         );
-
-
     border-radius: 20px;
-
     border: 1px solid #252d3a;
-
     padding: 30px 24px;
-
     box-shadow:
-
         0 20px 50px rgba(0, 0, 0, 0.75),
-
         0 0 0 1px rgba(255,255,255,0.015);
-
     height: fit-content;
-
     position: relative;
-
     overflow: hidden;
 }
 
@@ -135,64 +103,36 @@ body::before {
    ILUMINAÇÃO INTERNA
    ========================================================= */
 
-/* Brilho superior esquerdo */
-
 .app-container::before {
-
     content: '';
-
     position: absolute;
-
     top: -120px;
     left: -120px;
-
     width: 280px;
     height: 280px;
-
     background: rgba(251, 5, 50, 0.10);
-
     border-radius: 50%;
-
     filter: blur(70px);
-
     pointer-events: none;
-
     z-index: 0;
 }
-
-
-/* Brilho inferior direito */
 
 .app-container::after {
-
     content: '';
-
     position: absolute;
-
     right: -140px;
     bottom: -140px;
-
     width: 300px;
     height: 300px;
-
     background: rgba(251, 5, 50, 0.08);
-
     border-radius: 50%;
-
     filter: blur(80px);
-
     pointer-events: none;
-
     z-index: 0;
 }
 
-
-/* Mantém todo o conteúdo acima dos brilhos */
-
 .app-container > * {
-
     position: relative;
-
     z-index: 1;
 }
 
@@ -202,42 +142,25 @@ body::before {
    ========================================================= */
 
 .header {
-
     text-align: center;
-
     margin-bottom: 25px;
-
     position: relative;
-
     padding-top: 5px;
 }
 
-
 .header-logo {
-
     max-width: 130px;
-
     height: auto;
-
     display: block;
-
     margin: 0 auto 8px auto;
-
-    /* Deixa a logo inteira branca */
     filter: brightness(0) invert(1);
 }
 
-
 .header p {
-
     color: #9aa2b2;
-
     font-size: 11px;
-
     letter-spacing: 2.5px;
-
     text-transform: uppercase;
-
     font-weight: 600;
 }
 
@@ -247,46 +170,28 @@ body::before {
    ========================================================= */
 
 .btn-admin-toggle {
-
     position: absolute;
-
     right: -4px;
     top: -2px;
-
     background: #171c25;
-
     border: 1px solid #303948;
-
     width: 32px;
     height: 32px;
-
     border-radius: 50%;
-
     color: #9da5b5;
-
     font-size: 14px;
-
     display: flex;
-
     align-items: center;
     justify-content: center;
-
     cursor: pointer;
-
     transition: all 0.2s ease;
 }
 
-
 .btn-admin-toggle:hover {
-
     color: #fff;
-
     border-color: #fb0532;
-
     background: #1d2029;
-
-    box-shadow:
-        0 0 12px rgba(251, 5, 50, 0.15);
+    box-shadow: 0 0 12px rgba(251, 5, 50, 0.15);
 }
 
 
@@ -295,76 +200,43 @@ body::before {
    ========================================================= */
 
 .card-box {
-
     background: #11151b;
-
     border-radius: 14px;
-
     padding: 22px;
-
     margin-bottom: 20px;
-
     border: 1px solid #28313f;
-
-    box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.015);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.015);
 }
 
-
 .input-group {
-
     margin-bottom: 16px;
-
     text-align: left;
 }
 
-
 .input-group label {
-
     display: block;
-
     font-size: 11px;
-
     color: #8c95a5;
-
     margin-bottom: 6px;
-
     text-transform: uppercase;
-
     letter-spacing: 0.5px;
 }
 
-
 .input-group input {
-
     width: 100%;
-
     padding: 12px 14px;
-
     background: #090c11;
-
     border: 1px solid #303947;
-
     border-radius: 8px;
-
     color: #fff;
-
     font-size: 14px;
-
-    transition:
-        border-color 0.2s,
-        box-shadow 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-
 .input-group input:focus {
-
     outline: none;
-
     border-color: #fb0532;
-
-    box-shadow:
-        0 0 0 2px rgba(251, 5, 50, 0.08);
+    box-shadow: 0 0 0 2px rgba(251, 5, 50, 0.08);
 }
 
 
@@ -373,54 +245,31 @@ body::before {
    ========================================================= */
 
 .btn-gold {
-
     width: 100%;
-
     padding: 14px;
-
     background: linear-gradient(
         135deg,
         #ff1744 0%,
         #e5002d 100%
     );
-
     border: none;
-
     border-radius: 10px;
-
     color: #fff;
-
     font-weight: 600;
-
     font-size: 13px;
-
     cursor: pointer;
-
     text-transform: uppercase;
-
     letter-spacing: 1px;
-
-    box-shadow:
-        0 5px 18px rgba(251, 5, 50, 0.22);
-
-    transition:
-        opacity 0.2s,
-        transform 0.1s,
-        box-shadow 0.2s;
+    box-shadow: 0 5px 18px rgba(251, 5, 50, 0.22);
+    transition: opacity 0.2s, transform 0.1s, box-shadow 0.2s;
 }
-
 
 .btn-gold:hover {
-
     opacity: 0.97;
-
-    box-shadow:
-        0 6px 22px rgba(251, 5, 50, 0.3);
+    box-shadow: 0 6px 22px rgba(251, 5, 50, 0.3);
 }
 
-
 .btn-gold:active {
-
     transform: scale(0.98);
 }
 
@@ -430,27 +279,17 @@ body::before {
    ========================================================= */
 
 .btn-link {
-
     width: 100%;
-
     margin-top: 14px;
-
     background: none;
-
     border: none;
-
     color: #78808e;
-
     font-size: 12px;
-
     cursor: pointer;
-
     transition: color 0.2s;
 }
 
-
 .btn-link:hover {
-
     color: #c0c5ce;
 }
 
@@ -460,42 +299,24 @@ body::before {
    ========================================================= */
 
 .btn-sm {
-
     padding: 8px 12px;
-
     background: #171c23;
-
     color: #c7ccd5;
-
     border: 1px solid #303846;
-
     border-radius: 8px;
-
     font-size: 12px;
-
     cursor: pointer;
-
-    transition:
-        background 0.2s,
-        border-color 0.2s,
-        color 0.2s;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 
-
 .btn-sm:hover {
-
     background: #1d232c;
-
     border-color: #454f60;
-
     color: #fff;
 }
 
-
 .btn-full {
-
     width: 100%;
-
     margin-top: 12px;
 }
 
@@ -505,21 +326,14 @@ body::before {
    ========================================================= */
 
 .greeting-text {
-
     text-align: center;
-
     font-size: 13px;
-
     color: #aeb5c1;
-
     margin-bottom: 20px;
 }
 
-
 .greeting-text strong {
-
     color: #fff;
-
     font-weight: 600;
 }
 
@@ -529,13 +343,9 @@ body::before {
    ========================================================= */
 
 .stamps-grid {
-
     display: flex;
-
     justify-content: space-between;
-
     margin: 20px 0;
-
     gap: 10px;
 }
 
@@ -545,112 +355,72 @@ body::before {
    ========================================================= */
 
 .stamp-slot {
-
     flex: 1;
-
-    background:
-        linear-gradient(
-            145deg,
-            #151a22,
-            #10141b
-        );
-
+    background: linear-gradient(
+        145deg,
+        #151a22,
+        #10141b
+    );
     border: 1px solid #28313f;
-
     border-radius: 12px;
-
     height: 105px;
-
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
-
     justify-content: center;
-
     text-align: center;
-
     padding: 8px;
-
     transition: all 0.3s ease;
 }
 
-
-/* Hover */
-
 .stamp-slot:hover {
-
     border-color: #455268;
-
     transform: translateY(-1px);
 }
 
 
 /* =========================================================
-   CARIMBO ATIVO (CONCLUÍDO)
+   CARIMBO ATIVO (CONCLUÍDO E BEM ACESO)
    ========================================================= */
 
 .stamp-slot.active {
-
-    border-color: #fb0532;
-
+    border-color: #ff1744;
     border-style: solid;
-
     background: linear-gradient(
         145deg,
-        rgba(251, 5, 50, 0.22),
-        rgba(251, 5, 50, 0.05)
+        rgba(255, 23, 68, 0.45),
+        rgba(229, 0, 45, 0.15)
     );
-
     box-shadow:
-        0 0 0 1px rgba(251, 5, 50, 0.15),
-        0 6px 20px rgba(251, 5, 50, 0.15);
+        0 0 0 1px rgba(255, 23, 68, 0.4),
+        0 8px 25px rgba(255, 23, 68, 0.35);
 }
 
 
 /* =========================================================
-   ÍCONES DOS CARIMBOS (AJUSTE PARA LINKS SVG / IMG)
+   ÍCONES DOS CARIMBOS
    ========================================================= */
 
 .stamp-slot .icon {
-
     width: 32px;
-
     height: 32px;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
     margin-bottom: 6px;
 }
 
-
-/* Garante que a imagem do link SVG preencha e se ajuste perfeitamente */
-
 .stamp-slot .icon img {
-
     width: 26px;
-
     height: 26px;
-
     object-fit: contain;
-
     display: block;
-
-    /* Deixa os ícones com um tom cinza claro padrão nos slots vazios */
-    filter: brightness(0) saturate(100%) invert(60%) sepia(8%) saturate(600%) hue-rotate(185deg) brightness(95%) contrast(90%);
+    opacity: 0.6; /* Mais suave nos slots pendentes */
 }
 
-
-/* Quando o carimbo estiver ativo, o ícone ganha a cor vermelha da marca */
-
+/* Quando ativo, o ícone brilha com total opacidade */
 .stamp-slot.active .icon img {
-
-    filter: brightness(0) saturate(100%) invert(18%) sepia(98%) saturate(7432%) hue-rotate(346deg) brightness(95%) contrast(102%);
+    opacity: 1;
 }
 
 
@@ -659,133 +429,79 @@ body::before {
    ========================================================= */
 
 .stamp-slot .label {
-
     font-size: 10px;
-
     color: #858e9d;
-
     line-height: 1.2;
 }
 
-
-/* Texto do carimbo ativo */
-
 .stamp-slot.active .label {
-
     color: #ffffff;
-
     font-weight: 500;
 }
 
 
 /* =========================================================
-   BANNER DE BENEFÍCIO (COM O MESMO DEGRADÊ BONITO)
+   BANNER DE BENEFÍCIO
    ========================================================= */
 
 .discount-banner {
-
     background:
-
-        /* brilho superior esquerdo sutil */
         radial-gradient(
             circle at 0% 0%,
             rgba(251, 5, 50, 0.18) 0%,
             rgba(251, 5, 50, 0.06) 25%,
             transparent 50%
         ),
-
-        /* brilho inferior direito sutil */
         radial-gradient(
             circle at 100% 100%,
             rgba(251, 5, 50, 0.12) 0%,
             transparent 40%
         ),
-
-        /* fundo base com degradê igual ao card principal */
         linear-gradient(
             145deg,
             #11161e 0%,
             #090d13 100%
         );
-
     border: 1px solid #303a48;
-
     border-radius: 12px;
-
     padding: 16px;
-
     text-align: center;
-
     margin-bottom: 20px;
-
     box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.03),
         0 4px 15px rgba(0, 0, 0, 0.3);
-
     position: relative;
-
     overflow: hidden;
 }
 
-
-/* Título pequeno */
-
 .discount-label {
-
     font-size: 10px;
-
     color: #8992a1;
-
     text-transform: uppercase;
-
     letter-spacing: 1.2px;
 }
 
-
-/* Texto principal + estrela */
-
 .discount-banner h3 {
-
     color: #ffffff;
-
     font-size: 15px;
-
     font-family: 'Oswald', sans-serif;
-
     margin-top: 4px;
-
     letter-spacing: 0.5px;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
     gap: 8px;
-
     line-height: 1.35;
 }
 
-
-/* Estrela */
-
 .discount-banner h3::before {
-
     content: '★';
-
     color: #fb0532;
-
     font-family: Arial, sans-serif;
-
     font-size: 18px;
-
     line-height: 1;
-
     flex-shrink: 0;
-
-    text-shadow:
-        0 0 10px rgba(251, 5, 50, 0.35);
+    text-shadow: 0 0 10px rgba(251, 5, 50, 0.35);
 }
 
 
@@ -794,90 +510,53 @@ body::before {
    ========================================================= */
 
 .admin-panel {
-
-    background:
-
-        linear-gradient(
-            145deg,
-            #15191f,
-            #11151b
-        );
-
+    background: linear-gradient(
+        145deg,
+        #15191f,
+        #11151b
+    );
     border: 1px solid #303a48;
-
     border-radius: 14px;
-
     padding: 18px;
-
     margin-top: 15px;
-
-    box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.015);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.015);
 }
 
-
 .admin-title {
-
     color: #fff;
-
     margin-bottom: 14px;
-
     font-family: 'Oswald', sans-serif;
-
     font-size: 16px;
-
     letter-spacing: 0.5px;
-
     text-transform: uppercase;
 }
 
-
 .admin-client-list {
-
     max-height: 250px;
-
     overflow-y: auto;
-
     padding-right: 2px;
 }
 
-
 .client-item {
-
     background: #0d1015;
-
     border: 1px solid #252d38;
-
     padding: 12px;
-
     border-radius: 10px;
-
     margin-bottom: 8px;
-
     font-size: 13px;
-
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
 }
 
-
 .client-info strong {
-
     color: #fff;
-
     display: block;
-
     font-weight: 600;
 }
 
-
 .client-info span {
-
     color: #7e8795;
-
     font-size: 11px;
 }
 
@@ -887,27 +566,19 @@ body::before {
    ========================================================= */
 
 .admin-client-list::-webkit-scrollbar {
-
     width: 5px;
 }
 
-
 .admin-client-list::-webkit-scrollbar-track {
-
     background: transparent;
 }
 
-
 .admin-client-list::-webkit-scrollbar-thumb {
-
     background: #303846;
-
     border-radius: 10px;
 }
 
-
 .admin-client-list::-webkit-scrollbar-thumb:hover {
-
     background: #485364;
 }
 
@@ -917,52 +588,34 @@ body::before {
    ========================================================= */
 
 @media (max-width: 480px) {
-
     body {
-
         padding: 14px;
     }
 
-
     .app-container {
-
         padding: 26px 18px;
-
         border-radius: 18px;
     }
 
-
     .stamp-slot {
-
         height: 100px;
     }
 
-
     .stamp-slot .icon {
-
         width: 30px;
-
         height: 30px;
     }
 
-
     .stamp-slot .icon img {
-
         width: 24px;
-
         height: 24px;
     }
 
-
     .stamp-slot .label {
-
         font-size: 9px;
     }
 
-
     .discount-banner h3 {
-
         font-size: 14px;
     }
-
 }

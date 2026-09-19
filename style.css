@@ -222,6 +222,9 @@ body::before {
     display: block;
 
     margin: 0 auto 8px auto;
+
+    /* Deixa a logo inteira branca */
+    filter: brightness(0) invert(1);
 }
 
 
@@ -552,7 +555,6 @@ body::before {
             #10141b
         );
 
-    /* Borda sutil arredondada igual à referência */
     border: 1px solid #28313f;
 
     border-radius: 12px;
@@ -591,12 +593,10 @@ body::before {
 
 .stamp-slot.active {
 
-    /* Borda vermelha marcante estilo o print */
     border-color: #fb0532;
 
     border-style: solid;
 
-    /* Fundo com degradê avermelhado suave e elegante */
     background: linear-gradient(
         145deg,
         rgba(251, 5, 50, 0.22),
@@ -610,7 +610,7 @@ body::before {
 
 
 /* =========================================================
-   ÍCONES DOS CARIMBOS
+   ÍCONES DOS CARIMBOS (AJUSTE PARA LINKS SVG / IMG)
    ========================================================= */
 
 .stamp-slot .icon {
@@ -629,18 +629,28 @@ body::before {
 }
 
 
-/* SVG */
+/* Garante que a imagem do link SVG preencha e se ajuste perfeitamente */
 
-.stamp-slot .icon svg {
+.stamp-slot .icon img {
 
-    width: 28px;
+    width: 26px;
 
-    height: 28px;
+    height: 26px;
+
+    object-fit: contain;
 
     display: block;
 
-    /* Força o preenchimento dos SVGs para o vermelho da marca */
-    fill: #fb0532;
+    /* Deixa os ícones com um tom cinza claro padrão nos slots vazios */
+    filter: brightness(0) saturate(100%) invert(60%) sepia(8%) saturate(600%) hue-rotate(185deg) brightness(95%) contrast(90%);
+}
+
+
+/* Quando o carimbo estiver ativo, o ícone ganha a cor vermelha da marca */
+
+.stamp-slot.active .icon img {
+
+    filter: brightness(0) saturate(100%) invert(18%) sepia(98%) saturate(7432%) hue-rotate(346deg) brightness(95%) contrast(102%);
 }
 
 
@@ -669,20 +679,34 @@ body::before {
 
 
 /* =========================================================
-   BANNER DE BENEFÍCIO
+   BANNER DE BENEFÍCIO (COM O MESMO DEGRADÊ BONITO)
    ========================================================= */
 
 .discount-banner {
 
     background:
 
+        /* brilho superior esquerdo sutil */
+        radial-gradient(
+            circle at 0% 0%,
+            rgba(251, 5, 50, 0.18) 0%,
+            rgba(251, 5, 50, 0.06) 25%,
+            transparent 50%
+        ),
+
+        /* brilho inferior direito sutil */
         radial-gradient(
             circle at 100% 100%,
-            rgba(251, 5, 50, 0.10),
-            transparent 55%
-       ),
+            rgba(251, 5, 50, 0.12) 0%,
+            transparent 40%
+        ),
 
-        #11151c;
+        /* fundo base com degradê igual ao card principal */
+        linear-gradient(
+            145deg,
+            #11161e 0%,
+            #090d13 100%
+        );
 
     border: 1px solid #303a48;
 
@@ -695,7 +719,12 @@ body::before {
     margin-bottom: 20px;
 
     box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.02);
+        inset 0 1px 0 rgba(255,255,255,0.03),
+        0 4px 15px rgba(0, 0, 0, 0.3);
+
+    position: relative;
+
+    overflow: hidden;
 }
 
 
@@ -772,7 +801,7 @@ body::before {
             145deg,
             #15191f,
             #11151b
-       );
+        );
 
     border: 1px solid #303a48;
 
@@ -917,11 +946,11 @@ body::before {
     }
 
 
-    .stamp-slot .icon svg {
+    .stamp-slot .icon img {
 
-        width: 26px;
+        width: 24px;
 
-        height: 26px;
+        height: 24px;
     }
 
 

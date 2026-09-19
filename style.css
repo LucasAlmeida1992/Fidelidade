@@ -213,48 +213,79 @@ body::before {
     font-weight: 600;
 }
 
+/* ==========================================
+   NOVO DESIGN: LINHA DO TEMPO (TIMELINE)
+   ========================================== */
 .stamps-grid {
     display: flex;
     justify-content: space-between;
-    margin: 20px 0;
-    gap: 10px;
+    align-items: center;
+    position: relative;
+    margin: 25px 0 30px 0;
+    padding: 0 10px;
+}
+
+/* Linha horizontal conectora ao fundo */
+.stamps-grid::before {
+    content: '';
+    position: absolute;
+    top: 35px; /* Alinhado ao centro dos círculos */
+    left: 35px;
+    right: 35px;
+    height: 2px;
+    background: #2d2d2d;
+    z-index: 1;
 }
 
 .stamp-slot {
     flex: 1;
-    background: #1c1c1c;
-    border: 1px dashed #333;
-    border-radius: 12px;
-    height: 105px;
+    position: relative;
+    z-index: 2;
+    background: transparent;
+    border: none;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     text-align: center;
-    padding: 8px;
+    padding: 0;
     transition: all 0.3s;
 }
 
-.stamp-slot.active {
-    border-color: #fb0532;
-    border-style: solid;
-    background: #1f1417;
-    box-shadow: 0 0 15px rgba(251, 5, 50, 0.1);
-}
-
+/* Círculo do passo */
 .stamp-slot .icon {
-    font-size: 24px;
-    margin-bottom: 6px;
+    width: 54px;
+    height: 54px;
+    background: #1c1c1c;
+    border: 2px dashed #383838;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
 }
 
 .stamp-slot .label {
     font-size: 10px;
     color: #777;
     line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Slot Ativo na Linha do Tempo */
+.stamp-slot.active .icon {
+    border-color: #fb0532;
+    border-style: solid;
+    background: #1f1417;
+    box-shadow: 0 0 15px rgba(251, 5, 50, 0.25);
+    color: #fb0532;
 }
 
 .stamp-slot.active .label {
     color: #ccc;
+    font-weight: 600;
 }
 
 .discount-banner {
@@ -274,7 +305,7 @@ body::before {
 }
 
 .discount-banner h3 {
-    color: #ffffff; /* Alterado para branco conforme solicitado */
+    color: #ffffff;
     font-size: 15px;
     font-family: 'Oswald', sans-serif;
     margin-top: 4px;

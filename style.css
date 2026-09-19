@@ -339,7 +339,7 @@ body::before {
 
 
 /* =========================================================
-   GRID DOS CARIMBOS (COM LINHA DO TEMPO CORrigida)
+   GRID DOS CARIMBOS (COM LINHA DO TEMPO CORRIGIDA)
    ========================================================= */
 
 .stamps-grid {
@@ -348,10 +348,10 @@ body::before {
     margin: 20px 0;
     gap: 10px;
     position: relative;
-    z-index: 1; /* Garante contexto de empilhamento limpo */
+    z-index: 1;
 }
 
-/* Linha conectora ao fundo (Z-index negativo para ficar estritamente atrás) */
+/* Linha conectora ao fundo (Z-index negativo para passar por trás limpa) */
 .stamps-grid::before {
     content: '';
     position: absolute;
@@ -371,7 +371,6 @@ body::before {
 
 .stamp-slot {
     flex: 1;
-    /* Fundo opaco sólido para tampar a linha que passa por trás */
     background: linear-gradient(
         145deg,
         #151a22,
@@ -388,7 +387,7 @@ body::before {
     padding: 8px;
     transition: all 0.3s ease;
     position: relative;
-    z-index: 2; /* Fica acima da linha do fundo */
+    z-index: 2;
 }
 
 .stamp-slot:hover {
@@ -398,7 +397,7 @@ body::before {
 
 
 /* =========================================================
-   CARIMBO ATIVO (BEM ACESO E DESTAQUE MÁXIMO)
+   CARIMBO ATIVO (DESTAQUE MÁXIMO)
    ========================================================= */
 
 .stamp-slot.active {
@@ -417,7 +416,7 @@ body::before {
 
 
 /* =========================================================
-   ESTILIZAÇÃO DOS ÍCONES SVG PERSONALIZADOS
+   ESTILIZAÇÃO DOS ÍCONES EM CSS PURO (SÍMBOLOS)
    ========================================================= */
 
 .stamp-slot .icon {
@@ -429,33 +428,18 @@ body::before {
     margin-bottom: 6px;
 }
 
-.custom-svg-icon {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-    opacity: 0.5;
-    filter: grayscale(100%) brightness(1.5);
+.symbol-icon {
+    font-size: 20px;
+    color: #78808e;
+    opacity: 0.6;
     transition: all 0.3s ease;
 }
 
-/* Quando o carimbo estiver ativo, o SVG ganha destaque e brilho */
-.stamp-slot.active .custom-svg-icon {
-    opacity: 1;
-    filter: grayscale(0%) drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
-}
-
-/* Caso ainda use Material Icons (como a estrela do slot 3) */
-.stamp-slot .material-icons {
-    font-size: 24px;
-    color: #858e9d;
-    opacity: 0.6;
-    transition: color 0.3s, opacity 0.3s, text-shadow 0.3s;
-}
-
-.stamp-slot.active .material-icons {
+/* Quando o carimbo estiver ativo, o símbolo brilha */
+.stamp-slot.active .symbol-icon {
     color: #ffffff;
     opacity: 1;
-    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
 }
 
 

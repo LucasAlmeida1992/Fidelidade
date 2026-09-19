@@ -5,11 +5,12 @@
 }
 
 body {
-    background: #111;
-    color: #fff;
+    background: #0d0d0d;
+    color: #e0e0e0;
     font-family: 'Poppins', sans-serif;
     display: flex;
     justify-content: center;
+    align-items: center;
     min-height: 100vh;
     padding: 20px;
 }
@@ -20,12 +21,12 @@ body {
 
 .app-container {
     width: 100%;
-    max-width: 480px;
-    background: #1a1a1a;
+    max-width: 440px;
+    background: #161616;
     border-radius: 20px;
-    border: 1px solid #333;
-    padding: 25px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    border: 1px solid #262626;
+    padding: 30px 24px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
     height: fit-content;
 }
 
@@ -34,60 +35,79 @@ body {
     text-align: center;
     margin-bottom: 25px;
     position: relative;
+    padding-top: 5px;
 }
 
 .header-logo {
-    max-width: 120px;
+    max-width: 130px;
     height: auto;
     display: block;
-    margin: 0 auto 5px auto;
+    margin: 0 auto 8px auto;
 }
 
 .header p {
-    color: #888;
-    font-size: 13px;
+    color: #777;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 600;
 }
 
 .btn-admin-toggle {
     position: absolute;
-    right: 0;
-    top: 0;
-    background: none;
-    border: none;
-    color: #555;
-    font-size: 18px;
+    right: -4px;
+    top: -2px;
+    background: #222;
+    border: 1px solid #333;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    color: #888;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-admin-toggle:hover {
+    color: #fff;
+    border-color: #555;
 }
 
 /* CAMPOS E FORMULÁRIOS */
 .card-box {
-    background: #222;
-    border-radius: 12px;
-    padding: 20px;
+    background: #1c1c1c;
+    border-radius: 14px;
+    padding: 22px;
     margin-bottom: 20px;
-    border: 1px solid #2a2a2a;
+    border: 1px solid #282828;
 }
 
 .input-group {
-    margin-bottom: 15px;
+    margin-bottom: 16px;
     text-align: left;
 }
 
 .input-group label {
     display: block;
-    font-size: 12px;
-    color: #aaa;
-    margin-bottom: 5px;
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .input-group input {
     width: 100%;
-    padding: 12px;
+    padding: 12px 14px;
     background: #111;
-    border: 1px solid #444;
+    border: 1px solid #333;
     border-radius: 8px;
     color: #fff;
     font-size: 14px;
+    transition: border-color 0.2s;
 }
 
 .input-group input:focus {
@@ -99,14 +119,21 @@ body {
 .btn-gold {
     width: 100%;
     padding: 14px;
-    background: linear-gradient(135deg, #fb0532, #b30223);
+    background: linear-gradient(135deg, #fb0532, #d10025);
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     color: #fff;
     font-weight: 600;
-    font-size: 15px;
+    font-size: 13px;
     cursor: pointer;
     text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(251, 5, 50, 0.2);
+    transition: opacity 0.2s, transform 0.1s;
+}
+
+.btn-gold:hover {
+    opacity: 0.95;
 }
 
 .btn-gold:active {
@@ -115,125 +142,151 @@ body {
 
 .btn-link {
     width: 100%;
-    margin-top: 10px;
+    margin-top: 14px;
     background: none;
     border: none;
     color: #666;
     font-size: 12px;
     cursor: pointer;
+    transition: color 0.2s;
+}
+
+.btn-link:hover {
+    color: #aaa;
 }
 
 .btn-sm {
-    padding: 6px 12px;
-    background: #333;
-    color: #fff;
-    border: 1px solid #555;
-    border-radius: 6px;
-    font-size: 11px;
+    padding: 8px 12px;
+    background: #222;
+    color: #ccc;
+    border: 1px solid #333;
+    border-radius: 8px;
+    font-size: 12px;
     cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-sm:hover {
+    background: #2a2a2a;
+    color: #fff;
 }
 
 .btn-full {
     width: 100%;
-    margin-top: 10px;
+    margin-top: 12px;
 }
 
 /* CARTÃO DE CARIMBOS */
 .greeting-text {
     text-align: center;
-    font-size: 14px;
-    margin-bottom: 15px;
+    font-size: 13px;
+    color: #aaa;
+    margin-bottom: 20px;
 }
 
 .greeting-text strong {
-    color: #fb0532;
+    color: #fff;
+    font-weight: 600;
 }
 
 .stamps-grid {
     display: flex;
     justify-content: space-between;
-    margin: 25px 0;
+    margin: 20px 0;
     gap: 10px;
 }
 
 .stamp-slot {
     flex: 1;
-    background: #111;
-    border: 2px dashed #444;
+    background: #1c1c1c;
+    border: 1px dashed #333;
     border-radius: 12px;
-    height: 100px;
+    height: 105px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 5px;
+    padding: 8px;
     transition: all 0.3s;
 }
 
 .stamp-slot.active {
     border-color: #fb0532;
-    background: #330b12;
+    border-style: solid;
+    background: #1f1417;
+    box-shadow: 0 0 15px rgba(251, 5, 50, 0.1);
 }
 
 .stamp-slot .icon {
-    font-size: 28px;
-    margin-bottom: 5px;
+    font-size: 24px;
+    margin-bottom: 6px;
 }
 
 .stamp-slot .label {
     font-size: 10px;
-    color: #aaa;
+    color: #777;
+    line-height: 1.2;
+}
+
+.stamp-slot.active .label {
+    color: #ccc;
 }
 
 .discount-banner {
-    background: #330b12;
-    border: 1px solid #fb0532;
-    border-radius: 10px;
-    padding: 15px;
+    background: #1c1c1c;
+    border: 1px solid #282828;
+    border-radius: 12px;
+    padding: 16px;
     text-align: center;
     margin-bottom: 20px;
 }
 
 .discount-label {
-    font-size: 11px;
-    color: #aaa;
+    font-size: 10px;
+    color: #777;
     text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .discount-banner h3 {
     color: #fb0532;
-    font-size: 16px;
+    font-size: 15px;
     font-family: 'Oswald', sans-serif;
-    margin-top: 5px;
+    margin-top: 4px;
+    letter-spacing: 0.5px;
 }
 
 /* PAINEL ADMIN */
 .admin-panel {
-    background: #151515;
-    border: 1px solid #fb0532;
-    border-radius: 12px;
-    padding: 15px;
-    margin-top: 20px;
+    background: #1c1c1c;
+    border: 1px solid #333;
+    border-radius: 14px;
+    padding: 18px;
+    margin-top: 15px;
 }
 
 .admin-title {
-    color: #fb0532;
-    margin-bottom: 10px;
+    color: #fff;
+    margin-bottom: 14px;
     font-family: 'Oswald', sans-serif;
-    font-size: 18px;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
 }
 
 .admin-client-list {
     max-height: 250px;
     overflow-y: auto;
+    padding-right: 2px;
 }
 
 .client-item {
-    background: #222;
+    background: #141414;
+    border: 1px solid #222;
     padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 10px;
+    border-radius: 10px;
+    margin-bottom: 8px;
     font-size: 13px;
     display: flex;
     justify-content: space-between;
@@ -241,11 +294,12 @@ body {
 }
 
 .client-info strong {
-    color: #fb0532;
+    color: #fff;
     display: block;
+    font-weight: 600;
 }
 
 .client-info span {
-    color: #aaa;
+    color: #777;
     font-size: 11px;
 }

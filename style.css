@@ -36,11 +36,11 @@ body {
     position: relative;
 }
 
-.header h1 {
-    font-family: 'Oswald', sans-serif;
-    font-size: 24px;
-    color: #d4af37;
-    letter-spacing: 1px;
+.header-logo {
+    max-width: 120px;
+    height: auto;
+    display: block;
+    margin: 0 auto 5px auto;
 }
 
 .header p {
@@ -92,17 +92,17 @@ body {
 
 .input-group input:focus {
     outline: none;
-    border-color: #d4af37;
+    border-color: #fb0532;
 }
 
 /* BOTÕES */
 .btn-gold {
     width: 100%;
     padding: 14px;
-    background: linear-gradient(135deg, #d4af37, #aa820a);
+    background: linear-gradient(135deg, #fb0532, #b30223);
     border: none;
     border-radius: 8px;
-    color: #000;
+    color: #fff;
     font-weight: 600;
     font-size: 15px;
     cursor: pointer;
@@ -146,7 +146,7 @@ body {
 }
 
 .greeting-text strong {
-    color: #d4af37;
+    color: #fb0532;
 }
 
 .stamps-grid {
@@ -172,8 +172,8 @@ body {
 }
 
 .stamp-slot.active {
-    border-color: #d4af37;
-    background: #26200e;
+    border-color: #fb0532;
+    background: #330b12;
 }
 
 .stamp-slot .icon {
@@ -187,8 +187,8 @@ body {
 }
 
 .discount-banner {
-    background: #26200e;
-    border: 1px solid #d4af37;
+    background: #330b12;
+    border: 1px solid #fb0532;
     border-radius: 10px;
     padding: 15px;
     text-align: center;
@@ -202,7 +202,7 @@ body {
 }
 
 .discount-banner h3 {
-    color: #d4af37;
+    color: #fb0532;
     font-size: 16px;
     font-family: 'Oswald', sans-serif;
     margin-top: 5px;
@@ -211,14 +211,14 @@ body {
 /* PAINEL ADMIN */
 .admin-panel {
     background: #151515;
-    border: 1px solid #d4af37;
+    border: 1px solid #fb0532;
     border-radius: 12px;
     padding: 15px;
     margin-top: 20px;
 }
 
 .admin-title {
-    color: #d4af37;
+    color: #fb0532;
     margin-bottom: 10px;
     font-family: 'Oswald', sans-serif;
     font-size: 18px;
@@ -241,7 +241,7 @@ body {
 }
 
 .client-info strong {
-    color: #d4af37;
+    color: #fb0532;
     display: block;
 }
 

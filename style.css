@@ -339,7 +339,7 @@ body::before {
 
 
 /* =========================================================
-   GRID DOS CARIMBOS (LINHA REMOVIDA)
+   GRID DOS CARIMBOS
    ========================================================= */
 
 .stamps-grid {
@@ -403,32 +403,22 @@ body::before {
 
 
 /* =========================================================
-   ESTILIZAÇÃO DOS ÍCONES EM CSS PURO (SÍMBOLOS)
+   ESTILIZAÇÃO DOS EMOJIS NATIVOS
    ========================================================= */
 
-.stamp-slot .icon {
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.emoji-icon {
+    font-size: 26px;
     margin-bottom: 6px;
-}
-
-.symbol-icon {
-    font-size: 20px;
-    color: #78808e;
-    opacity: 0.6;
+    line-height: 1;
+    display: block;
+    filter: grayscale(100%) opacity(0.3);
     transition: all 0.3s ease;
 }
 
-
-/* Quando o carimbo estiver ativo, o símbolo brilha */
-
-.stamp-slot.active .symbol-icon {
-    color: #ffffff;
-    opacity: 1;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
+.stamp-slot.active .emoji-icon {
+    filter: grayscale(0%) opacity(1);
+    transform: scale(1.1);
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
 }
 
 
@@ -608,11 +598,6 @@ body::before {
 
     .stamp-slot {
         height: 100px;
-    }
-
-    .stamp-slot .icon {
-        width: 26px;
-        height: 26px;
     }
 
     .stamp-slot .label {

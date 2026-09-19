@@ -401,16 +401,18 @@ body::before {
     z-index: 3;
 }
 
-
 /* =========================================================
-   ESTILIZAÇÃO DOS EMOJIS NATIVOS
+   ESTILIZAÇÃO DOS ÍCONES E EMOJIS (ATUALIZADO PARA SVG)
    ========================================================= */
 
 .emoji-icon {
-    font-size: 26px;
+    font-size: 26px; /* Tamanho base caso volte a usar emoji */
     margin-bottom: 6px;
     line-height: 1;
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #F3F3F3; /* Esta é a cor base que o SVG vai adotar */
     filter: grayscale(100%) opacity(0.3);
     transition: all 0.3s ease;
 }
@@ -420,7 +422,6 @@ body::before {
     transform: scale(1.1);
     text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
 }
-
 
 /* =========================================================
    TEXTO DOS CARIMBOS

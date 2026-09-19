@@ -4,6 +4,10 @@
 const URL_API = "COLOQUE_SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI"; 
 const LIMITE_CARIMBOS = 2; // Limite para o desconto é 2
 
+// Ícones em SVG configurados para adotar a cor (currentColor) e tamanho ideal (32px)
+const SVG_CHECK = `<svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="currentColor"><path d="m424-312 282-282-56-56-226 226-114-114-56 56 170 170ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z"/></svg>`;
+const SVG_CIRCLE = `<svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>`;
+
 // ==========================================
 // CAPTURA DOS ELEMENTOS DO HTML
 // ==========================================
@@ -66,7 +70,6 @@ function consultarCliente() {
 
             clienteAtual = data;
             
-            // Se a API não retornar nome, usa o que ele digitou na tela
             if (!clienteAtual.nome && nomeDigitado) {
                 clienteAtual.nome = nomeDigitado;
             }
@@ -120,7 +123,6 @@ function solicitarAdicionarCarimbo() {
             return;
         }
 
-        // Atualiza a quantidade de carimbos vinda da planilha
         clienteAtual.carimbos = data.carimbos;
         
         if (data.cicloResetado) {
@@ -157,11 +159,13 @@ function atualizarInterfaceCartao(nome, carimbos) {
         }
     }
 
-    atualizarSlot("slot-1", carimbos >= 1, "✅", "⭕");
-    atualizarSlot("slot-2", carimbos >= 2, "✅", "⭕");
+    // Passamos as constantes SVG agora, em vez dos emojis!
+    atualizarSlot("slot-1", carimbos >= 1, SVG_CHECK, SVG_CIRCLE);
+    atualizarSlot("slot-2", carimbos >= 2, SVG_CHECK, SVG_CIRCLE);
+    
+    // O terceiro slot recebe texto/emoji nativo normalmente (O innerHTML suporta ambos)
     atualizarSlot("slot-3", carimbos >= 2, "🏆", "🎁");
 
-    // Altera o botão dependendo do limite
     if (btnAdicionarCarimbo) {
         if (carimbos >= LIMITE_CARIMBOS) {
             btnAdicionarCarimbo.innerText = "Reiniciar Cartão";
@@ -172,21 +176,20 @@ function atualizarInterfaceCartao(nome, carimbos) {
 }
 
 // ==========================================
-// ATUALIZAR APENAS O EMOJI DOS SLOTS
+// ATUALIZAR APENAS O EMOJI/SVG DOS SLOTS
 // ==========================================
 function atualizarSlot(idElemento, ativo, iconeAtivo, iconeInativo) {
     const slot = document.getElementById(idElemento);
     if (!slot) return;
 
-    // Liga ou desliga o efeito vermelho do CSS
     slot.className = ativo ? "stamp-slot active" : "stamp-slot";
     
-    // Altera SOMENTE o emoji, mantendo o texto "1ª Tattoo" intacto
-    const numSlot = idElemento.split("-")[1]; // Ex: pega o "1" de "slot-1"
+    const numSlot = idElemento.split("-")[1];
     const emojiSpan = document.getElementById("emoji-" + numSlot);
     
     if (emojiSpan) {
-        emojiSpan.innerText = ativo ? iconeAtivo : iconeInativo;
+        // innerHTML: Permite injetar tags como <svg> no HTML diretamente.
+        emojiSpan.innerHTML = ativo ? iconeAtivo : iconeInativo;
     }
 }
 

@@ -60,6 +60,10 @@ const dispDesconto =
 
 window.addEventListener("DOMContentLoaded", () => {
 
+    // --------------------------------------
+    // Recupera cliente salvo
+    // --------------------------------------
+
     const localPhone =
         localStorage.getItem("fidelidade_whatsapp");
 
@@ -84,6 +88,10 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    // --------------------------------------
+    // Botão acessar cartão
+    // --------------------------------------
+
     const btnAcessar =
         document.getElementById("btn-acessar");
 
@@ -95,6 +103,10 @@ window.addEventListener("DOMContentLoaded", () => {
         );
     }
 
+
+    // --------------------------------------
+    // Botão adicionar carimbo
+    // --------------------------------------
 
     const btnCarimbo =
         document.getElementById(
@@ -110,6 +122,10 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    // --------------------------------------
+    // Botão sair
+    // --------------------------------------
+
     const btnSair =
         document.getElementById("btn-sair");
 
@@ -121,6 +137,10 @@ window.addEventListener("DOMContentLoaded", () => {
         );
     }
 
+
+    // --------------------------------------
+    // Botão painel admin
+    // --------------------------------------
 
     const btnAdmin =
         document.getElementById(
@@ -136,6 +156,10 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    // --------------------------------------
+    // Fechar painel admin
+    // --------------------------------------
+
     const btnFecharAdmin =
         document.getElementById(
             "btn-fechar-admin"
@@ -149,6 +173,10 @@ window.addEventListener("DOMContentLoaded", () => {
         );
     }
 
+
+    // --------------------------------------
+    // Campo de busca
+    // --------------------------------------
 
     const adminSearch =
         document.getElementById(
@@ -175,7 +203,8 @@ async function acessarCartao() {
 
     const phone =
         inputPhone
-            ? inputPhone.value.replace(/\D/g, "")
+            ? inputPhone.value
+                .replace(/\D/g, "")
             : "";
 
     const name =
@@ -193,6 +222,8 @@ async function acessarCartao() {
         return;
     }
 
+
+    // Salva no navegador
 
     localStorage.setItem(
         "fidelidade_whatsapp",
@@ -246,7 +277,8 @@ async function carregarDadosCliente(
         if (!response.ok) {
 
             throw new Error(
-                "HTTP " + response.status
+                "HTTP " +
+                response.status
             );
         }
 
@@ -272,6 +304,10 @@ async function carregarDadosCliente(
         }
 
 
+        // ----------------------------------
+        // Mostra cartão
+        // ----------------------------------
+
         if (secLogin) {
             secLogin.classList.add("hidden");
         }
@@ -280,6 +316,10 @@ async function carregarDadosCliente(
             secCartao.classList.remove("hidden");
         }
 
+
+        // ----------------------------------
+        // Cliente encontrado
+        // ----------------------------------
 
         if (data.found) {
 
@@ -306,6 +346,10 @@ async function carregarDadosCliente(
 
 
         } else {
+
+            // --------------------------------
+            // Cliente novo
+            // --------------------------------
 
             const clienteNome =
                 name ||
@@ -360,12 +404,20 @@ function atualizarInterfaceCartao(
         Number(carimbos) || 0;
 
 
+    // --------------------------------------
+    // Nome
+    // --------------------------------------
+
     if (dispNome) {
 
         dispNome.innerText =
             nome || "Cliente";
     }
 
+
+    // --------------------------------------
+    // Mensagem de desconto
+    // --------------------------------------
 
     if (dispDesconto) {
 
@@ -387,39 +439,39 @@ function atualizarInterfaceCartao(
     }
 
 
-    // ======================================
-    // CARIMBO 1
-    // ======================================
+    // --------------------------------------
+    // SLOT 1
+    // --------------------------------------
 
     atualizarSlot(
         "slot-1",
         carimbos >= 1,
-        "✓",
-        "○"
+        "✅",
+        "⭕"
     );
 
 
-    // ======================================
-    // CARIMBO 2
-    // ======================================
+    // --------------------------------------
+    // SLOT 2
+    // --------------------------------------
 
     atualizarSlot(
         "slot-2",
         carimbos >= 2,
-        "✓",
-        "○"
+        "✅",
+        "⭕"
     );
 
 
-    // ======================================
-    // PRÊMIO
-    // ======================================
+    // --------------------------------------
+    // SLOT 3 / PRÊMIO
+    // --------------------------------------
 
     atualizarSlot(
         "slot-3",
         carimbos >= 2,
-        "★",
-        "★"
+        "🏆",
+        "🎁"
     );
 }
 
@@ -448,12 +500,8 @@ function atualizarSlot(
             : "stamp-slot";
 
 
-    const circle =
-        slot.querySelector(".stamp-circle");
-
-
     const icon =
-        slot.querySelector(".stamp-circle .icon");
+        slot.querySelector(".icon");
 
 
     if (icon) {
@@ -462,33 +510,6 @@ function atualizarSlot(
             ativo
                 ? iconeAtivo
                 : iconeInativo;
-    }
-
-
-    /*
-     * O círculo inteiro é controlado pelo CSS.
-     * Quando ativo:
-     *
-     * - fundo vermelho
-     * - borda vermelha
-     * - ícone branco
-     * - efeito de carimbo/adesivo
-     *
-     * Quando inativo:
-     *
-     * - fundo escuro
-     * - círculo vazado
-     * - ícone discreto
-     */
-
-    if (circle) {
-
-        circle.setAttribute(
-            "aria-label",
-            ativo
-                ? "Carimbo realizado"
-                : "Carimbo pendente"
-        );
     }
 }
 
@@ -548,7 +569,8 @@ async function adicionarCarimboComSenha() {
         if (!response.ok) {
 
             throw new Error(
-                "HTTP " + response.status
+                "HTTP " +
+                response.status
             );
         }
 
@@ -563,6 +585,10 @@ async function adicionarCarimboComSenha() {
         );
 
 
+        // ----------------------------------
+        // Erro
+        // ----------------------------------
+
         if (!data.success) {
 
             alert(
@@ -574,6 +600,10 @@ async function adicionarCarimboComSenha() {
         }
 
 
+        // ----------------------------------
+        // Desconto resgatado
+        // ----------------------------------
+
         if (data.cicloResetado) {
 
             alert(
@@ -581,6 +611,10 @@ async function adicionarCarimboComSenha() {
                 "O ciclo do cartão foi reiniciado."
             );
 
+
+        // ----------------------------------
+        // Desconto liberado
+        // ----------------------------------
 
         } else if (data.descontoLiberado) {
 
@@ -590,6 +624,10 @@ async function adicionarCarimboComSenha() {
             );
 
 
+        // ----------------------------------
+        // Carimbo normal
+        // ----------------------------------
+
         } else {
 
             alert(
@@ -597,6 +635,10 @@ async function adicionarCarimboComSenha() {
             );
         }
 
+
+        // ----------------------------------
+        // Atualiza cartão
+        // ----------------------------------
 
         await carregarDadosCliente(
             clienteAtual.whatsapp,
@@ -644,6 +686,12 @@ async function promptAdmin() {
             encodeURIComponent(pin);
 
 
+        console.log(
+            "Consultando painel admin:",
+            url
+        );
+
+
         const response =
             await fetch(url);
 
@@ -651,7 +699,8 @@ async function promptAdmin() {
         if (!response.ok) {
 
             throw new Error(
-                "HTTP " + response.status
+                "HTTP " +
+                response.status
             );
         }
 
@@ -659,6 +708,16 @@ async function promptAdmin() {
         const data =
             await response.json();
 
+
+        console.log(
+            "Resposta admin:",
+            data
+        );
+
+
+        // ----------------------------------
+        // Senha / API
+        // ----------------------------------
 
         if (!data.success) {
 
@@ -671,19 +730,39 @@ async function promptAdmin() {
         }
 
 
+        // ----------------------------------
+        // IMPORTANTE:
+        // A API retorna:
+        //
+        // {
+        //   success: true,
+        //   clients: [...]
+        // }
+        //
+        // ----------------------------------
+
         todosClientes =
             Array.isArray(data.clients)
                 ? data.clients
                 : [];
 
 
+        // Guarda PIN para os botões
         pinAdminAtual = pin;
 
+
+        // ----------------------------------
+        // Renderiza
+        // ----------------------------------
 
         renderizarClientesAdmin(
             todosClientes
         );
 
+
+        // ----------------------------------
+        // Abre painel
+        // ----------------------------------
 
         if (secAdmin) {
 
@@ -735,6 +814,10 @@ function renderizarClientesAdmin(
     container.innerHTML = "";
 
 
+    // --------------------------------------
+    // Nenhum cliente
+    // --------------------------------------
+
     if (
         !Array.isArray(lista) ||
         lista.length === 0
@@ -748,6 +831,10 @@ function renderizarClientesAdmin(
         return;
     }
 
+
+    // --------------------------------------
+    // Clientes
+    // --------------------------------------
 
     lista.forEach(
         (cliente) => {
@@ -804,4 +891,365 @@ function renderizarClientesAdmin(
                         + Carimbo
                     </button>
 
-                </
+                </div>
+
+            `;
+
+
+            // --------------------------------
+            // Botão carimbo
+            // --------------------------------
+
+            const botao =
+                item.querySelector(
+                    ".btn-add-admin"
+                );
+
+
+            if (botao) {
+
+                botao.addEventListener(
+                    "click",
+                    () => {
+
+                        carimboDiretoAdmin(
+                            whatsapp,
+                            nome
+                        );
+                    }
+                );
+            }
+
+
+            container.appendChild(
+                item
+            );
+        }
+    );
+}
+
+
+// ==========================================
+// FILTRAR CLIENTES
+// ==========================================
+
+function filtrarClientes() {
+
+    const campo =
+        document.getElementById(
+            "admin-search"
+        );
+
+
+    const termo =
+        campo
+            ? campo.value
+                .toLowerCase()
+                .trim()
+            : "";
+
+
+    const filtrados =
+        todosClientes.filter(
+            (cliente) => {
+
+                const nome =
+                    String(
+                        cliente.nome || ""
+                    ).toLowerCase();
+
+
+                const whatsapp =
+                    String(
+                        cliente.whatsapp || ""
+                    );
+
+
+                return (
+                    nome.includes(termo) ||
+                    whatsapp.includes(termo)
+                );
+            }
+        );
+
+
+    renderizarClientesAdmin(
+        filtrados
+    );
+}
+
+
+// ==========================================
+// CARIMBO PELO ADMIN
+// ==========================================
+
+async function carimboDiretoAdmin(
+    whatsapp,
+    nome
+) {
+
+    let pin =
+        pinAdminAtual;
+
+
+    // --------------------------------------
+    // Se não tiver PIN salvo
+    // --------------------------------------
+
+    if (!pin) {
+
+        pin =
+            prompt(
+                "Confirme a senha Admin:"
+            );
+
+
+        if (!pin) return;
+    }
+
+
+    try {
+
+        const url =
+            API_URL +
+            "?action=add_stamp" +
+            "&whatsapp=" +
+            encodeURIComponent(
+                whatsapp
+            ) +
+            "&nome=" +
+            encodeURIComponent(
+                nome || ""
+            ) +
+            "&pin=" +
+            encodeURIComponent(pin);
+
+
+        const response =
+            await fetch(url);
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "HTTP " +
+                response.status
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "Resposta carimbo admin:",
+            data
+        );
+
+
+        if (!data.success) {
+
+            alert(
+                data.error ||
+                "Senha incorreta!"
+            );
+
+            return;
+        }
+
+
+        // ----------------------------------
+        // Mensagem
+        // ----------------------------------
+
+        if (data.cicloResetado) {
+
+            alert(
+                "🎉 Desconto resgatado!\n\n" +
+                "O ciclo do cliente foi reiniciado."
+            );
+
+        } else if (data.descontoLiberado) {
+
+            alert(
+                "🎉 Carimbo atualizado!\n\n" +
+                "10% de desconto liberado."
+            );
+
+        } else {
+
+            alert(
+                "✅ Carimbo atualizado!"
+            );
+        }
+
+
+        // ----------------------------------
+        // Recarrega lista
+        // ----------------------------------
+
+        await atualizarPainelAdmin();
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro carimbo admin:",
+            error
+        );
+
+
+        alert(
+            "Erro ao registrar carimbo."
+        );
+    }
+}
+
+
+// ==========================================
+// ATUALIZAR PAINEL ADMIN
+// ==========================================
+
+async function atualizarPainelAdmin() {
+
+    if (!pinAdminAtual) {
+        return;
+    }
+
+
+    try {
+
+        const url =
+            API_URL +
+            "?action=get_all" +
+            "&pin=" +
+            encodeURIComponent(
+                pinAdminAtual
+            );
+
+
+        const response =
+            await fetch(url);
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "HTTP " +
+                response.status
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            alert(
+                data.error ||
+                "Não foi possível atualizar o painel."
+            );
+
+            return;
+        }
+
+
+        todosClientes =
+            Array.isArray(data.clients)
+                ? data.clients
+                : [];
+
+
+        renderizarClientesAdmin(
+            todosClientes
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro atualizando admin:",
+            error
+        );
+    }
+}
+
+
+// ==========================================
+// FECHAR PAINEL ADMIN
+// ==========================================
+
+function fecharAdmin() {
+
+    if (secAdmin) {
+
+        secAdmin.classList.add(
+            "hidden"
+        );
+    }
+}
+
+
+// ==========================================
+// SAIR
+// ==========================================
+
+function sair() {
+
+    localStorage.removeItem(
+        "fidelidade_whatsapp"
+    );
+
+    localStorage.removeItem(
+        "fidelidade_nome"
+    );
+
+
+    clienteAtual = null;
+
+
+    if (secCartao) {
+
+        secCartao.classList.add(
+            "hidden"
+        );
+    }
+
+
+    if (secLogin) {
+
+        secLogin.classList.remove(
+            "hidden"
+        );
+    }
+
+
+    if (inputPhone) {
+        inputPhone.value = "";
+    }
+
+
+    if (inputName) {
+        inputName.value = "";
+    }
+}
+
+
+// ==========================================
+// ESCAPAR HTML
+// Evita quebrar o painel com nomes
+// contendo caracteres especiais.
+// ==========================================
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}

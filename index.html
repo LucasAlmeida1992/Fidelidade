@@ -3,85 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cartão Fidelidade VIP</title>
-    <!-- Fontes -->
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <title>Cartão Fidelidade - Lucas França Tattoo</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="app-header">
+            <h1>Lucas França Tattoo</h1>
+            <p>Cartão Fidelidade Exclusivo</p>
+            <button id="btn-admin-toggle" class="btn-icon" title="Painel do Tatuador">⚙️</button>
+        </header>
 
-<div class="app-container">
-    <div class="header">
-        <button class="btn-admin-toggle" id="btn-admin-toggle" title="Painel do Tatuador">⚙️</button>
-        <img src="Lg Lucas Franca.svg" alt="Lucas Franca" class="header-logo">
-        <p>CARTÃO FIDELIDADE VIP</p>
-    </div>
+        <!-- SEÇÃO DE LOGIN / ACESSO -->
+        <section id="sec-login" class="card-section">
+            <h2>Acessar seu Cartão</h2>
+            <p class="subtitle">Digite seu WhatsApp para ver seus carimbos e prêmios.</p>
+            
+            <form id="form-login" onsubmit="acessarCartao(event)">
+                <div class="input-group">
+                    <label for="cli-phone">WhatsApp (com DDD)</label>
+                    <input type="tel" id="cli-phone" placeholder="Ex: 21999999999" required>
+                </div>
+                <div class="input-group">
+                    <label for="cli-name">Seu Nome</label>
+                    <input type="text" id="cli-name" placeholder="Ex: João Silva" required>
+                </div>
+                <button type="submit" id="btn-acessar" class="btn-primary">Acessar Cartão</button>
+            </form>
+        </section>
 
-    <!-- TELA 1: LOGIN DO CLIENTE -->
-    <div id="sec-login" class="card-box">
-        <div class="input-group">
-            <label for="cli-phone">Seu WhatsApp (com DDD)</label>
-            <input type="tel" id="cli-phone" placeholder="21999999999" autocomplete="tel">
-        </div>
-        <div class="input-group">
-            <label for="cli-name">Seu Nome Completo</label>
-            <input type="text" id="cli-name" placeholder="Digite seu nome">
-        </div>
-        <button class="btn-gold" id="btn-acessar">Ver Meu Cartão</button>
-    </div>
-
-    <!-- TELA 2: CARTÃO DE CARIMBOS DO CLIENTE -->
-    <div id="sec-cartao" class="hidden">
-        <p class="greeting-text">
-            Olá, <strong id="disp-nome">---</strong>!
-        </p>
-
-        <div class="stamps-grid">
-            <!-- SLOT 1 -->
-            <div class="stamp-slot" id="slot-1">
-                <span class="emoji-icon">
-                    <!-- O JS vai injetar o SVG aqui automaticamente -->
-                </span>
-                <span class="label">1ª Tattoo</span>
+        <!-- SEÇÃO DO CARTÃO FIDELIDADE -->
+        <section id="sec-cartao" class="card-section hidden">
+            <div class="client-welcome">
+                <span>Olá, <strong id="disp-nome">Cliente</strong>!</span>
+                <button id="btn-sair" class="btn-text">Sair</button>
             </div>
 
-            <!-- SLOT 2 -->
-            <div class="stamp-slot" id="slot-2">
-                <span class="emoji-icon">
-                    <!-- O JS vai injetar o SVG aqui automaticamente -->
-                </span>
-                <span class="label">2ª Tattoo</span>
+            <div class="loyalty-card">
+                <div class="card-header-badge">Fidelidade 2+1</div>
+                <div class="stamps-grid">
+                    <div id="slot-1" class="stamp-slot">
+                        <span class="slot-number">1</span>
+                        <span class="icon"></span>
+                        <span class="slot-label">1ª Tattoo</span>
+                    </div>
+                    <div id="slot-2" class="stamp-slot">
+                        <span class="slot-number">2</span>
+                        <span class="icon"></span>
+                        <span class="slot-label">2ª Tattoo</span>
+                    </div>
+                    <div id="slot-3" class="stamp-slot reward-slot">
+                        <span class="slot-number">🎁</span>
+                        <span class="icon">🏆</span>
+                        <span class="slot-label">10% OFF</span>
+                    </div>
+                </div>
+
+                <div id="disp-desconto" class="reward-message">
+                    Faça sua 1ª tattoo para iniciar o cartão!
+                </div>
             </div>
 
-            <!-- SLOT 3 -->
-            <div class="stamp-slot" id="slot-3">
-                <span class="emoji-icon">🎁</span>
-                <span class="label">3ª Tattoo • 10% OFF</span>
+            <!-- Botão para o cliente resgatar carimbo via código do estúdio -->
+            <button type="button" id="btn-abrir-resgate" class="btn-secondary">✨ Resgatar Carimbo (Código do Estúdio)</button>
+
+            <div class="card-footer-info">
+                <p>📍 Av. Dom Hélder Câmara - Pilares, Rio de Janeiro</p>
+                <p class="info-note">ℹ️ Concluiu a sessão? Peça o código de 60 segundos ao tatuador.</p>
+            </div>
+        </section>
+
+        <!-- MODAL DE DIGITAR O CÓDIGO (CLIENTE) -->
+        <div id="modal-resgate" class="modal-overlay hidden">
+            <div class="modal-content">
+                <h3>Resgatar Carimbo</h3>
+                <p>Digite o código de 4 dígitos fornecido pelo tatuador:</p>
+                <input type="text" id="input-codigo-resgate" maxlength="4" placeholder="0000" autocomplete="off">
+                <div class="modal-actions">
+                    <button type="button" id="btn-cancelar-resgate" class="btn-text">Cancelar</button>
+                    <button type="button" id="btn-confirmar-resgate" class="btn-primary">Confirmar</button>
+                </div>
             </div>
         </div>
 
-        <div class="discount-banner">
-            <span class="discount-label">Status do Benefício</span>
-            <h3 id="disp-desconto">Carregando...</h3>
-        </div>
+        <!-- PAINEL ADMIN (TATUADOR) -->
+        <section id="sec-admin" class="card-section hidden admin-panel">
+            <div class="admin-header">
+                <h2>Painel do Tatuador</h2>
+                <button id="btn-fechar-admin" class="btn-close">✕</button>
+            </div>
 
-        <button class="btn-gold" id="btn-adicionar-carimbo">Adicionar Carimbo</button>
-        <button class="btn-link" id="btn-sair">Trocar de Conta</button>
+            <div class="input-group">
+                <label for="admin-search">Buscar Cliente</label>
+                <input type="text" id="admin-search" placeholder="Nome ou WhatsApp...">
+            </div>
+
+            <div id="lista-clientes-admin" class="admin-client-list">
+                <!-- Preenchido via JS -->
+            </div>
+        </section>
     </div>
 
-    <!-- TELA 3: PAINEL ADMIN -->
-    <div id="sec-admin" class="admin-panel hidden">
-        <h3 class="admin-title">PAINEL DO TATUADOR</h3>
-        <div class="input-group">
-            <input type="text" id="admin-search" placeholder="Buscar por Nome ou WhatsApp...">
-        </div>
-        <div id="lista-clientes-admin" class="admin-client-list">
-            <!-- Lista de clientes injetada via JS -->
-        </div>
-        <button class="btn-sm btn-full" id="btn-fechar-admin">Fechar Painel</button>
-    </div>
-</div>
-
+    <script src="script.js"></script>
 </body>
 </html>

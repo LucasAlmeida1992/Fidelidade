@@ -339,7 +339,7 @@ body::before {
 
 
 /* =========================================================
-   GRID DOS CARIMBOS (COM LINHA DO TEMPO CORRIGIDA)
+   GRID DOS CARIMBOS (LINHA REMOVIDA)
    ========================================================= */
 
 .stamps-grid {
@@ -349,21 +349,6 @@ body::before {
     gap: 10px;
     position: relative;
     z-index: 1;
-}
-
-
-/* Linha conectora ao fundo (Z-index negativo para passar por trás limpa) */
-
-.stamps-grid::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 15px;
-    right: 15px;
-    height: 2px;
-    background: #28313f;
-    transform: translateY(-50%);
-    z-index: -1; 
 }
 
 
@@ -399,12 +384,11 @@ body::before {
 
 
 /* =========================================================
-   CARIMBO ATIVO (MAIS VERMELHO, ACESO E 100% OPACO)
+   CARIMBO ATIVO (VERMELHO, ACESO E 100% OPACO)
    ========================================================= */
 
 .stamp-slot.active {
     border: 2px solid #ff1744;
-    /* Cores 100% sólidas e bem vivas (sem canal alpha/transparência) para tapar totalmente a linha */
     background: linear-gradient(
         145deg,
         #ff1744 0%,

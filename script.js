@@ -2,49 +2,62 @@
 // CONFIGURAÇÕES DA API / URL DO GOOGLE APPS SCRIPT
 // ==========================================
 const URL_API = "COLOQUE_SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI"; 
-const LIMITE_CARIMBOS = 2; // O limite para este cartão de fidelidade é 2
+const LIMITE_CARIMBOS = 2; // Limite para o desconto é 2
 
-// Elementos do DOM (Certifique-se de que os IDs no seu HTML coincidem com estes)
-const inputTelefone = document.getElementById("telefone");
-const btnConsultar = document.getElementById("btn-consultar");
+// ==========================================
+// CAPTURA DOS ELEMENTOS DO HTML
+// ==========================================
+const inputTelefone = document.getElementById("cli-phone");
+const inputNome = document.getElementById("cli-name");
+const btnAcessar = document.getElementById("btn-acessar");
 const btnAdicionarCarimbo = document.getElementById("btn-adicionar-carimbo");
-const infoCliente = document.getElementById("info-cliente");
+const btnSair = document.getElementById("btn-sair");
 const dispNome = document.getElementById("disp-nome");
 const dispDesconto = document.getElementById("disp-desconto");
+
+// Telas
+const secLogin = document.getElementById("sec-login");
+const secCartao = document.getElementById("sec-cartao");
+const secAdmin = document.getElementById("sec-admin");
+
+// Botões Admin
+const btnAdminToggle = document.getElementById("btn-admin-toggle");
+const btnFecharAdmin = document.getElementById("btn-fechar-admin");
 
 // Estado atual da sessão
 let clienteAtual = null;
 
 // ==========================================
-// EVENT LISTENERS
+// EVENT LISTENERS (CLIQUE DOS BOTÕES)
 // ==========================================
-if (btnConsultar) {
-    btnConsultar.addEventListener("click", consultarCliente);
-}
+if (btnAcessar) btnAcessar.addEventListener("click", consultarCliente);
+if (btnAdicionarCarimbo) btnAdicionarCarimbo.addEventListener("click", solicitarAdicionarCarimbo);
+if (btnSair) btnSair.addEventListener("click", fazerLogout);
 
-if (btnAdicionarCarimbo) {
-    btnAdicionarCarimbo.addEventListener("click", solicitarAdicionarCarimbo);
-}
+// Abrir e fechar Painel Admin
+if (btnAdminToggle) btnAdminToggle.addEventListener("click", () => secAdmin.classList.toggle("hidden"));
+if (btnFecharAdmin) btnFecharAdmin.addEventListener("click", () => secAdmin.classList.add("hidden"));
 
 // ==========================================
-// CONSULTAR CLIENTE
+// CONSULTAR CLIENTE (LOGIN)
 // ==========================================
 function consultarCliente() {
     const telefone = inputTelefone.value.trim();
+    const nomeDigitado = inputNome.value.trim();
 
     if (!telefone) {
-        alert("Por favor, digite o número de telefone.");
+        alert("Por favor, digite o seu número de WhatsApp.");
         return;
     }
 
-    btnConsultar.innerText = "Buscando...";
-    btnConsultar.disabled = true;
+    btnAcessar.innerText = "Buscando...";
+    btnAcessar.disabled = true;
 
     fetch(`${URL_API}?acao=consultar&telefone=${encodeURIComponent(telefone)}`)
         .then(response => response.json())
         .then(data => {
-            btnConsultar.innerText = "Consultar";
-            btnConsultar.disabled = false;
+            btnAcessar.innerText = "Ver Meu Cartão";
+            btnAcessar.disabled = false;
 
             if (data.erro) {
                 alert(data.erro);
@@ -52,19 +65,25 @@ function consultarCliente() {
             }
 
             clienteAtual = data;
+            
+            // Se a API não retornar nome, usa o que ele digitou na tela
+            if (!clienteAtual.nome && nomeDigitado) {
+                clienteAtual.nome = nomeDigitado;
+            }
+
             exibirPainelCliente(true);
-            atualizarInterfaceCartao(data.nome, data.carimbos);
+            atualizarInterfaceCartao(clienteAtual.nome, clienteAtual.carimbos);
         })
         .catch(error => {
             console.error("Erro na consulta:", error);
-            btnConsultar.innerText = "Consultar";
-            btnConsultar.disabled = false;
-            alert("Erro ao conectar com o servidor.");
+            btnAcessar.innerText = "Ver Meu Cartão";
+            btnAcessar.disabled = false;
+            alert("Erro ao conectar com o servidor. Verifique o link do Apps Script.");
         });
 }
 
 // ==========================================
-// SOLICITAR ADICIONAR CARIMBO (COM SENHA)
+// ADICIONAR CARIMBO OU REINICIAR (COM SENHA)
 // ==========================================
 function solicitarAdicionarCarimbo() {
     if (!clienteAtual) {
@@ -72,7 +91,7 @@ function solicitarAdicionarCarimbo() {
         return;
     }
 
-    const senha = prompt("Digite a senha de administrador/tatuador:");
+    const senha = prompt("Digite a senha do Tatuador para autorizar:");
     if (!senha) return; // Cancelado pelo usuário
 
     btnAdicionarCarimbo.innerText = "Processando...";
@@ -88,7 +107,7 @@ function solicitarAdicionarCarimbo() {
         method: "POST",
         body: JSON.stringify(dadosEnvio),
         headers: {
-            "Content-Type": "text/plain;charset=utf-8" // Usar text/plain evita bloqueios de CORS pré-flight no Apps Script
+            "Content-Type": "text/plain;charset=utf-8"
         }
     })
     .then(response => response.json())
@@ -97,16 +116,15 @@ function solicitarAdicionarCarimbo() {
 
         if (data.erro) {
             alert("Erro: " + data.erro);
-            // Restaura o texto correto dependendo de quantos carimbos ele tem
             atualizarInterfaceCartao(clienteAtual.nome, clienteAtual.carimbos);
             return;
         }
 
-        // Atualiza o estado local com os dados retornados do servidor
+        // Atualiza a quantidade de carimbos vinda da planilha
         clienteAtual.carimbos = data.carimbos;
         
         if (data.cicloResetado) {
-            alert("🎉 Desconto resgatado com sucesso! O cartão foi reiniciado para um novo ciclo.");
+            alert("🎉 Desconto resgatado com sucesso! O cartão foi reiniciado para a próxima tattoo.");
         } else {
             alert("Carimbo adicionado com sucesso!");
         }
@@ -127,28 +145,23 @@ function solicitarAdicionarCarimbo() {
 function atualizarInterfaceCartao(nome, carimbos) {
     carimbos = Number(carimbos) || 0;
 
-    // Atualiza Nome do Cliente
-    if (dispNome) {
-        dispNome.innerText = nome || "Cliente";
-    }
+    if (dispNome) dispNome.innerText = nome || "Cliente";
 
-    // Mensagens de status / desconto
     if (dispDesconto) {
         if (carimbos <= 0) {
-            dispDesconto.innerText = "Faça sua 1ª tattoo para iniciar o cartão!";
+            dispDesconto.innerText = "Faça sua 1ª tattoo para iniciar!";
         } else if (carimbos === 1) {
-            dispDesconto.innerText = "Falta 1 tattoo para liberar 10% OFF na próxima!";
+            dispDesconto.innerText = "Falta 1 tattoo para 10% OFF!";
         } else {
-            dispDesconto.innerText = "🎉 10% DE DESCONTO LIBERADO PARA A PRÓXIMA TATTOO!";
+            dispDesconto.innerText = "🎉 10% OFF LIBERADO NA PRÓXIMA!";
         }
     }
 
-    // Atualiza os Slots visuais (Garante que os IDs HTML sejam 'slot-1', 'slot-2', 'slot-3')
     atualizarSlot("slot-1", carimbos >= 1, "✅", "⭕");
     atualizarSlot("slot-2", carimbos >= 2, "✅", "⭕");
     atualizarSlot("slot-3", carimbos >= 2, "🏆", "🎁");
 
-    // Altera o texto do botão caso o cartão esteja completo (limite atingido)
+    // Altera o botão dependendo do limite
     if (btnAdicionarCarimbo) {
         if (carimbos >= LIMITE_CARIMBOS) {
             btnAdicionarCarimbo.innerText = "Reiniciar Cartão";
@@ -159,24 +172,40 @@ function atualizarInterfaceCartao(nome, carimbos) {
 }
 
 // ==========================================
-// FUNÇÃO AUXILIAR PARA OS SLOTS
+// ATUALIZAR APENAS O EMOJI DOS SLOTS
 // ==========================================
 function atualizarSlot(idElemento, ativo, iconeAtivo, iconeInativo) {
     const slot = document.getElementById(idElemento);
     if (!slot) return;
 
-    // Aplica a classe CSS 'active' para acionar o vermelho intenso e brilho
+    // Liga ou desliga o efeito vermelho do CSS
     slot.className = ativo ? "stamp-slot active" : "stamp-slot";
     
-    // Altera o ícone interno se o elemento possuir tag de texto/ícone
-    slot.innerText = ativo ? iconeAtivo : iconeInativo;
+    // Altera SOMENTE o emoji, mantendo o texto "1ª Tattoo" intacto
+    const numSlot = idElemento.split("-")[1]; // Ex: pega o "1" de "slot-1"
+    const emojiSpan = document.getElementById("emoji-" + numSlot);
+    
+    if (emojiSpan) {
+        emojiSpan.innerText = ativo ? iconeAtivo : iconeInativo;
+    }
 }
 
 // ==========================================
-// CONTROLAR VISIBILIDADE DO PAINEL
+// CONTROLES DE VISIBILIDADE (LOGIN / CARTÃO)
 // ==========================================
 function exibirPainelCliente(mostrar) {
-    if (infoCliente) {
-        infoCliente.style.display = mostrar ? "block" : "none";
+    if (mostrar) {
+        if (secLogin) secLogin.classList.add("hidden");
+        if (secCartao) secCartao.classList.remove("hidden");
+    } else {
+        if (secLogin) secLogin.classList.remove("hidden");
+        if (secCartao) secCartao.classList.add("hidden");
     }
+}
+
+function fazerLogout() {
+    clienteAtual = null;
+    exibirPainelCliente(false);
+    if (inputTelefone) inputTelefone.value = "";
+    if (inputNome) inputNome.value = "";
 }

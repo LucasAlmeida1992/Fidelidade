@@ -131,6 +131,7 @@ function atualizarInterfaceCartao(nome, carimbos) {
 
     const dispNome = document.getElementById("disp-nome") || document.getElementById("cli-nome");
     const dispDesconto = document.getElementById("disp-desconto") || document.getElementById("dispDesconto");
+    const btnCarimbo = document.getElementById("btn-adicionar-carimbo");
 
     if (dispNome) dispNome.innerText = nome || "Cliente";
 
@@ -141,6 +142,15 @@ function atualizarInterfaceCartao(nome, carimbos) {
             dispDesconto.innerText = "Falta 1 tattoo para liberar 10% OFF na próxima!";
         } else {
             dispDesconto.innerText = "🎉 10% DE DESCONTO LIBERADO PARA A PRÓXIMA TATTOO!";
+        }
+    }
+
+    // Altera o texto do botão dinamicamente conforme os carimbos atingidos
+    if (btnCarimbo) {
+        if (carimbos >= 2) {
+            btnCarimbo.innerText = "Reiniciar Cartão";
+        } else {
+            btnCarimbo.innerText = "Adicionar Carimbo";
         }
     }
 
@@ -215,7 +225,7 @@ async function adicionarCarimboComSenha() {
     } finally {
         if (btnCarimbo) {
             btnCarimbo.disabled = false;
-            btnCarimbo.innerText = "Adicionar Carimbo";
+            // O texto do botão será tratado adequadamente pela função atualizarInterfaceCartao chamada logo acima
         }
     }
 }

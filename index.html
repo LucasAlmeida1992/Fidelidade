@@ -3,40 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cartão Fidelidade - Lucas França Tattoo</title>
+    <title>Lucas França Tattoo - Cartão Fidelidade VIP</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Fontes Inter + UnifrakturMaguntia para a logo tattoo -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
-        <!-- HEADER -->
+        <!-- HEADER EXACTO DA IMAGEM -->
         <header class="app-header">
-            <h1>Lucas França Tattoo</h1>
-            <p>Cartão Fidelidade Exclusivo</p>
-            <button id="btn-admin-toggle" class="btn-icon" title="Painel do Tatuador">⚙️</button>
+            <div class="logo-title">Lucas França</div>
+            <div class="logo-subtitle">Tattoo</div>
+            <div class="vip-tag">Cartão Fidelidade VIP</div>
+            <button id="btn-admin-toggle" class="btn-icon" title="Painel Admin">⚙️</button>
         </header>
 
-        <!-- SEÇÃO DE LOGIN / ACESSO -->
+        <!-- SEÇÃO DE LOGIN -->
         <section id="sec-login" class="card-section">
-            <h2>Acessar seu Cartão</h2>
-            <p class="subtitle">Digite seu WhatsApp para ver seus carimbos e prêmios.</p>
-            
-            <form id="form-login" onsubmit="acessarCartao(event)">
+            <form id="form-login">
                 <div class="input-group">
-                    <label for="cli-phone">WhatsApp (com DDD)</label>
-                    <input type="tel" id="cli-phone" placeholder="Ex: 21999999999" required>
+                    <label for="cli-phone">SEU WHATSAPP (COM DDD)</label>
+                    <input type="tel" id="cli-phone" placeholder="2145636534" required>
                 </div>
                 <div class="input-group">
-                    <label for="cli-name">Seu Nome</label>
-                    <input type="text" id="cli-name" placeholder="Ex: João Silva" required>
+                    <label for="cli-name">SEU NOME COMPLETO</label>
+                    <input type="text" id="cli-name" placeholder="Digite seu nome" required>
                 </div>
-                <button type="submit" id="btn-acessar" class="btn-primary">Acessar Cartão</button>
+                <button type="submit" id="btn-acessar" class="btn-primary">VER MEU CARTÃO</button>
             </form>
         </section>
 
-        <!-- SEÇÃO DO CARTÃO FIDELIDADE -->
+        <!-- SEÇÃO DO CARTÃO FIDELIDADE (MANTÉM INTEGRADO COM SEU JS) -->
         <section id="sec-cartao" class="card-section hidden">
             <div class="client-welcome">
                 <span>Olá, <strong id="disp-nome">Cliente</strong>!</span>
@@ -44,28 +43,19 @@
             </div>
 
             <div class="loyalty-card">
-                <div class="card-header-badge">Fidelidade 2+1</div>
-                
                 <div class="stamps-grid">
-                    <!-- SLOT 1 -->
                     <div class="stamp-slot" id="slot-1">
-                        <span class="emoji-icon" id="emoji-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
-                        </span>
+                        <span class="emoji-icon"></span>
                         <span class="label">1ª Tattoo</span>
                     </div>
 
-                    <!-- SLOT 2 -->
                     <div class="stamp-slot" id="slot-2">
-                        <span class="emoji-icon" id="emoji-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
-                        </span>
+                        <span class="emoji-icon"></span>
                         <span class="label">2ª Tattoo</span>
                     </div>
 
-                    <!-- SLOT 3 -->
-                    <div class="stamp-slot" id="slot-3">
-                        <span class="emoji-icon" id="emoji-3">🎁</span>
+                    <div class="stamp-slot reward-slot" id="slot-3">
+                        <span class="emoji-icon">🎁</span>
                         <span class="label">3ª Tattoo • 10% OFF</span>
                     </div>
                 </div>
@@ -75,16 +65,14 @@
                 </div>
             </div>
 
-            <!-- Botão para resgatar carimbo via código do estúdio -->
-            <button type="button" id="btn-abrir-resgate" class="btn-secondary">✨ Resgatar Carimbo (Código do Estúdio)</button>
+            <button type="button" id="btn-abrir-resgate" class="btn-secondary">✨ Resgatar Carimbo (Código)</button>
 
             <div class="card-footer-info">
                 <p>📍 Av. Dom Hélder Câmara - Pilares, Rio de Janeiro</p>
-                <p class="info-note">ℹ️ Concluiu a sessão? Peça o código de 60 segundos ao tatuador.</p>
             </div>
         </section>
 
-        <!-- MODAL DE DIGITAR O CÓDIGO (CLIENTE) -->
+        <!-- MODAL DE RESGATE -->
         <div id="modal-resgate" class="modal-overlay hidden">
             <div class="modal-content">
                 <h3>Resgatar Carimbo</h3>
@@ -97,7 +85,7 @@
             </div>
         </div>
 
-        <!-- PAINEL ADMIN (TATUADOR) -->
+        <!-- PAINEL ADMIN -->
         <section id="sec-admin" class="card-section hidden admin-panel">
             <div class="admin-header">
                 <h2 class="admin-title">PAINEL DO TATUADOR</h2>
@@ -109,9 +97,8 @@
                 <input type="text" id="admin-search" placeholder="Buscar por Nome ou WhatsApp...">
             </div>
 
-            <div id="lista-clientes-admin" class="admin-client-list">
-                <!-- Lista de clientes injetada via JS -->
-            </div>
+            <div id="lista-clientes-admin" class="admin-client-list"></div>
+
             <button class="btn-sm btn-full" id="btn-fechar-admin-bottom">Fechar Painel</button>
         </section>
     </div>

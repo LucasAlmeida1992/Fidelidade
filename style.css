@@ -1,212 +1,227 @@
 :root {
-    --bg-color: #0f0f11;
-    --card-bg: #18181b;
-    --border-color: #27272a;
-    --primary-color: #e50914;
-    --primary-hover: #b80710;
-    --gold-color: #f59e0b;
-    --text-color: #f4f4f5;
-    --text-muted: #a1a1aa;
+    --bg-color: #08090b;
+    --card-bg: #111216;
+    --input-bg: #181a20;
+    --border-color: #232630;
+    --primary-red: #e50914;
+    --text-white: #ffffff;
+    --text-muted: #808592;
+    --label-muted: #6c727f;
 }
 
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 body {
     background-color: var(--bg-color);
-    /* ⚠️ COLE AQUI SEU DEGRADÊ OU IMAGEM DE FUNDO ORIGINAL SE QUISER: */
-    /* background: url('sua-imagem.jpg') no-repeat center center / cover; */
-    
-    color: var(--text-color);
+    /* Substitua 'dragao.png' pelo nome do seu arquivo de imagem do fundo se houver */
+    background-image: url('dragao.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    color: var(--text-white);
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    padding: 16px;
+    padding: 20px;
 }
 
+/* Container do Cartão Central */
 .app-container {
     width: 100%;
-    max-width: 400px;
+    max-width: 380px;
     background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 20px;
-    padding: 24px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    border-radius: 18px;
+    padding: 30px 24px 26px 24px;
     position: relative;
+    /* Brilho avermelhado sutil nas bordas idêntico à foto */
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 
+                0 0 25px rgba(229, 9, 20, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* Header */
 .app-header {
     text-align: center;
     margin-bottom: 24px;
     position: relative;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border-color);
 }
 
-.app-header h1 {
-    font-size: 18px;
+.logo-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: 'UnifrakturMaguntia', 'Cinzel', serif;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.logo-subtitle {
+    font-size: 9px;
     font-weight: 700;
-    color: #fff;
-    letter-spacing: 0.5px;
-    margin-bottom: 2px;
+    color: #a0a5b5;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
 }
 
-.app-header p {
-    font-size: 12px;
+.vip-tag {
+    font-size: 9px;
+    font-weight: 700;
     color: var(--text-muted);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
 }
 
+/* Botão da Engrenagem */
 .btn-icon {
     position: absolute;
-    top: 0;
+    top: -6px;
     right: 0;
     background: transparent;
     border: none;
-    font-size: 16px;
+    color: var(--text-muted);
+    font-size: 14px;
     cursor: pointer;
     padding: 6px;
     border-radius: 50%;
-    transition: background 0.2s;
+    transition: color 0.2s;
 }
 
 .btn-icon:hover {
-    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
 }
 
+/* Seções */
 .card-section {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-.card-section.hidden {
-    display: none;
+.card-section.hidden,
+.modal-overlay.hidden,
+.hidden {
+    display: none !important;
 }
 
-.subtitle {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-bottom: 4px;
-}
-
+/* Campos de Texto */
 .input-group {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    margin-bottom: 12px;
 }
 
 .input-group label {
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-muted);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--label-muted);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
 }
 
 .input-group input {
-    background: #0f0f11;
+    background: var(--input-bg);
     border: 1px solid var(--border-color);
     border-radius: 10px;
-    padding: 12px 14px;
-    color: #fff;
-    font-size: 14px;
+    padding: 13px 14px;
+    color: #ffffff;
+    font-size: 13px;
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .input-group input:focus {
-    border-color: var(--primary-color);
+    border-color: var(--primary-red);
+    box-shadow: 0 0 8px rgba(229, 9, 20, 0.3);
 }
 
+/* Botão Vermelho estilo imagem */
 .btn-primary {
-    background: var(--primary-color);
-    color: #fff;
+    background: linear-gradient(180deg, #ff0d1a 0%, #d6000d 100%);
+    color: #ffffff;
     border: none;
     border-radius: 10px;
-    padding: 12px;
-    font-size: 14px;
-    font-weight: 600;
+    padding: 13px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: transform 0.1s, box-shadow 0.2s;
     width: 100%;
+    margin-top: 4px;
+    box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
 }
 
 .btn-primary:hover {
-    background: var(--primary-hover);
+    background: linear-gradient(180deg, #ff2430 0%, #e6000f 100%);
+    box-shadow: 0 6px 20px rgba(229, 9, 20, 0.6);
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
 }
 
 .btn-secondary {
-    background: #202024;
-    color: #fff;
+    background: var(--input-bg);
+    color: #ffffff;
     border: 1px solid var(--border-color);
     border-radius: 10px;
     padding: 12px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
     width: 100%;
-    text-align: center;
 }
 
 .btn-secondary:hover {
-    background: #27272a;
-    border-color: var(--text-muted);
+    background: #20232c;
 }
 
+/* Área Interna do Cartão quando Logado */
 .client-welcome {
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 13px;
-    color: var(--text-muted);
-    margin-bottom: 4px;
+    color: #a0a5b5;
 }
 
 .client-welcome strong {
-    color: #fff;
+    color: #ffffff;
 }
 
 .btn-text {
     background: none;
     border: none;
-    color: var(--text-muted);
+    color: var(--label-muted);
     font-size: 12px;
     cursor: pointer;
     text-decoration: underline;
 }
 
 .btn-text:hover {
-    color: #fff;
+    color: #ffffff;
 }
 
 .loyalty-card {
-    background: #121215;
+    background: #16181f;
     border: 1px solid var(--border-color);
     border-radius: 14px;
     padding: 20px;
-    position: relative;
     display: flex;
     flex-direction: column;
     gap: 16px;
-}
-
-.card-header-badge {
-    position: absolute;
-    top: -10px;
-    right: 16px;
-    background: var(--primary-color);
-    color: #fff;
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 6px;
-    letter-spacing: 0.5px;
 }
 
 .stamps-grid {
@@ -216,8 +231,8 @@ body {
 }
 
 .stamp-slot {
-    background: #18181b;
-    border: 1px dashed var(--border-color);
+    background: var(--card-bg);
+    border: 1px dashed #282c37;
     border-radius: 10px;
     padding: 12px 6px;
     display: flex;
@@ -226,34 +241,21 @@ body {
     justify-content: center;
     gap: 6px;
     min-height: 85px;
-    transition: all 0.2s ease;
+    transition: all 0.2s;
 }
 
 .stamp-slot.active {
-    background: rgba(229, 9, 20, 0.08);
-    border: 1px solid var(--primary-color);
-    border-style: solid;
-}
-
-.stamp-slot.reward-slot.active {
-    background: rgba(245, 158, 11, 0.08);
-    border: 1px solid var(--gold-color);
+    background: rgba(229, 9, 20, 0.1);
+    border: 1px solid var(--primary-red);
 }
 
 .emoji-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-muted);
-    font-size: 22px;
+    font-size: 20px;
+    color: var(--label-muted);
 }
 
 .stamp-slot.active .emoji-icon {
-    color: var(--primary-color);
-}
-
-.stamp-slot.reward-slot.active .emoji-icon {
-    color: var(--gold-color);
+    color: var(--primary-red);
 }
 
 .label {
@@ -263,49 +265,39 @@ body {
 }
 
 .reward-message {
-    background: #18181b;
+    background: var(--card-bg);
     border-radius: 8px;
     padding: 10px;
-    font-size: 12px;
+    font-size: 11px;
     text-align: center;
-    font-weight: 500;
-    color: var(--gold-color);
-    border: 1px solid rgba(245, 158, 11, 0.2);
+    font-weight: 600;
+    color: var(--primary-red);
+    border: 1px solid rgba(229, 9, 20, 0.2);
 }
 
 .card-footer-info {
     text-align: center;
     font-size: 11px;
-    color: var(--text-muted);
+    color: var(--label-muted);
     display: flex;
     flex-direction: column;
     gap: 4px;
-    margin-top: 2px;
 }
 
-.info-note {
-    font-style: italic;
-    color: #71717a;
-}
-
-/* Modal de Resgate por Código */
+/* Modal */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.75);
+    background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(4px);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
     padding: 16px;
-}
-
-.modal-overlay.hidden {
-    display: none;
 }
 
 .modal-content {
@@ -319,12 +311,12 @@ body {
     flex-direction: column;
     gap: 14px;
     text-align: center;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    box-shadow: 0 0 30px rgba(0,0,0,0.9);
 }
 
 .modal-content h3 {
-    font-size: 16px;
-    color: #fff;
+    font-size: 15px;
+    color: #ffffff;
 }
 
 .modal-content p {
@@ -333,14 +325,14 @@ body {
 }
 
 .modal-content input {
-    background: #0f0f11;
+    background: var(--input-bg);
     border: 1px solid var(--border-color);
     border-radius: 10px;
     padding: 12px;
-    color: #fff;
-    font-size: 24px;
+    color: #ffffff;
+    font-size: 22px;
     text-align: center;
-    letter-spacing: 8px;
+    letter-spacing: 6px;
     outline: none;
 }
 
@@ -348,7 +340,6 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 4px;
 }
 
 /* Painel Admin */
@@ -360,12 +351,12 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 4px;
 }
 
 .admin-title {
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
 }
 
 .btn-close {
@@ -377,70 +368,56 @@ body {
 }
 
 .admin-client-list {
-    max-height: 300px;
+    max-height: 280px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-top: 4px;
 }
 
 .client-item {
-    background: #121215;
+    background: var(--input-bg);
     border: 1px solid var(--border-color);
     border-radius: 10px;
-    padding: 10px 12px;
+    padding: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.client-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
 .client-info strong {
-    font-size: 13px;
-    color: #fff;
+    font-size: 12px;
+    display: block;
+    color: #ffffff;
 }
 
 .client-info span {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--text-muted);
 }
 
 .btn-sm {
     padding: 6px 8px;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 10px;
+    font-weight: 700;
     border-radius: 6px;
     cursor: pointer;
     border: 1px solid var(--border-color);
 }
 
-.btn-full {
-    width: 100%;
-    margin-top: 8px;
-    background: #202024;
-    color: #fff;
-}
-
 .btn-code-admin {
-    background: rgba(245, 158, 11, 0.1);
-    border-color: rgba(245, 158, 11, 0.3);
-    color: var(--gold-color);
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
 }
 
 .btn-add-admin {
-    background: rgba(34, 197, 94, 0.1);
-    border-color: rgba(34, 197, 94, 0.3);
+    background: rgba(34, 197, 94, 0.15);
     color: #4ade80;
+    border-color: rgba(34, 197, 94, 0.3);
 }
 
 .btn-delete-admin {
-    background: rgba(229, 9, 20, 0.1);
-    border-color: rgba(229, 9, 20, 0.3);
+    background: rgba(229, 9, 20, 0.15);
     color: #ff6b81;
+    border-color: rgba(229, 9, 20, 0.3);
 }

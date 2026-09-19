@@ -1,12 +1,12 @@
 :root {
-    --bg-color: #121214;
-    --card-bg: #1a1a1e;
-    --border-color: #2e2e38;
+    --bg-color: #0f0f11;
+    --card-bg: #18181b;
+    --border-color: #27272a;
     --primary-color: #e50914;
     --primary-hover: #b80710;
-    --gold-color: #f39c12;
-    --text-color: #f1f1f1;
-    --text-muted: #9ca3af;
+    --gold-color: #f59e0b;
+    --text-color: #f4f4f5;
+    --text-muted: #a1a1aa;
 }
 
 * {
@@ -28,12 +28,12 @@ body {
 
 .app-container {
     width: 100%;
-    max-width: 420px;
+    max-width: 400px;
     background: var(--card-bg);
     border: 1px solid var(--border-color);
-    border-radius: 16px;
+    border-radius: 20px;
     padding: 24px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
     position: relative;
 }
 
@@ -41,17 +41,20 @@ body {
     text-align: center;
     margin-bottom: 24px;
     position: relative;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .app-header h1 {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     color: #fff;
-    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
 }
 
 .app-header p {
-    font-size: 13px;
+    font-size: 12px;
     color: var(--text-muted);
 }
 
@@ -61,15 +64,15 @@ body {
     right: 0;
     background: transparent;
     border: none;
-    font-size: 18px;
+    font-size: 16px;
     cursor: pointer;
-    padding: 4px;
+    padding: 6px;
     border-radius: 50%;
     transition: background 0.2s;
 }
 
 .btn-icon:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .card-section {
@@ -85,7 +88,7 @@ body {
 .subtitle {
     font-size: 13px;
     color: var(--text-muted);
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
 .input-group {
@@ -102,10 +105,10 @@ body {
 }
 
 .input-group input {
-    background: #121214;
+    background: #0f0f11;
     border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 12px;
+    border-radius: 10px;
+    padding: 12px 14px;
     color: #fff;
     font-size: 14px;
     outline: none;
@@ -120,7 +123,7 @@ body {
     background: var(--primary-color);
     color: #fff;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 12px;
     font-size: 14px;
     font-weight: 600;
@@ -134,10 +137,10 @@ body {
 }
 
 .btn-secondary {
-    background: #25252d;
+    background: #202024;
     color: #fff;
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 12px;
     font-size: 13px;
     font-weight: 600;
@@ -148,23 +151,28 @@ body {
 }
 
 .btn-secondary:hover {
-    background: #2e2e38;
-    border-color: var(--primary-color);
+    background: #27272a;
+    border-color: var(--text-muted);
 }
 
 .client-welcome {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 14px;
-    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.client-welcome strong {
+    color: #fff;
 }
 
 .btn-text {
     background: none;
     border: none;
     color: var(--text-muted);
-    font-size: 13px;
+    font-size: 12px;
     cursor: pointer;
     text-decoration: underline;
 }
@@ -174,9 +182,9 @@ body {
 }
 
 .loyalty-card {
-    background: #151518;
+    background: #121215;
     border: 1px solid var(--border-color);
-    border-radius: 12px;
+    border-radius: 14px;
     padding: 20px;
     position: relative;
     display: flex;
@@ -193,28 +201,29 @@ body {
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
-    padding: 2px 8px;
-    border-radius: 4px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
 }
 
 .stamps-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+    gap: 10px;
 }
 
 .stamp-slot {
-    background: #1e1e24;
+    background: #18181b;
     border: 1px dashed var(--border-color);
     border-radius: 10px;
-    padding: 14px 8px;
+    padding: 12px 6px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    min-height: 90px;
-    transition: all 0.3s ease;
+    min-height: 85px;
+    transition: all 0.2s ease;
 }
 
 .stamp-slot.active {
@@ -224,12 +233,12 @@ body {
 }
 
 .stamp-slot.reward-slot.active {
-    background: rgba(243, 156, 18, 0.1);
+    background: rgba(245, 158, 11, 0.08);
     border: 1px solid var(--gold-color);
 }
 
 .slot-number {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--text-muted);
     font-weight: 600;
 }
@@ -239,7 +248,7 @@ body {
     align-items: center;
     justify-content: center;
     color: var(--text-muted);
-    font-size: 24px;
+    font-size: 22px;
 }
 
 .stamp-slot.active .icon {
@@ -251,20 +260,20 @@ body {
 }
 
 .slot-label {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--text-muted);
     text-align: center;
 }
 
 .reward-message {
-    background: #1e1e24;
+    background: #18181b;
     border-radius: 8px;
-    padding: 12px;
-    font-size: 13px;
+    padding: 10px;
+    font-size: 12px;
     text-align: center;
     font-weight: 500;
     color: var(--gold-color);
-    border: 1px solid rgba(243, 156, 18, 0.2);
+    border: 1px solid rgba(245, 158, 11, 0.2);
 }
 
 .card-footer-info {
@@ -274,12 +283,12 @@ body {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    margin-top: 4px;
+    margin-top: 2px;
 }
 
 .info-note {
     font-style: italic;
-    color: #888;
+    color: #71717a;
 }
 
 /* Modal */
@@ -289,7 +298,8 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -304,14 +314,15 @@ body {
 .modal-content {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 20px;
+    border-radius: 16px;
+    padding: 24px;
     width: 100%;
     max-width: 320px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
     text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
 }
 
 .modal-content h3 {
@@ -325,14 +336,14 @@ body {
 }
 
 .modal-content input {
-    background: #121214;
+    background: #0f0f11;
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 12px;
     color: #fff;
-    font-size: 20px;
+    font-size: 24px;
     text-align: center;
-    letter-spacing: 6px;
+    letter-spacing: 8px;
     outline: none;
 }
 
@@ -352,11 +363,11 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
 .admin-header h2 {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
 }
 
@@ -369,18 +380,18 @@ body {
 }
 
 .admin-client-list {
-    max-height: 320px;
+    max-height: 300px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-top: 8px;
+    margin-top: 4px;
 }
 
 .client-item {
-    background: #151518;
+    background: #121215;
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 10px 12px;
     display: flex;
     justify-content: space-between;
@@ -404,7 +415,7 @@ body {
 }
 
 .btn-sm {
-    padding: 6px 10px;
+    padding: 6px 8px;
     font-size: 11px;
     font-weight: 600;
     border-radius: 6px;
@@ -413,19 +424,19 @@ body {
 }
 
 .btn-code-admin {
-    background: #251e11;
-    border-color: #f39c12;
-    color: #f39c12;
+    background: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.3);
+    color: var(--gold-color);
 }
 
 .btn-add-admin {
-    background: #112a1a;
-    border-color: #22c55e;
+    background: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.3);
     color: #4ade80;
 }
 
 .btn-delete-admin {
-    background: #2a1114;
-    border-color: #e50914;
+    background: rgba(229, 9, 20, 0.1);
+    border-color: rgba(229, 9, 20, 0.3);
     color: #ff6b81;
 }

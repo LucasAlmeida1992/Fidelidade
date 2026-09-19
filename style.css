@@ -538,7 +538,7 @@ body::before {
 
 
 /* =========================================================
-   CARIMBO NORMAL
+   CARIMBO NORMAL (INATIVO)
    ========================================================= */
 
 .stamp-slot {
@@ -552,7 +552,8 @@ body::before {
             #10141b
         );
 
-    border: 1px dashed #3a4351;
+    /* Borda sutil arredondada igual à referência */
+    border: 1px solid #28313f;
 
     border-radius: 12px;
 
@@ -578,31 +579,33 @@ body::before {
 
 .stamp-slot:hover {
 
-    border-color: #596475;
+    border-color: #455268;
 
     transform: translateY(-1px);
 }
 
 
 /* =========================================================
-   CARIMBO ATIVO
+   CARIMBO ATIVO (CONCLUÍDO)
    ========================================================= */
 
 .stamp-slot.active {
 
+    /* Borda vermelha marcante estilo o print */
     border-color: #fb0532;
 
     border-style: solid;
 
-    /* vermelho sólido */
-
-    background: #fb0532;
+    /* Fundo com degradê avermelhado suave e elegante */
+    background: linear-gradient(
+        145deg,
+        rgba(251, 5, 50, 0.22),
+        rgba(251, 5, 50, 0.05)
+    );
 
     box-shadow:
-
         0 0 0 1px rgba(251, 5, 50, 0.15),
-
-        0 6px 20px rgba(251, 5, 50, 0.20);
+        0 6px 20px rgba(251, 5, 50, 0.15);
 }
 
 
@@ -612,9 +615,9 @@ body::before {
 
 .stamp-slot .icon {
 
-    width: 28px;
+    width: 32px;
 
-    height: 28px;
+    height: 32px;
 
     display: flex;
 
@@ -622,7 +625,7 @@ body::before {
 
     justify-content: center;
 
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 
@@ -630,15 +633,14 @@ body::before {
 
 .stamp-slot .icon svg {
 
-    width: 26px;
+    width: 28px;
 
-    height: 26px;
+    height: 28px;
 
     display: block;
 
-    /* Ícones brancos */
-
-    fill: #ffffff;
+    /* Força o preenchimento dos SVGs para o vermelho da marca */
+    fill: #fb0532;
 }
 
 
@@ -678,7 +680,7 @@ body::before {
             circle at 100% 100%,
             rgba(251, 5, 50, 0.10),
             transparent 55%
-        ),
+       ),
 
         #11151c;
 
@@ -770,7 +772,7 @@ body::before {
             145deg,
             #15191f,
             #11151b
-        );
+       );
 
     border: 1px solid #303a48;
 
@@ -909,17 +911,17 @@ body::before {
 
     .stamp-slot .icon {
 
-        width: 26px;
+        width: 30px;
 
-        height: 26px;
+        height: 30px;
     }
 
 
     .stamp-slot .icon svg {
 
-        width: 24px;
+        width: 26px;
 
-        height: 24px;
+        height: 26px;
     }
 
 

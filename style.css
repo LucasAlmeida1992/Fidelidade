@@ -1,423 +1,748 @@
-:root {
-    --bg-color: #08090b;
-    --card-bg: #111216;
-    --input-bg: #181a20;
-    --border-color: #232630;
-    --primary-red: #e50914;
-    --text-white: #ffffff;
-    --text-muted: #808592;
-    --label-muted: #6c727f;
-}
+/* =========================================================
+   RESET
+   ========================================================= */
 
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+
+/* =========================================================
+   BODY
+   ========================================================= */
+
 body {
-    background-color: var(--bg-color);
-    /* Substitua 'dragao.png' pelo nome do seu arquivo de imagem do fundo se houver */
-    background-image: url('dragao.png');
+    background-image: url('dragao fundo mobile.webp');
+    background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-size: cover;
     background-attachment: fixed;
-    color: var(--text-white);
+    color: #e8eaf0;
+    font-family: 'Poppins', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     padding: 20px;
-}
-
-/* Container do Cartão Central */
-.app-container {
-    width: 100%;
-    max-width: 380px;
-    background: var(--card-bg);
-    border-radius: 18px;
-    padding: 30px 24px 26px 24px;
-    position: relative;
-    /* Brilho avermelhado sutil nas bordas idêntico à foto */
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 
-                0 0 25px rgba(229, 9, 20, 0.22);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-/* Header */
-.app-header {
-    text-align: center;
-    margin-bottom: 24px;
     position: relative;
 }
 
-.logo-title {
-    font-size: 22px;
-    font-weight: 800;
-    color: #ffffff;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-family: 'UnifrakturMaguntia', 'Cinzel', serif;
-    line-height: 1;
-    margin-bottom: 4px;
-}
 
-.logo-subtitle {
-    font-size: 9px;
-    font-weight: 700;
-    color: #a0a5b5;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-}
+/* Camada escura com toque azulado sobre a imagem de fundo */
 
-.vip-tag {
-    font-size: 9px;
-    font-weight: 700;
-    color: var(--text-muted);
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-}
-
-/* Botão da Engrenagem */
-.btn-icon {
+body::before {
+    content: '';
     position: absolute;
-    top: -6px;
-    right: 0;
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    font-size: 14px;
-    cursor: pointer;
-    padding: 6px;
-    border-radius: 50%;
-    transition: color 0.2s;
+    inset: 0;
+    background: rgba(8, 14, 26, 0.78);
+    z-index: -1;
 }
 
-.btn-icon:hover {
-    color: #ffffff;
+
+/* Desktop */
+
+@media (min-width: 768px) {
+    body {
+        background-image: url('dragao fundo desktop.webp');
+    }
 }
 
-/* Seções */
-.card-section {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
 
-.card-section.hidden,
-.modal-overlay.hidden,
+/* =========================================================
+   UTILITÁRIO
+   ========================================================= */
+
 .hidden {
     display: none !important;
 }
 
-/* Campos de Texto */
-.input-group {
+
+/* =========================================================
+   CONTAINER PRINCIPAL
+   ========================================================= */
+
+.app-container {
+    width: 100%;
+    max-width: 440px;
+    background:
+        /* brilho vermelho superior esquerdo */
+        radial-gradient(
+            circle at 0% 0%,
+            rgba(251, 5, 50, 0.20) 0%,
+            rgba(251, 5, 50, 0.08) 20%,
+            transparent 42%
+        ),
+        /* brilho vermelho inferior direito */
+        radial-gradient(
+            circle at 100% 100%,
+            rgba(251, 5, 50, 0.16) 0%,
+            rgba(251, 5, 50, 0.05) 22%,
+            transparent 45%
+        ),
+        /* fundo base */
+        linear-gradient(
+            145deg,
+            #10141c 0%,
+            #080b11 100%
+        );
+    border-radius: 20px;
+    border: 1px solid #252d3a;
+    padding: 30px 24px;
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.75),
+        0 0 0 1px rgba(255,255,255,0.015);
+    height: fit-content;
+    position: relative;
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   ILUMINAÇÃO INTERNA
+   ========================================================= */
+
+.app-container::before {
+    content: '';
+    position: absolute;
+    top: -120px;
+    left: -120px;
+    width: 280px;
+    height: 280px;
+    background: rgba(251, 5, 50, 0.10);
+    border-radius: 50%;
+    filter: blur(70px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.app-container::after {
+    content: '';
+    position: absolute;
+    right: -140px;
+    bottom: -140px;
+    width: 300px;
+    height: 300px;
+    background: rgba(251, 5, 50, 0.08);
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.app-container > * {
+    position: relative;
+    z-index: 1;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.header {
+    text-align: center;
+    margin-bottom: 25px;
+    position: relative;
+    padding-top: 5px;
+}
+
+.header-logo {
+    max-width: 130px;
+    height: auto;
+    display: block;
+    margin: 0 auto 8px auto;
+    filter: brightness(0) invert(1);
+}
+
+.header p {
+    color: #9aa2b2;
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   BOTÃO CONFIGURAÇÕES
+   ========================================================= */
+
+.btn-admin-toggle {
+    position: absolute;
+    right: -4px;
+    top: -2px;
+    background: #171c25;
+    border: 1px solid #303948;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    color: #9da5b5;
+    font-size: 14px;
     display: flex;
-    flex-direction: column;
-    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-admin-toggle:hover {
+    color: #fff;
+    border-color: #fb0532;
+    background: #1d2029;
+    box-shadow: 0 0 12px rgba(251, 5, 50, 0.15);
+}
+
+
+/* =========================================================
+   CAMPOS E FORMULÁRIOS
+   ========================================================= */
+
+.card-box {
+    background: #11151b;
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 20px;
+    border: 1px solid #28313f;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.015);
+}
+
+.input-group {
+    margin-bottom: 16px;
+    text-align: left;
 }
 
 .input-group label {
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--label-muted);
-    letter-spacing: 0.8px;
+    display: block;
+    font-size: 11px;
+    color: #8c95a5;
+    margin-bottom: 6px;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .input-group input {
-    background: var(--input-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    padding: 13px 14px;
-    color: #ffffff;
-    font-size: 13px;
-    outline: none;
+    width: 100%;
+    padding: 12px 14px;
+    background: #090c11;
+    border: 1px solid #303947;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .input-group input:focus {
-    border-color: var(--primary-red);
-    box-shadow: 0 0 8px rgba(229, 9, 20, 0.3);
+    outline: none;
+    border-color: #fb0532;
+    box-shadow: 0 0 0 2px rgba(251, 5, 50, 0.08);
 }
 
-/* Botão Vermelho estilo imagem */
-.btn-primary {
-    background: linear-gradient(180deg, #ff0d1a 0%, #d6000d 100%);
-    color: #ffffff;
+
+/* =========================================================
+   BOTÃO PRINCIPAL
+   ========================================================= */
+
+.btn-gold {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(
+        135deg,
+        #ff1744 0%,
+        #e5002d 100%
+    );
     border: none;
     border-radius: 10px;
-    padding: 13px;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+    color: #fff;
+    font-weight: 600;
+    font-size: 13px;
     cursor: pointer;
-    transition: transform 0.1s, box-shadow 0.2s;
-    width: 100%;
-    margin-top: 4px;
-    box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 5px 18px rgba(251, 5, 50, 0.22);
+    transition: opacity 0.2s, transform 0.1s, box-shadow 0.2s;
 }
 
-.btn-primary:hover {
-    background: linear-gradient(180deg, #ff2430 0%, #e6000f 100%);
-    box-shadow: 0 6px 20px rgba(229, 9, 20, 0.6);
+.btn-gold:hover {
+    opacity: 0.97;
+    box-shadow: 0 6px 22px rgba(251, 5, 50, 0.3);
 }
 
-.btn-primary:active {
+.btn-gold:active {
     transform: scale(0.98);
 }
 
-.btn-secondary {
-    background: var(--input-bg);
-    color: #ffffff;
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    padding: 12px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
+
+/* =========================================================
+   LINKS
+   ========================================================= */
+
+.btn-link {
     width: 100%;
-}
-
-.btn-secondary:hover {
-    background: #20232c;
-}
-
-/* Área Interna do Cartão quando Logado */
-.client-welcome {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 13px;
-    color: #a0a5b5;
-}
-
-.client-welcome strong {
-    color: #ffffff;
-}
-
-.btn-text {
+    margin-top: 14px;
     background: none;
     border: none;
-    color: var(--label-muted);
+    color: #78808e;
     font-size: 12px;
     cursor: pointer;
-    text-decoration: underline;
+    transition: color 0.2s;
 }
 
-.btn-text:hover {
-    color: #ffffff;
+.btn-link:hover {
+    color: #c0c5ce;
 }
 
-.loyalty-card {
-    background: #16181f;
-    border: 1px solid var(--border-color);
-    border-radius: 14px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+
+/* =========================================================
+   BOTÕES PEQUENOS
+   ========================================================= */
+
+.btn-sm {
+    padding: 8px 10px;
+    background: #171c23;
+    color: #c7ccd5;
+    border: 1px solid #303846;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
+
+.btn-sm:hover {
+    background: #1d232c;
+    border-color: #454f60;
+    color: #fff;
+}
+
+.btn-full {
+    width: 100%;
+    margin-top: 12px;
+}
+
+
+/* =========================================================
+   CARTÃO DE CARIMBOS
+   ========================================================= */
+
+.greeting-text {
+    text-align: center;
+    font-size: 13px;
+    color: #aeb5c1;
+    margin-bottom: 20px;
+}
+
+.greeting-text strong {
+    color: #fff;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   GRID DOS CARIMBOS
+   ========================================================= */
 
 .stamps-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
     gap: 10px;
+    position: relative;
+    z-index: 1;
 }
+
+
+/* =========================================================
+   CARIMBO NORMAL (INATIVO)
+   ========================================================= */
 
 .stamp-slot {
-    background: var(--card-bg);
-    border: 1px dashed #282c37;
-    border-radius: 10px;
-    padding: 12px 6px;
+    flex: 1;
+    background: linear-gradient(
+        145deg,
+        #151a22,
+        #10141b
+    );
+    border: 1px solid #28313f;
+    border-radius: 12px;
+    height: 105px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    min-height: 85px;
-    transition: all 0.2s;
+    text-align: center;
+    padding: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
 }
+
+.stamp-slot:hover {
+    border-color: #455268;
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   CARIMBO ATIVO (VERMELHO, ACESO E 100% OPACO)
+   ========================================================= */
 
 .stamp-slot.active {
-    background: rgba(229, 9, 20, 0.1);
-    border: 1px solid var(--primary-red);
+    border: 2px solid #ff1744;
+    background: linear-gradient(
+        145deg,
+        #ff1744 0%,
+        #cc0029 100%
+    );
+    box-shadow:
+        inset 0 0 15px rgba(255, 255, 255, 0.35),
+        0 0 25px rgba(255, 23, 68, 0.8),
+        0 8px 30px rgba(255, 23, 68, 0.5);
+    z-index: 3;
 }
 
-.emoji-icon {
-    font-size: 20px;
-    color: var(--label-muted);
-}
 
-.stamp-slot.active .emoji-icon {
-    color: var(--primary-red);
-}
+/* =========================================================
+   ESTILIZAÇÃO DOS ÍCONES E EMOJIS (SVG & TEXTO)
+   ========================================================= */
 
-.label {
-    font-size: 10px;
-    color: var(--text-muted);
-    text-align: center;
-}
-
-.reward-message {
-    background: var(--card-bg);
-    border-radius: 8px;
-    padding: 10px;
-    font-size: 11px;
-    text-align: center;
-    font-weight: 600;
-    color: var(--primary-red);
-    border: 1px solid rgba(229, 9, 20, 0.2);
-}
-
-.card-footer-info {
-    text-align: center;
-    font-size: 11px;
-    color: var(--label-muted);
+.icon {
+    font-size: 26px;
+    margin-bottom: 6px;
+    line-height: 1;
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    align-items: center;
+    justify-content: center;
+    color: #F3F3F3;
+    filter: grayscale(100%) opacity(0.3);
+    transition: all 0.3s ease;
 }
 
-/* Modal */
+.stamp-slot.active .icon {
+    filter: grayscale(0%) opacity(1);
+    transform: scale(1.1);
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+
+/* =========================================================
+   TEXTO DOS CARIMBOS
+   ========================================================= */
+
+.stamp-slot .label {
+    font-size: 10px;
+    color: #858e9d;
+    line-height: 1.2;
+}
+
+.stamp-slot.active .label {
+    color: #ffffff;
+    font-weight: 600;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+
+/* =========================================================
+   BANNER DE BENEFÍCIO
+   ========================================================= */
+
+.discount-banner {
+    background:
+        radial-gradient(
+            circle at 0% 0%,
+            rgba(251, 5, 50, 0.18) 0%,
+            rgba(251, 5, 50, 0.06) 25%,
+            transparent 50%
+        ),
+        radial-gradient(
+            circle at 100% 100%,
+            rgba(251, 5, 50, 0.12) 0%,
+            transparent 40%
+        ),
+        linear-gradient(
+            145deg,
+            #11161e 0%,
+            #090d13 100%
+        );
+    border: 1px solid #303a48;
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.03),
+        0 4px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.discount-label {
+    font-size: 10px;
+    color: #8992a1;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+}
+
+.discount-banner h3 {
+    color: #ffffff;
+    font-size: 15px;
+    font-family: 'Oswald', sans-serif;
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    line-height: 1.35;
+}
+
+.discount-banner h3::before {
+    content: '★';
+    color: #fb0532;
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    line-height: 1;
+    flex-shrink: 0;
+    text-shadow: 0 0 10px rgba(251, 5, 50, 0.35);
+}
+
+
+/* =========================================================
+   MODAL DE RESGATE POR CÓDIGO
+   ========================================================= */
+
 .modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(4px);
+    inset: 0;
+    background: rgba(4, 7, 12, 0.85);
+    backdrop-filter: blur(6px);
     display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 1000;
-    padding: 16px;
+    justify-content: center;
+    z-index: 999;
+    padding: 20px;
 }
 
-.modal-content {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
+.modal-box {
+    background: linear-gradient(
+        145deg,
+        #151a22,
+        #10141b
+    );
+    border: 1px solid #303a48;
     border-radius: 16px;
     padding: 24px;
     width: 100%;
-    max-width: 320px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
+    max-width: 360px;
     text-align: center;
-    box-shadow: 0 0 30px rgba(0,0,0,0.9);
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.8),
+        0 0 25px rgba(251, 5, 50, 0.15);
 }
 
-.modal-content h3 {
-    font-size: 15px;
-    color: #ffffff;
+.modal-box h3 {
+    color: #fff;
+    font-family: 'Oswald', sans-serif;
+    font-size: 18px;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
 }
 
-.modal-content p {
+.modal-box p {
+    color: #9aa2b2;
     font-size: 12px;
-    color: var(--text-muted);
+    margin-bottom: 16px;
+    line-height: 1.4;
 }
 
-.modal-content input {
-    background: var(--input-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
+.modal-box input {
+    width: 100%;
     padding: 12px;
-    color: #ffffff;
-    font-size: 22px;
+    background: #080b11;
+    border: 2px solid #303947;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 24px;
     text-align: center;
-    letter-spacing: 6px;
+    letter-spacing: 10px;
+    font-weight: 700;
+    margin-bottom: 18px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.modal-box input:focus {
     outline: none;
+    border-color: #fb0532;
+    box-shadow: 0 0 15px rgba(251, 5, 50, 0.25);
 }
 
 .modal-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-/* Painel Admin */
-.admin-panel {
-    background: var(--card-bg);
-}
-
-.admin-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.admin-title {
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 1px;
-}
-
-.btn-close {
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    font-size: 16px;
-    cursor: pointer;
-}
-
-.admin-client-list {
-    max-height: 280px;
-    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
+
+/* =========================================================
+   PAINEL ADMIN
+   ========================================================= */
+
+.admin-panel {
+    background: linear-gradient(
+        145deg,
+        #15191f,
+        #11151b
+    );
+    border: 1px solid #303a48;
+    border-radius: 14px;
+    padding: 18px;
+    margin-top: 15px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.015);
+}
+
+.admin-title {
+    color: #fff;
+    margin-bottom: 14px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.admin-client-list {
+    max-height: 260px;
+    overflow-y: auto;
+    padding-right: 2px;
+}
+
 .client-item {
-    background: var(--input-bg);
-    border: 1px solid var(--border-color);
+    background: #0d1015;
+    border: 1px solid #252d38;
+    padding: 10px 12px;
     border-radius: 10px;
-    padding: 10px;
+    margin-bottom: 8px;
+    font-size: 13px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 8px;
+}
+
+.client-info {
+    flex: 1;
+    min-width: 0;
 }
 
 .client-info strong {
-    font-size: 12px;
+    color: #fff;
     display: block;
-    color: #ffffff;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .client-info span {
-    font-size: 10px;
-    color: var(--text-muted);
+    color: #7e8795;
+    font-size: 11px;
 }
 
-.btn-sm {
-    padding: 6px 8px;
-    font-size: 10px;
-    font-weight: 700;
-    border-radius: 6px;
-    cursor: pointer;
-    border: 1px solid var(--border-color);
-}
+
+/* BOTÕES ESPECÍFICOS DO PAINEL ADMIN */
 
 .btn-code-admin {
-    background: rgba(255, 255, 255, 0.05);
-    color: #ffffff;
+    background: #122033;
+    border-color: #1d3e66;
+    color: #60a5fa;
+}
+
+.btn-code-admin:hover {
+    background: #172b47;
+    border-color: #60a5fa;
+    color: #fff;
 }
 
 .btn-add-admin {
-    background: rgba(34, 197, 94, 0.15);
+    background: #112419;
+    border-color: #1e4d2b;
     color: #4ade80;
-    border-color: rgba(34, 197, 94, 0.3);
+}
+
+.btn-add-admin:hover {
+    background: #183323;
+    border-color: #4ade80;
+    color: #fff;
 }
 
 .btn-delete-admin {
-    background: rgba(229, 9, 20, 0.15);
+    background: #2a1114;
+    border-color: #fb0532;
     color: #ff6b81;
-    border-color: rgba(229, 9, 20, 0.3);
+}
+
+.btn-delete-admin:hover {
+    background: #3b1419;
+    border-color: #ff3355;
+    color: #fff;
+}
+
+
+/* =========================================================
+   SCROLLBAR — PAINEL
+   ========================================================= */
+
+.admin-client-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.admin-client-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.admin-client-list::-webkit-scrollbar-thumb {
+    background: #303846;
+    border-radius: 10px;
+}
+
+.admin-client-list::-webkit-scrollbar-thumb:hover {
+    background: #485364;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+   ========================================================= */
+
+@media (max-width: 480px) {
+    body {
+        padding: 14px;
+    }
+
+    .app-container {
+        padding: 26px 18px;
+        border-radius: 18px;
+    }
+
+    .stamp-slot {
+        height: 100px;
+    }
+
+    .stamp-slot .label {
+        font-size: 9px;
+    }
+
+    .discount-banner h3 {
+        font-size: 14px;
+    }
+
+    .client-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .client-item > div:last-child {
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: 6px;
+    }
 }

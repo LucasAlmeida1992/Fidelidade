@@ -445,6 +445,7 @@ window.addEventListener("DOMContentLoaded", () => {
             instalarAplicativo
         );
     }
+
 });
 
 // ==========================================
@@ -537,46 +538,15 @@ async function carregarDadosCliente(
             await response.json();
 
         // ==========================================
-        // CLIENTE NÃO ENCONTRADO / EXCLUÍDO
+        // CLIENTE EXCLUÍDO
         // ==========================================
 
         if (data.success === false) {
 
-            const mensagemErro =
-                String(
-                    data.error || ""
-                ).toLowerCase();
-
-            const clienteNaoEncontrado =
-                mensagemErro.includes(
-                    "não encontrado"
-                ) ||
-                mensagemErro.includes(
-                    "nao encontrado"
-                ) ||
-                mensagemErro.includes(
-                    "não existe"
-                ) ||
-                mensagemErro.includes(
-                    "nao existe"
-                ) ||
-                mensagemErro.includes(
-                    "cliente não"
-                ) ||
-                mensagemErro.includes(
-                    "cliente nao"
-                ) ||
-                mensagemErro.includes(
-                    "excluído"
-                ) ||
-                mensagemErro.includes(
-                    "excluido"
-                );
-
-            if (clienteNaoEncontrado) {
+            if (data.deleted === true) {
 
                 // ------------------------------------------
-                // LIMPA DADOS SALVOS
+                // LIMPA OS DADOS SALVOS
                 // ------------------------------------------
 
                 localStorage.removeItem(
@@ -594,7 +564,7 @@ async function carregarDadosCliente(
                 clienteAtual = null;
 
                 // ------------------------------------------
-                // LIMPA CAMPOS DO LOGIN
+                // LIMPA OS CAMPOS DO LOGIN
                 // ------------------------------------------
 
                 const inputPhone =
@@ -622,12 +592,12 @@ async function carregarDadosCliente(
                 alternarSecao("login");
 
                 // ------------------------------------------
-                // AVISO AO CLIENTE
+                // AVISA O CLIENTE
                 // ------------------------------------------
 
                 alert(
-                    "Este cliente não está mais cadastrado.\n\n" +
-                    "Os dados foram limpos. Faça um novo cadastro para continuar."
+                    "Este cliente foi excluído.\n\n" +
+                    "Os dados foram limpos. Faça um novo cadastro com o tatuador."
                 );
 
                 return;
@@ -1120,6 +1090,7 @@ function renderizarClientesAdmin(lista) {
                         whatsapp,
                         nome
                     );
+
                 }
             );
         }
@@ -1143,6 +1114,7 @@ function renderizarClientesAdmin(lista) {
                         whatsapp,
                         nome
                     );
+
                 }
             );
         }
@@ -1166,6 +1138,7 @@ function renderizarClientesAdmin(lista) {
                         whatsapp,
                         nome
                     );
+
                 }
             );
         }

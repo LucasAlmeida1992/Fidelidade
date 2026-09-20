@@ -39,6 +39,32 @@ let todosClientes = [];
 let monitoramentoCliente = null;
 let verificacaoEmAndamento = false;
 
+// ==========================================
+// INSTALAÇÃO PWA
+// ==========================================
+
+let deferredPrompt = null;
+
+
+window.addEventListener(
+    "beforeinstallprompt",
+    (event) => {
+
+        event.preventDefault();
+
+        deferredPrompt = event;
+    }
+);
+
+
+window.addEventListener(
+    "appinstalled",
+    () => {
+
+        deferredPrompt = null;
+    }
+);
+
 
 // ==========================================
 // INICIALIZAÇÃO
@@ -266,6 +292,103 @@ window.addEventListener(
 
 
         // ==========================================
+        // BOTÃO INSTALAR APP
+        // ==========================================
+
+        const btnInstalarApp =
+            document.getElementById(
+                "btn-instalar-app"
+            );
+
+        const iosInstallHelp =
+            document.getElementById(
+                "ios-install-help"
+            );
+
+
+        if (btnInstalarApp) {
+
+            btnInstalarApp.addEventListener(
+                "click",
+                async () => {
+
+                    // ==========================================
+                    // IPHONE / IPAD
+                    // ==========================================
+
+                    const isIOS =
+                        /iPad|iPhone|iPod/.test(
+                            navigator.userAgent
+                        ) ||
+                        (
+                            navigator.platform ===
+                            "MacIntel" &&
+                            navigator.maxTouchPoints > 1
+                        );
+
+
+                    if (isIOS) {
+
+                        if (iosInstallHelp) {
+
+                            iosInstallHelp.classList.remove(
+                                "hidden"
+                            );
+                        }
+
+                        return;
+                    }
+
+
+                    // ==========================================
+                    // ANDROID / CHROME / EDGE
+                    // ==========================================
+
+                    if (!deferredPrompt) {
+
+                        alert(
+                            "A instalação ainda não está disponível neste momento. Tente novamente em alguns segundos ou use o menu do navegador para instalar o app."
+                        );
+
+                        return;
+                    }
+
+
+                    const promptEvent =
+                        deferredPrompt;
+
+
+                    deferredPrompt =
+                        null;
+
+
+                    try {
+
+                        await promptEvent.prompt();
+
+
+                        const resultado =
+                            await promptEvent.userChoice;
+
+
+                        console.log(
+                            "Resultado da instalação:",
+                            resultado.outcome
+                        );
+
+                    } catch (error) {
+
+                        console.error(
+                            "Erro ao abrir instalação:",
+                            error
+                        );
+                    }
+                }
+            );
+        }
+
+
+        // ==========================================
         // QUANDO VOLTA PARA A ABA
         // ==========================================
 
@@ -478,6 +601,7 @@ async function carregarDadosCliente(
 
 
         iniciarMonitoramentoCliente();
+
 
     } catch (error) {
 
@@ -755,6 +879,7 @@ function pararMonitoramentoCliente() {
         clearInterval(
             monitoramentoCliente
         );
+
 
         monitoramentoCliente =
             null;
@@ -2014,7 +2139,6 @@ async function excluirClienteAdmin(
 
             limparSessaoCliente();
 
-
             alert(
                 `🗑️ Cliente ${nome} excluído com sucesso!\n\nA sessão foi encerrada e os campos foram apagados.`
             );
@@ -2230,6 +2354,7 @@ function limparSessaoCliente() {
         "fidelidade_whatsapp"
     );
 
+
     localStorage.removeItem(
         "fidelidade_nome"
     );
@@ -2242,6 +2367,7 @@ function limparSessaoCliente() {
     sessionStorage.removeItem(
         "fidelidade_whatsapp"
     );
+
 
     sessionStorage.removeItem(
         "fidelidade_nome"
@@ -2385,7 +2511,9 @@ function escapeHTML(
     value
 ) {
 
-    return String(value)
+    return String(
+        value
+    )
 
         .replace(
             /&/g,

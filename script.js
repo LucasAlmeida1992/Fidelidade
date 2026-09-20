@@ -7,6 +7,7 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyI0svNzI2nIktgvCNTm76F
 
 // SVGs Configuráveis
 const SVG_CHECK = `<svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="currentColor"><path d="m424-312 282-282-56-56-226 226-114-114-56 56 170 170ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z"/></svg>`;
+
 const SVG_CIRCLE = `<svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>`;
 
 // ==========================================
@@ -25,11 +26,13 @@ let deferredInstallPrompt = null;
 
 // Detecta quando o navegador oferece a instalação do PWA
 window.addEventListener("beforeinstallprompt", (event) => {
+
     event.preventDefault();
 
     deferredInstallPrompt = event;
 
-    const btnInstalar = document.getElementById("btn-instalar-app");
+    const btnInstalar =
+        document.getElementById("btn-instalar-app");
 
     if (btnInstalar) {
         btnInstalar.style.display = "block";
@@ -38,15 +41,18 @@ window.addEventListener("beforeinstallprompt", (event) => {
 
 // Detecta quando o aplicativo foi instalado
 window.addEventListener("appinstalled", () => {
+
     deferredInstallPrompt = null;
 
-    const btnInstalar = document.getElementById("btn-instalar-app");
+    const btnInstalar =
+        document.getElementById("btn-instalar-app");
 
     if (btnInstalar) {
         btnInstalar.style.display = "none";
     }
 
-    const ajudaIOS = document.getElementById("ios-install-help");
+    const ajudaIOS =
+        document.getElementById("ios-install-help");
 
     if (ajudaIOS) {
         ajudaIOS.classList.add("hidden");
@@ -57,13 +63,19 @@ window.addEventListener("appinstalled", () => {
 
 // Verifica se é iPhone/iPad
 function ehIOS() {
-    return /iphone|ipad|ipod/i.test(navigator.userAgent);
+
+    return /iphone|ipad|ipod/i.test(
+        navigator.userAgent
+    );
 }
 
 // Verifica se o site já está aberto como aplicativo
 function estaNoModoApp() {
+
     return (
-        window.matchMedia("(display-mode: standalone)").matches ||
+        window.matchMedia(
+            "(display-mode: standalone)"
+        ).matches ||
         window.navigator.standalone === true
     );
 }
@@ -74,16 +86,24 @@ function estaNoModoApp() {
 
 async function instalarAplicativo() {
 
-    const btnInstalar = document.getElementById("btn-instalar-app");
-    const ajudaIOS = document.getElementById("ios-install-help");
+    const btnInstalar =
+        document.getElementById("btn-instalar-app");
+
+    const ajudaIOS =
+        document.getElementById("ios-install-help");
 
     // ------------------------------------------
     // IPHONE / IPAD
     // ------------------------------------------
+
     if (ehIOS()) {
 
         if (estaNoModoApp()) {
-            alert("O cartão já está salvo como aplicativo neste aparelho.");
+
+            alert(
+                "O cartão já está salvo como aplicativo neste aparelho."
+            );
+
             return;
         }
 
@@ -111,16 +131,29 @@ async function instalarAplicativo() {
     deferredInstallPrompt.prompt();
 
     try {
-        const resultado = await deferredInstallPrompt.userChoice;
+
+        const resultado =
+            await deferredInstallPrompt.userChoice;
 
         if (resultado.outcome === "accepted") {
-            console.log("Usuário aceitou instalar o aplicativo.");
+
+            console.log(
+                "Usuário aceitou instalar o aplicativo."
+            );
+
         } else {
-            console.log("Usuário cancelou a instalação.");
+
+            console.log(
+                "Usuário cancelou a instalação."
+            );
         }
 
     } catch (error) {
-        console.error("Erro durante a instalação:", error);
+
+        console.error(
+            "Erro durante a instalação:",
+            error
+        );
     }
 
     deferredInstallPrompt = null;
@@ -137,11 +170,18 @@ async function instalarAplicativo() {
 function registrarServiceWorker() {
 
     if (!("serviceWorker" in navigator)) {
-        console.log("Service Worker não é suportado neste navegador.");
+
+        console.log(
+            "Service Worker não é suportado neste navegador."
+        );
+
         return;
     }
 
-    navigator.serviceWorker.register("./service-worker.js")
+    navigator.serviceWorker.register(
+        "./service-worker.js"
+    )
+
         .then((registration) => {
 
             console.log(
@@ -150,6 +190,7 @@ function registrarServiceWorker() {
             );
 
         })
+
         .catch((error) => {
 
             console.error(
@@ -169,15 +210,31 @@ window.addEventListener("DOMContentLoaded", () => {
     // Registrar PWA
     registrarServiceWorker();
 
-    const inputPhone = document.getElementById("cli-phone");
-    const inputName = document.getElementById("cli-name");
+    const inputPhone =
+        document.getElementById("cli-phone");
 
-    const localPhone = localStorage.getItem("fidelidade_whatsapp");
-    const localName = localStorage.getItem("fidelidade_nome");
+    const inputName =
+        document.getElementById("cli-name");
+
+    const localPhone =
+        localStorage.getItem(
+            "fidelidade_whatsapp"
+        );
+
+    const localName =
+        localStorage.getItem(
+            "fidelidade_nome"
+        );
 
     if (localPhone) {
-        if (inputPhone) inputPhone.value = localPhone;
-        if (inputName) inputName.value = localName || "";
+
+        if (inputPhone) {
+            inputPhone.value = localPhone;
+        }
+
+        if (inputName) {
+            inputName.value = localName || "";
+        }
 
         carregarDadosCliente(
             localPhone,
@@ -189,9 +246,11 @@ window.addEventListener("DOMContentLoaded", () => {
     // BOTÃO ACESSAR
     // ==========================================
 
-    const btnAcessar = document.getElementById("btn-acessar");
+    const btnAcessar =
+        document.getElementById("btn-acessar");
 
     if (btnAcessar) {
+
         btnAcessar.addEventListener(
             "click",
             acessarCartao
@@ -246,9 +305,11 @@ window.addEventListener("DOMContentLoaded", () => {
     // BOTÃO SAIR
     // ==========================================
 
-    const btnSair = document.getElementById("btn-sair");
+    const btnSair =
+        document.getElementById("btn-sair");
 
     if (btnSair) {
+
         btnSair.addEventListener(
             "click",
             sair
@@ -259,9 +320,11 @@ window.addEventListener("DOMContentLoaded", () => {
     // BOTÃO ADMIN
     // ==========================================
 
-    const btnAdmin = document.getElementById("btn-admin-toggle");
+    const btnAdmin =
+        document.getElementById("btn-admin-toggle");
 
     if (btnAdmin) {
+
         btnAdmin.addEventListener(
             "click",
             promptAdmin
@@ -272,9 +335,11 @@ window.addEventListener("DOMContentLoaded", () => {
     // FECHAR ADMIN
     // ==========================================
 
-    const btnFecharAdmin = document.getElementById("btn-fechar-admin");
+    const btnFecharAdmin =
+        document.getElementById("btn-fechar-admin");
 
     if (btnFecharAdmin) {
+
         btnFecharAdmin.addEventListener(
             "click",
             fecharAdmin
@@ -285,9 +350,11 @@ window.addEventListener("DOMContentLoaded", () => {
     // BUSCA ADMIN
     // ==========================================
 
-    const adminSearch = document.getElementById("admin-search");
+    const adminSearch =
+        document.getElementById("admin-search");
 
     if (adminSearch) {
+
         adminSearch.addEventListener(
             "input",
             filtrarClientes
@@ -298,27 +365,37 @@ window.addEventListener("DOMContentLoaded", () => {
     // BOTÃO DO MODAL DE RESGATE
     // ==========================================
 
-    const btnAbrirResgate = document.getElementById("btn-abrir-resgate");
+    const btnAbrirResgate =
+        document.getElementById("btn-abrir-resgate");
 
     if (btnAbrirResgate) {
+
         btnAbrirResgate.addEventListener(
             "click",
             abrirModalResgate
         );
     }
 
-    const btnCancelarResgate = document.getElementById("btn-cancelar-resgate");
+    const btnCancelarResgate =
+        document.getElementById(
+            "btn-cancelar-resgate"
+        );
 
     if (btnCancelarResgate) {
+
         btnCancelarResgate.addEventListener(
             "click",
             fecharModalResgate
         );
     }
 
-    const btnConfirmarResgate = document.getElementById("btn-confirmar-resgate");
+    const btnConfirmarResgate =
+        document.getElementById(
+            "btn-confirmar-resgate"
+        );
 
     if (btnConfirmarResgate) {
+
         btnConfirmarResgate.addEventListener(
             "click",
             confirmarResgateCodigo
@@ -329,7 +406,10 @@ window.addEventListener("DOMContentLoaded", () => {
     // ENTER NO CÓDIGO DO MODAL
     // ==========================================
 
-    const inputCodigo = document.getElementById("input-codigo-resgate");
+    const inputCodigo =
+        document.getElementById(
+            "input-codigo-resgate"
+        );
 
     if (inputCodigo) {
 
@@ -353,7 +433,10 @@ window.addEventListener("DOMContentLoaded", () => {
     // BOTÃO INSTALAR APLICATIVO
     // ==========================================
 
-    const btnInstalarApp = document.getElementById("btn-instalar-app");
+    const btnInstalarApp =
+        document.getElementById(
+            "btn-instalar-app"
+        );
 
     if (btnInstalarApp) {
 
@@ -361,9 +444,7 @@ window.addEventListener("DOMContentLoaded", () => {
             "click",
             instalarAplicativo
         );
-
     }
-
 });
 
 // ==========================================
@@ -376,16 +457,21 @@ async function acessarCartao(event) {
         event.preventDefault();
     }
 
-    const inputPhone = document.getElementById("cli-phone");
-    const inputName = document.getElementById("cli-name");
+    const inputPhone =
+        document.getElementById("cli-phone");
 
-    const phone = inputPhone
-        ? inputPhone.value.replace(/\D/g, "")
-        : "";
+    const inputName =
+        document.getElementById("cli-name");
 
-    const name = inputName
-        ? inputName.value.trim()
-        : "";
+    const phone =
+        inputPhone
+            ? inputPhone.value.replace(/\D/g, "")
+            : "";
+
+    const name =
+        inputName
+            ? inputName.value.trim()
+            : "";
 
     if (!phone) {
 
@@ -441,6 +527,7 @@ async function carregarDadosCliente(
             await fetch(url);
 
         if (!response.ok) {
+
             throw new Error(
                 "HTTP " + response.status
             );
@@ -449,7 +536,106 @@ async function carregarDadosCliente(
         const data =
             await response.json();
 
+        // ==========================================
+        // CLIENTE NÃO ENCONTRADO / EXCLUÍDO
+        // ==========================================
+
         if (data.success === false) {
+
+            const mensagemErro =
+                String(
+                    data.error || ""
+                ).toLowerCase();
+
+            const clienteNaoEncontrado =
+                mensagemErro.includes(
+                    "não encontrado"
+                ) ||
+                mensagemErro.includes(
+                    "nao encontrado"
+                ) ||
+                mensagemErro.includes(
+                    "não existe"
+                ) ||
+                mensagemErro.includes(
+                    "nao existe"
+                ) ||
+                mensagemErro.includes(
+                    "cliente não"
+                ) ||
+                mensagemErro.includes(
+                    "cliente nao"
+                ) ||
+                mensagemErro.includes(
+                    "excluído"
+                ) ||
+                mensagemErro.includes(
+                    "excluido"
+                );
+
+            if (clienteNaoEncontrado) {
+
+                // ------------------------------------------
+                // LIMPA DADOS SALVOS
+                // ------------------------------------------
+
+                localStorage.removeItem(
+                    "fidelidade_whatsapp"
+                );
+
+                localStorage.removeItem(
+                    "fidelidade_nome"
+                );
+
+                // ------------------------------------------
+                // LIMPA CLIENTE ATUAL
+                // ------------------------------------------
+
+                clienteAtual = null;
+
+                // ------------------------------------------
+                // LIMPA CAMPOS DO LOGIN
+                // ------------------------------------------
+
+                const inputPhone =
+                    document.getElementById(
+                        "cli-phone"
+                    );
+
+                const inputName =
+                    document.getElementById(
+                        "cli-name"
+                    );
+
+                if (inputPhone) {
+                    inputPhone.value = "";
+                }
+
+                if (inputName) {
+                    inputName.value = "";
+                }
+
+                // ------------------------------------------
+                // VOLTA PARA A TELA DE LOGIN
+                // ------------------------------------------
+
+                alternarSecao("login");
+
+                // ------------------------------------------
+                // AVISO AO CLIENTE
+                // ------------------------------------------
+
+                alert(
+                    "Este cliente não está mais cadastrado.\n\n" +
+                    "Os dados foram limpos. Faça um novo cadastro para continuar."
+                );
+
+                return;
+            }
+
+            // ==========================================
+            // OUTRO TIPO DE ERRO
+            // ==========================================
 
             alert(
                 data.error ||
@@ -500,7 +686,6 @@ async function carregarDadosCliente(
             btnAcessar.innerText =
                 "Acessar Cartão";
         }
-
     }
 }
 
@@ -523,6 +708,7 @@ function atualizarInterfaceCartao(
         document.getElementById("disp-desconto");
 
     if (dispNome) {
+
         dispNome.innerText =
             nome || "Cliente";
     }
@@ -543,9 +729,7 @@ function atualizarInterfaceCartao(
 
             dispDesconto.innerText =
                 "🎉 10% DE DESCONTO LIBERADO PARA A PRÓXIMA TATTOO!";
-
         }
-
     }
 
     atualizarSlot(
@@ -608,7 +792,9 @@ function atualizarSlot(
 function abrirModalResgate() {
 
     const modal =
-        document.getElementById("modal-resgate");
+        document.getElementById(
+            "modal-resgate"
+        );
 
     const inputCodigo =
         document.getElementById(
@@ -616,7 +802,10 @@ function abrirModalResgate() {
         );
 
     if (modal) {
-        modal.classList.remove("hidden");
+
+        modal.classList.remove(
+            "hidden"
+        );
     }
 
     if (inputCodigo) {
@@ -630,7 +819,9 @@ function abrirModalResgate() {
 function fecharModalResgate() {
 
     const modal =
-        document.getElementById("modal-resgate");
+        document.getElementById(
+            "modal-resgate"
+        );
 
     if (modal) {
 
@@ -806,6 +997,7 @@ async function promptAdmin() {
             );
 
         if (secAdmin) {
+
             secAdmin.classList.remove(
                 "hidden"
             );
@@ -928,7 +1120,6 @@ function renderizarClientesAdmin(lista) {
                         whatsapp,
                         nome
                     );
-
                 }
             );
         }
@@ -952,7 +1143,6 @@ function renderizarClientesAdmin(lista) {
                         whatsapp,
                         nome
                     );
-
                 }
             );
         }
@@ -976,7 +1166,6 @@ function renderizarClientesAdmin(lista) {
                         whatsapp,
                         nome
                     );
-
                 }
             );
         }
@@ -1224,7 +1413,9 @@ async function excluirClienteAdmin(
         // ==========================================
 
         const adminSearch =
-            document.getElementById("admin-search");
+            document.getElementById(
+                "admin-search"
+            );
 
         if (adminSearch) {
             adminSearch.value = "";
@@ -1236,7 +1427,9 @@ async function excluirClienteAdmin(
         // ==========================================
 
         const whatsappSalvo =
-            localStorage.getItem("fidelidade_whatsapp");
+            localStorage.getItem(
+                "fidelidade_whatsapp"
+            );
 
         if (whatsappSalvo === whatsapp) {
 
@@ -1249,10 +1442,14 @@ async function excluirClienteAdmin(
             );
 
             const inputPhone =
-                document.getElementById("cli-phone");
+                document.getElementById(
+                    "cli-phone"
+                );
 
             const inputName =
-                document.getElementById("cli-name");
+                document.getElementById(
+                    "cli-name"
+                );
 
             if (inputPhone) {
                 inputPhone.value = "";
@@ -1278,10 +1475,14 @@ async function excluirClienteAdmin(
             alternarSecao("login");
 
             const inputPhone =
-                document.getElementById("cli-phone");
+                document.getElementById(
+                    "cli-phone"
+                );
 
             const inputName =
-                document.getElementById("cli-name");
+                document.getElementById(
+                    "cli-name"
+                );
 
             if (inputPhone) {
                 inputPhone.value = "";
@@ -1525,22 +1726,27 @@ function alternarSecao(secao) {
 function escapeHTML(value) {
 
     return String(value)
+
         .replace(
             /&/g,
             "&amp;"
         )
+
         .replace(
             /</g,
             "&lt;"
         )
+
         .replace(
             />/g,
             "&gt;"
         )
+
         .replace(
             /"/g,
             "&quot;"
         )
+
         .replace(
             /'/g,
             "&#039;"

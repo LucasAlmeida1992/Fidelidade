@@ -1,9 +1,10 @@
 // ==========================================
-// CONFIGURAÇÃO DA API (GOOGLE APPS SCRIPT)
+// CONFIGURAÇÃO DA API
 // CARTÃO FIDELIDADE - LUCAS FRANÇA TATTOO
 // ==========================================
 
 const API_URL = "https://script.google.com/macros/s/AKfycbyI0svNzI2nIktgvCNTm76FQmBGXk0119W0claQhsf8Jz7XvnXQ9DiT09pZJFoYsgTF/exec";
+
 
 // ==========================================
 // SVGs CONFIGURÁVEIS
@@ -12,6 +13,7 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyI0svNzI2nIktgvCNTm76F
 const SVG_CHECK = `<svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="currentColor"><path d="m424-312 282-282-56-56-226 226-114-114-56 56 170 170ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z"/></svg>`;
 
 const SVG_CIRCLE = `<svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>`;
+
 
 // ==========================================
 // VARIÁVEIS GLOBAIS
@@ -23,10 +25,21 @@ let todosClientes = [];
 
 
 // ==========================================
+// MONITORAMENTO AUTOMÁTICO DO CARTÃO
+// ==========================================
+
+let monitorCartaoInterval = null;
+let monitorCartaoEmAndamento = false;
+
+
+// ==========================================
 // FUNÇÃO CENTRAL PARA LIMPAR SESSÃO
 // ==========================================
 
 function limparSessaoCliente() {
+
+    // Para o monitoramento automático
+    pararMonitorCartao();
 
     // Remove todos os dados de login
     localStorage.removeItem("fidelidade_whatsapp");
@@ -43,8 +56,11 @@ function limparSessaoCliente() {
     alternarSecao("login");
 
     // Limpa os campos
-    const inputPhone = document.getElementById("cli-phone");
-    const inputName = document.getElementById("cli-name");
+    const inputPhone =
+        document.getElementById("cli-phone");
+
+    const inputName =
+        document.getElementById("cli-name");
 
     if (inputPhone) {
         inputPhone.value = "";
@@ -62,16 +78,30 @@ function limparSessaoCliente() {
 
 window.addEventListener("DOMContentLoaded", () => {
 
-    const inputPhone = document.getElementById("cli-phone");
-    const inputName = document.getElementById("cli-name");
+    const inputPhone =
+        document.getElementById("cli-phone");
 
-    const localPhone = localStorage.getItem("fidelidade_whatsapp");
-    const localName = localStorage.getItem("fidelidade_nome");
-    const sessaoAtiva = localStorage.getItem("fidelidade_sessao_ativa");
+    const inputName =
+        document.getElementById("cli-name");
 
-    // =====================================================
+
+    // ==========================================
+    // RECUPERA SESSÃO SALVA
+    // ==========================================
+
+    const localPhone =
+        localStorage.getItem("fidelidade_whatsapp");
+
+    const localName =
+        localStorage.getItem("fidelidade_nome");
+
+    const sessaoAtiva =
+        localStorage.getItem("fidelidade_sessao_ativa");
+
+
+    // ==========================================
     // RESTAURA LOGIN SOMENTE SE A SESSÃO ESTIVER ATIVA
-    // =====================================================
+    // ==========================================
 
     if (
         localPhone &&
@@ -93,17 +123,119 @@ window.addEventListener("DOMContentLoaded", () => {
         );
     }
 
+
     // ==========================================
-    // LOGIN
+    // BOTÃO ACESSAR
     // ==========================================
 
-    const btnAcessar = document.getElementById("btn-acessar");
+    const btnAcessar =
+        document.getElementById("btn-acessar");
 
     if (btnAcessar) {
-
         btnAcessar.addEventListener(
             "click",
             acessarCartao
+        );
+    }
+
+
+    // ==========================================
+    // BOTÃO SAIR
+    // ==========================================
+
+    const btnSair =
+        document.getElementById("btn-sair");
+
+    if (btnSair) {
+        btnSair.addEventListener(
+            "click",
+            sair
+        );
+    }
+
+
+    // ==========================================
+    // BOTÃO ADMIN
+    // ==========================================
+
+    const btnAdmin =
+        document.getElementById("btn-admin-toggle");
+
+    if (btnAdmin) {
+        btnAdmin.addEventListener(
+            "click",
+            promptAdmin
+        );
+    }
+
+
+    // ==========================================
+    // FECHAR ADMIN
+    // ==========================================
+
+    const btnFecharAdmin =
+        document.getElementById("btn-fechar-admin");
+
+    if (btnFecharAdmin) {
+        btnFecharAdmin.addEventListener(
+            "click",
+            fecharAdmin
+        );
+    }
+
+
+    // ==========================================
+    // PESQUISA ADMIN
+    // ==========================================
+
+    const adminSearch =
+        document.getElementById("admin-search");
+
+    if (adminSearch) {
+        adminSearch.addEventListener(
+            "input",
+            filtrarClientes
+        );
+    }
+
+
+    // ==========================================
+    // MODAL DE RESGATE
+    // ==========================================
+
+    const btnAbrirResgate =
+        document.getElementById("btn-abrir-resgate");
+
+    if (btnAbrirResgate) {
+        btnAbrirResgate.addEventListener(
+            "click",
+            abrirModalResgate
+        );
+    }
+
+
+    const btnCancelarResgate =
+        document.getElementById(
+            "btn-cancelar-resgate"
+        );
+
+    if (btnCancelarResgate) {
+        btnCancelarResgate.addEventListener(
+            "click",
+            fecharModalResgate
+        );
+    }
+
+
+    const btnConfirmarResgate =
+        document.getElementById(
+            "btn-confirmar-resgate"
+        );
+
+    if (btnConfirmarResgate) {
+        btnConfirmarResgate.addEventListener(
+            "click",
+            confirmarResgateCodigo
         );
     }
 
@@ -116,110 +248,10 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
     // ==========================================
-    // SAIR
-    // ==========================================
-
-    const btnSair = document.getElementById("btn-sair");
-
-    if (btnSair) {
-
-        btnSair.addEventListener(
-            "click",
-            sair
-        );
-    }
-
-
-    // ==========================================
-    // ADMIN
-    // ==========================================
-
-    const btnAdmin = document.getElementById("btn-admin-toggle");
-
-    if (btnAdmin) {
-
-        btnAdmin.addEventListener(
-            "click",
-            promptAdmin
-        );
-    }
-
-
-    const btnFecharAdmin = document.getElementById(
-        "btn-fechar-admin"
-    );
-
-    if (btnFecharAdmin) {
-
-        btnFecharAdmin.addEventListener(
-            "click",
-            fecharAdmin
-        );
-    }
-
-
-    const adminSearch = document.getElementById(
-        "admin-search"
-    );
-
-    if (adminSearch) {
-
-        adminSearch.addEventListener(
-            "input",
-            filtrarClientes
-        );
-    }
-
-
-    // ==========================================
-    // MODAL DE CÓDIGO
-    // ==========================================
-
-    const btnAbrirResgate = document.getElementById(
-        "btn-abrir-resgate"
-    );
-
-    if (btnAbrirResgate) {
-
-        btnAbrirResgate.addEventListener(
-            "click",
-            abrirModalResgate
-        );
-    }
-
-
-    const btnCancelarResgate = document.getElementById(
-        "btn-cancelar-resgate"
-    );
-
-    if (btnCancelarResgate) {
-
-        btnCancelarResgate.addEventListener(
-            "click",
-            fecharModalResgate
-        );
-    }
-
-
-    const btnConfirmarResgate = document.getElementById(
-        "btn-confirmar-resgate"
-    );
-
-    if (btnConfirmarResgate) {
-
-        btnConfirmarResgate.addEventListener(
-            "click",
-            confirmarResgateCodigo
-        );
-    }
-
-
-    // ==========================================
-    // ENTER NO CÓDIGO DO ESTÚDIO
+    // ENTER NO CÓDIGO
     // ==========================================
 
     configurarEnterCodigo();
-
 });
 
 
@@ -229,8 +261,12 @@ window.addEventListener("DOMContentLoaded", () => {
 
 function configurarEnterLogin() {
 
-    const inputPhone = document.getElementById("cli-phone");
-    const inputName = document.getElementById("cli-name");
+    const inputPhone =
+        document.getElementById("cli-phone");
+
+    const inputName =
+        document.getElementById("cli-name");
+
 
     if (inputPhone) {
 
@@ -242,15 +278,12 @@ function configurarEnterLogin() {
 
                     event.preventDefault();
 
-                    const btnAcessar = document.getElementById(
-                        "btn-acessar"
-                    );
+                    const btnAcessar =
+                        document.getElementById(
+                            "btn-acessar"
+                        );
 
-                    if (
-                        btnAcessar &&
-                        !btnAcessar.disabled
-                    ) {
-
+                    if (btnAcessar) {
                         btnAcessar.click();
                     }
                 }
@@ -269,15 +302,12 @@ function configurarEnterLogin() {
 
                     event.preventDefault();
 
-                    const btnAcessar = document.getElementById(
-                        "btn-acessar"
-                    );
+                    const btnAcessar =
+                        document.getElementById(
+                            "btn-acessar"
+                        );
 
-                    if (
-                        btnAcessar &&
-                        !btnAcessar.disabled
-                    ) {
-
+                    if (btnAcessar) {
                         btnAcessar.click();
                     }
                 }
@@ -288,18 +318,21 @@ function configurarEnterLogin() {
 
 
 // ==========================================
-// ENTER NO CÓDIGO DO ESTÚDIO
+// ENTER NO CÓDIGO DE RESGATE
 // ==========================================
 
 function configurarEnterCodigo() {
 
-    const inputCodigo = document.getElementById(
-        "input-codigo-resgate"
-    );
+    const inputCodigo =
+        document.getElementById(
+            "input-codigo-resgate"
+        );
+
 
     if (!inputCodigo) {
         return;
     }
+
 
     inputCodigo.addEventListener(
         "keydown",
@@ -309,15 +342,12 @@ function configurarEnterCodigo() {
 
                 event.preventDefault();
 
-                const btnConfirmar = document.getElementById(
-                    "btn-confirmar-resgate"
-                );
+                const btnConfirmar =
+                    document.getElementById(
+                        "btn-confirmar-resgate"
+                    );
 
-                if (
-                    btnConfirmar &&
-                    !btnConfirmar.disabled
-                ) {
-
+                if (btnConfirmar) {
                     btnConfirmar.click();
                 }
             }
@@ -336,23 +366,24 @@ async function acessarCartao(event) {
         event.preventDefault();
     }
 
-    const inputPhone = document.getElementById(
-        "cli-phone"
-    );
 
-    const inputName = document.getElementById(
-        "cli-name"
-    );
+    const inputPhone =
+        document.getElementById("cli-phone");
 
-
-    const phone = inputPhone
-        ? inputPhone.value.replace(/\D/g, "")
-        : "";
+    const inputName =
+        document.getElementById("cli-name");
 
 
-    const name = inputName
-        ? inputName.value.trim()
-        : "";
+    const phone =
+        inputPhone
+            ? inputPhone.value.replace(/\D/g, "")
+            : "";
+
+
+    const name =
+        inputName
+            ? inputName.value.trim()
+            : "";
 
 
     if (!phone) {
@@ -365,11 +396,11 @@ async function acessarCartao(event) {
     }
 
 
-    // =====================================================
-    // NÃO SALVA A SESSÃO AINDA.
-    //
-    // Primeiro a API precisa confirmar que o cliente existe.
-    // =====================================================
+    // ==========================================
+    // CARREGA CLIENTE
+    // O localStorage só será salvo depois
+    // que a API confirmar que o cliente existe.
+    // ==========================================
 
     await carregarDadosCliente(
         phone,
@@ -380,7 +411,7 @@ async function acessarCartao(event) {
 
 
 // ==========================================
-// BUSCAR DADOS DO CLIENTE
+// BUSCAR DADOS DO CLIENTE NA API
 // ==========================================
 
 async function carregarDadosCliente(
@@ -389,9 +420,10 @@ async function carregarDadosCliente(
     restaurandoSessao = false
 ) {
 
-    const btnAcessar = document.getElementById(
-        "btn-acessar"
-    );
+    const btnAcessar =
+        document.getElementById(
+            "btn-acessar"
+        );
 
 
     try {
@@ -411,7 +443,13 @@ async function carregarDadosCliente(
             `&nome=${encodeURIComponent(name)}`;
 
 
-        const response = await fetch(url);
+        const response =
+            await fetch(
+                url,
+                {
+                    cache: "no-store"
+                }
+            );
 
 
         if (!response.ok) {
@@ -422,16 +460,18 @@ async function carregarDadosCliente(
         }
 
 
-        const data = await response.json();
+        const data =
+            await response.json();
 
 
         // ==========================================
-        // CLIENTE NÃO ENCONTRADO
+        // CLIENTE NÃO ENCONTRADO / EXCLUÍDO
         // ==========================================
 
         if (data.success === false) {
 
             limparSessaoCliente();
+
 
             if (restaurandoSessao) {
 
@@ -448,19 +488,19 @@ async function carregarDadosCliente(
                 );
             }
 
+
             return;
         }
 
 
         // ==========================================
-        // CLIENTE ENCONTRADO
+        // MONTA CLIENTE ATUAL
         // ==========================================
 
         clienteAtual = {
 
             whatsapp:
-                data.whatsapp ||
-                phone,
+                data.whatsapp || phone,
 
             nome:
                 data.nome ||
@@ -473,7 +513,7 @@ async function carregarDadosCliente(
 
 
         // ==========================================
-        // AGORA SIM A SESSÃO É SALVA
+        // AGORA SIM SALVA A SESSÃO
         // ==========================================
 
         localStorage.setItem(
@@ -481,12 +521,10 @@ async function carregarDadosCliente(
             clienteAtual.whatsapp
         );
 
-
         localStorage.setItem(
             "fidelidade_nome",
             clienteAtual.nome
         );
-
 
         localStorage.setItem(
             "fidelidade_sessao_ativa",
@@ -504,13 +542,14 @@ async function carregarDadosCliente(
         );
 
 
+        alternarSecao("cartao");
+
+
         // ==========================================
-        // MOSTRA CARTÃO
+        // INICIA MONITORAMENTO AUTOMÁTICO
         // ==========================================
 
-        alternarSecao(
-            "cartao"
-        );
+        iniciarMonitorCartao();
 
 
     } catch (error) {
@@ -521,9 +560,13 @@ async function carregarDadosCliente(
         );
 
 
-        // Se foi uma tentativa de restaurar
-        // uma sessão antiga e houve erro,
-        // não deixa uma sessão quebrada presa.
+        alert(
+            "Erro ao conectar com a planilha. Verifique a URL da API."
+        );
+
+
+        // Se estava restaurando uma sessão
+        // e deu erro, não deixa sessão quebrada.
 
         if (restaurandoSessao) {
 
@@ -541,15 +584,8 @@ async function carregarDadosCliente(
 
             clienteAtual = null;
 
-            alternarSecao(
-                "login"
-            );
+            alternarSecao("login");
         }
-
-
-        alert(
-            "Erro ao conectar com a planilha. Verifique a URL da API."
-        );
 
 
     } finally {
@@ -561,6 +597,175 @@ async function carregarDadosCliente(
             btnAcessar.innerText =
                 "Acessar Cartão";
         }
+    }
+}
+
+
+// ==========================================
+// MONITORAMENTO AUTOMÁTICO DO CARTÃO
+// ==========================================
+
+function iniciarMonitorCartao() {
+
+    // Evita criar mais de um intervalo
+    pararMonitorCartao();
+
+
+    if (
+        !clienteAtual ||
+        !clienteAtual.whatsapp
+    ) {
+        return;
+    }
+
+
+    // Consulta a cada 3 segundos
+    monitorCartaoInterval =
+        setInterval(
+            verificarAlteracaoCartao,
+            3000
+        );
+}
+
+
+function pararMonitorCartao() {
+
+    if (monitorCartaoInterval) {
+
+        clearInterval(
+            monitorCartaoInterval
+        );
+
+        monitorCartaoInterval = null;
+    }
+}
+
+
+async function verificarAlteracaoCartao() {
+
+    if (
+        !clienteAtual ||
+        !clienteAtual.whatsapp
+    ) {
+        return;
+    }
+
+
+    // Evita consultas simultâneas
+    if (monitorCartaoEmAndamento) {
+        return;
+    }
+
+
+    monitorCartaoEmAndamento = true;
+
+
+    try {
+
+        const url =
+            `${API_URL}?action=get_client` +
+            `&whatsapp=${encodeURIComponent(
+                clienteAtual.whatsapp
+            )}` +
+            `&nome=${encodeURIComponent(
+                clienteAtual.nome || ""
+            )}`;
+
+
+        const response =
+            await fetch(
+                url,
+                {
+                    cache: "no-store"
+                }
+            );
+
+
+        if (!response.ok) {
+            return;
+        }
+
+
+        const data =
+            await response.json();
+
+
+        // ==========================================
+        // CLIENTE FOI EXCLUÍDO
+        // ==========================================
+
+        if (data.success === false) {
+
+            pararMonitorCartao();
+
+            limparSessaoCliente();
+
+            alert(
+                data.error ||
+                "Seu cadastro não foi encontrado."
+            );
+
+            return;
+        }
+
+
+        // ==========================================
+        // NOVA QUANTIDADE DE CARIMBOS
+        // ==========================================
+
+        const novosCarimbos =
+            Number(data.carimbos) || 0;
+
+
+        const carimbosAtuais =
+            Number(clienteAtual.carimbos) || 0;
+
+
+        // ==========================================
+        // NADA MUDOU
+        // ==========================================
+
+        if (
+            novosCarimbos === carimbosAtuais
+        ) {
+            return;
+        }
+
+
+        // ==========================================
+        // ALTERAÇÃO DETECTADA
+        // ==========================================
+
+        console.log(
+            "Alteração detectada no cartão:",
+            carimbosAtuais,
+            "->",
+            novosCarimbos
+        );
+
+
+        clienteAtual.carimbos =
+            novosCarimbos;
+
+
+        // ==========================================
+        // RECARREGA O CELULAR DO CLIENTE
+        // ==========================================
+
+        window.location.reload();
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao verificar atualização do cartão:",
+            error
+        );
+
+
+    } finally {
+
+        monitorCartaoEmAndamento = false;
     }
 }
 
@@ -590,53 +795,12 @@ function atualizarInterfaceCartao(
         );
 
 
-    const btnCodigo =
-        document.getElementById(
-            "btn-abrir-resgate"
-        );
-
-
     if (dispNome) {
 
         dispNome.innerText =
             nome || "Cliente";
     }
 
-
-    // ==========================================
-    // O MESMO BOTÃO MUDA CONFORME O CICLO
-    //
-    // 0 ou 1 carimbo:
-    // 🔑 Digitar Código do Estúdio
-    //
-    // 2 carimbos:
-    // 🔄 Reiniciar Cartão
-    // ==========================================
-
-    if (btnCodigo) {
-
-        if (carimbos >= 2) {
-
-            btnCodigo.innerText =
-                "🔄 Reiniciar Cartão";
-
-            btnCodigo.title =
-                "Digite o código do estúdio para resgatar o desconto e reiniciar o cartão";
-
-        } else {
-
-            btnCodigo.innerText =
-                "🔑 Digitar Código do Estúdio";
-
-            btnCodigo.title =
-                "Digite o código temporário fornecido pelo tatuador";
-        }
-    }
-
-
-    // ==========================================
-    // STATUS DO BENEFÍCIO
-    // ==========================================
 
     if (dispDesconto) {
 
@@ -657,10 +821,6 @@ function atualizarInterfaceCartao(
         }
     }
 
-
-    // ==========================================
-    // SLOTS
-    // ==========================================
 
     atualizarSlot(
         "slot-1",
@@ -684,12 +844,33 @@ function atualizarInterfaceCartao(
         "🏆",
         "🎁"
     );
+
+
+    // ==========================================
+    // TEXTO DO BOTÃO
+    // ==========================================
+
+    const btnAbrirResgate =
+        document.getElementById(
+            "btn-abrir-resgate"
+        );
+
+
+    if (btnAbrirResgate) {
+
+        if (carimbos >= 2) {
+
+            btnAbrirResgate.innerText =
+                "🔄 Reiniciar Cartão";
+
+        } else {
+
+            btnAbrirResgate.innerText =
+                "🔑 Digitar Código do Estúdio";
+        }
+    }
 }
 
-
-// ==========================================
-// ATUALIZAR SLOT
-// ==========================================
 
 function atualizarSlot(
     id,
@@ -714,9 +895,7 @@ function atualizarSlot(
 
 
     const iconSpan =
-        slot.querySelector(
-            ".icon"
-        );
+        slot.querySelector(".icon");
 
 
     if (iconSpan) {
@@ -730,7 +909,7 @@ function atualizarSlot(
 
 
 // ==========================================
-// MODAL DE CÓDIGO
+// MODAL DE RESGATE POR CÓDIGO
 // ==========================================
 
 function abrirModalResgate() {
@@ -747,112 +926,10 @@ function abrirModalResgate() {
         );
 
 
-    const titulo =
-        document.getElementById(
-            "titulo-resgate"
-        );
-
-
-    const descricao =
-        modal
-            ? modal.querySelector(
-                ".modal-description"
-            )
-            : null;
-
-
-    const aviso =
-        modal
-            ? modal.querySelector(
-                ".modal-expire"
-            )
-            : null;
-
-
-    const botaoConfirmar =
-        document.getElementById(
-            "btn-confirmar-resgate"
-        );
-
-
-    const cicloCompleto =
-        !!clienteAtual &&
-        Number(clienteAtual.carimbos) >= 2;
-
-
-    // ==========================================
-    // TÍTULO
-    // ==========================================
-
-    if (titulo) {
-
-        titulo.innerText =
-            cicloCompleto
-                ? "Reiniciar Cartão"
-                : "Código do Estúdio";
-    }
-
-
-    // ==========================================
-    // DESCRIÇÃO
-    // ==========================================
-
-    if (descricao) {
-
-        descricao.innerText =
-            cicloCompleto
-
-                ? "Digite o código de 4 dígitos fornecido pelo tatuador para resgatar seu desconto e reiniciar o cartão."
-
-                : "Digite o código de 4 dígitos fornecido pelo tatuador para registrar sua tattoo.";
-    }
-
-
-    // ==========================================
-    // AVISO
-    // ==========================================
-
-    if (aviso) {
-
-        aviso.innerText =
-            "O código é temporário e pode ser usado uma única vez.";
-    }
-
-
-    // ==========================================
-    // BOTÃO DO MODAL
-    // ==========================================
-
-    if (botaoConfirmar) {
-
-        botaoConfirmar.innerText =
-            cicloCompleto
-                ? "Reiniciar Cartão"
-                : "Confirmar Código";
-    }
-
-
-    // ==========================================
-    // ABRIR MODAL
-    // ==========================================
-
     if (modal) {
-
-        modal.classList.remove(
-            "hidden"
-        );
-
-
-        modal.setAttribute(
-            "aria-hidden",
-            "false"
-        );
+        modal.classList.remove("hidden");
     }
 
-
-    // ==========================================
-    // LIMPAR E FOCAR INPUT
-    // ==========================================
 
     if (inputCodigo) {
 
@@ -862,10 +939,6 @@ function abrirModalResgate() {
     }
 }
 
-
-// ==========================================
-// FECHAR MODAL
-// ==========================================
 
 function fecharModalResgate() {
 
@@ -880,18 +953,12 @@ function fecharModalResgate() {
         modal.classList.add(
             "hidden"
         );
-
-
-        modal.setAttribute(
-            "aria-hidden",
-            "true"
-        );
     }
 }
 
 
 // ==========================================
-// CONFIRMAR CÓDIGO
+// CONFIRMAR CÓDIGO DO ESTÚDIO
 // ==========================================
 
 async function confirmarResgateCodigo() {
@@ -942,18 +1009,18 @@ async function confirmarResgateCodigo() {
     try {
 
         if (btnConfirmar) {
-
             btnConfirmar.disabled = true;
-
-            btnConfirmar.innerText =
-                "Validando...";
         }
 
 
         const url =
             `${API_URL}?action=redeem_token` +
-            `&whatsapp=${encodeURIComponent(clienteAtual.whatsapp)}` +
-            `&codigo=${encodeURIComponent(codigo)}`;
+            `&whatsapp=${encodeURIComponent(
+                clienteAtual.whatsapp
+            )}` +
+            `&codigo=${encodeURIComponent(
+                codigo
+            )}`;
 
 
         const response =
@@ -986,37 +1053,21 @@ async function confirmarResgateCodigo() {
         fecharModalResgate();
 
 
-        // ==========================================
-        // RESET DO CICLO
-        // ==========================================
-
         if (data.cicloResetado) {
 
             alert(
-                "🎉 Desconto resgatado com sucesso!\n\n" +
+                "🎉 Desconto resgatado com sucesso!\n" +
                 "O seu cartão foi reiniciado para o próximo ciclo."
             );
-        }
 
-
-        // ==========================================
-        // LIBEROU DESCONTO
-        // ==========================================
-
-        else if (data.descontoLiberado) {
+        } else if (data.descontoLiberado) {
 
             alert(
-                "🎉 Carimbo adicionado!\n\n" +
+                "🎉 Carimbo adicionado!\n" +
                 "Você liberou 10% de desconto para a próxima tattoo!"
             );
-        }
 
-
-        // ==========================================
-        // CARIMBO NORMAL
-        // ==========================================
-
-        else {
+        } else {
 
             alert(
                 "✅ Carimbo adicionado com sucesso!"
@@ -1025,7 +1076,9 @@ async function confirmarResgateCodigo() {
 
 
         // ==========================================
-        // ATUALIZA DADOS LOCAIS
+        // IMPORTANTE:
+        // NÃO RECARREGA A PÁGINA AQUI.
+        // O próprio cliente já atualiza a interface.
         // ==========================================
 
         clienteAtual.carimbos =
@@ -1036,19 +1089,6 @@ async function confirmarResgateCodigo() {
             clienteAtual.nome,
             clienteAtual.carimbos
         );
-
-
-        // ==========================================
-        // RECARREGA A PÁGINA
-        //
-        // A sessão está salva no localStorage.
-        // Ao recarregar, o sistema consulta novamente
-        // a API e mostra os dados reais da planilha.
-        // ==========================================
-
-        window.location.reload();
-
-        return;
 
 
     } catch (error) {
@@ -1067,17 +1107,7 @@ async function confirmarResgateCodigo() {
     } finally {
 
         if (btnConfirmar) {
-
             btnConfirmar.disabled = false;
-
-
-            if (clienteAtual) {
-
-                btnConfirmar.innerText =
-                    Number(clienteAtual.carimbos) >= 2
-                        ? "Reiniciar Cartão"
-                        : "Confirmar Código";
-            }
         }
     }
 }
@@ -1096,7 +1126,6 @@ async function promptAdmin() {
 
 
     if (!pin) {
-
         return;
     }
 
@@ -1135,8 +1164,7 @@ async function promptAdmin() {
         }
 
 
-        pinAdminAtual =
-            pin;
+        pinAdminAtual = pin;
 
 
         todosClientes =
@@ -1180,7 +1208,7 @@ async function promptAdmin() {
 
 
 // ==========================================
-// PAINEL ADMIN - RENDERIZAR CLIENTES
+// PAINEL ADMIN - RENDERIZAR LISTA
 // ==========================================
 
 function renderizarClientesAdmin(lista) {
@@ -1192,7 +1220,6 @@ function renderizarClientesAdmin(lista) {
 
 
     if (!container) {
-
         return;
     }
 
@@ -1212,167 +1239,151 @@ function renderizarClientesAdmin(lista) {
     }
 
 
-    lista.forEach(
-        (cliente) => {
+    lista.forEach((cliente) => {
 
-            const item =
-                document.createElement(
-                    "div"
-                );
+        const item =
+            document.createElement("div");
 
 
-            item.className =
-                "client-item";
+        item.className =
+            "client-item";
 
 
-            const nome =
-                cliente.nome ||
-                "Cliente";
+        const nome =
+            cliente.nome ||
+            "Cliente";
 
 
-            const whatsapp =
-                String(
-                    cliente.whatsapp ||
-                    ""
-                );
+        const whatsapp =
+            String(
+                cliente.whatsapp || ""
+            );
 
 
-            const carimbos =
-                Number(
-                    cliente.carimbos
-                ) || 0;
+        const carimbos =
+            Number(
+                cliente.carimbos
+            ) || 0;
 
 
-            item.innerHTML = `
-                <div class="client-info">
+        item.innerHTML = `
+            <div class="client-info">
+                <strong>${escapeHTML(nome)}</strong>
+                <span>${escapeHTML(whatsapp)} | ${carimbos}/2 carimbos</span>
+            </div>
 
-                    <strong>
-                        ${escapeHTML(nome)}
-                    </strong>
+            <div style="display: flex; gap: 4px;">
 
-                    <span>
-                        ${escapeHTML(whatsapp)}
-                        |
-                        ${carimbos}/2 carimbos
-                    </span>
+                <button
+                    type="button"
+                    class="btn-sm btn-code-admin"
+                    title="Gerar código de 60s"
+                >
+                    🔑 Código
+                </button>
 
-                </div>
+                <button
+                    type="button"
+                    class="btn-sm btn-add-admin"
+                    title="Carimbo direto"
+                >
+                    + Carimbo
+                </button>
 
-                <div style="display: flex; gap: 4px;">
+                <button
+                    type="button"
+                    class="btn-sm btn-delete-admin"
+                    title="Excluir"
+                >
+                    Excluir
+                </button>
 
-                    <button
-                        type="button"
-                        class="btn-sm btn-code-admin"
-                        title="Gerar código de 60s"
-                    >
-                        🔑 Código
-                    </button>
-
-                    <button
-                        type="button"
-                        class="btn-sm btn-add-admin"
-                        title="Carimbo direto"
-                    >
-                        + Carimbo
-                    </button>
-
-                    <button
-                        type="button"
-                        class="btn-sm btn-delete-admin"
-                        title="Excluir"
-                    >
-                        Excluir
-                    </button>
-
-                </div>
-            `;
+            </div>
+        `;
 
 
-            // ==========================================
-            // GERAR CÓDIGO
-            // ==========================================
+        // ==========================================
+        // BOTÃO CÓDIGO
+        // ==========================================
 
-            const botaoCodigo =
-                item.querySelector(
-                    ".btn-code-admin"
-                );
-
-
-            if (botaoCodigo) {
-
-                botaoCodigo.addEventListener(
-                    "click",
-                    () => {
-
-                        gerarCodigoAdmin(
-                            whatsapp,
-                            nome
-                        );
-                    }
-                );
-            }
+        const botaoCodigo =
+            item.querySelector(
+                ".btn-code-admin"
+            );
 
 
-            // ==========================================
-            // CARIMBO DIRETO
-            // ==========================================
+        if (botaoCodigo) {
 
-            const botaoCarimbo =
-                item.querySelector(
-                    ".btn-add-admin"
-                );
+            botaoCodigo.addEventListener(
+                "click",
+                () => {
 
-
-            if (botaoCarimbo) {
-
-                botaoCarimbo.addEventListener(
-                    "click",
-                    () => {
-
-                        carimboDiretoAdmin(
-                            whatsapp,
-                            nome
-                        );
-                    }
-                );
-            }
-
-
-            // ==========================================
-            // EXCLUIR
-            // ==========================================
-
-            const botaoExcluir =
-                item.querySelector(
-                    ".btn-delete-admin"
-                );
-
-
-            if (botaoExcluir) {
-
-                botaoExcluir.addEventListener(
-                    "click",
-                    () => {
-
-                        excluirClienteAdmin(
-                            whatsapp,
-                            nome
-                        );
-                    }
-                );
-            }
-
-
-            container.appendChild(
-                item
+                    gerarCodigoAdmin(
+                        whatsapp,
+                        nome
+                    );
+                }
             );
         }
-    );
+
+
+        // ==========================================
+        // BOTÃO CARIMBO
+        // ==========================================
+
+        const botaoCarimbo =
+            item.querySelector(
+                ".btn-add-admin"
+            );
+
+
+        if (botaoCarimbo) {
+
+            botaoCarimbo.addEventListener(
+                "click",
+                () => {
+
+                    carimboDiretoAdmin(
+                        whatsapp,
+                        nome
+                    );
+                }
+            );
+        }
+
+
+        // ==========================================
+        // BOTÃO EXCLUIR
+        // ==========================================
+
+        const botaoExcluir =
+            item.querySelector(
+                ".btn-delete-admin"
+            );
+
+
+        if (botaoExcluir) {
+
+            botaoExcluir.addEventListener(
+                "click",
+                () => {
+
+                    excluirClienteAdmin(
+                        whatsapp,
+                        nome
+                    );
+                }
+            );
+        }
+
+
+        container.appendChild(item);
+    });
 }
 
 
 // ==========================================
-// ADMIN - GERAR CÓDIGO TEMPORÁRIO
+// PAINEL ADMIN - GERAR CÓDIGO TEMPORÁRIO
 // ==========================================
 
 async function gerarCodigoAdmin(
@@ -1393,7 +1404,6 @@ async function gerarCodigoAdmin(
 
 
         if (!pin) {
-
             return;
         }
     }
@@ -1403,8 +1413,12 @@ async function gerarCodigoAdmin(
 
         const url =
             `${API_URL}?action=generate_token` +
-            `&whatsapp=${encodeURIComponent(whatsapp)}` +
-            `&pin=${encodeURIComponent(pin)}`;
+            `&whatsapp=${encodeURIComponent(
+                whatsapp
+            )}` +
+            `&pin=${encodeURIComponent(
+                pin
+            )}`;
 
 
         const response =
@@ -1460,7 +1474,7 @@ async function gerarCodigoAdmin(
 
 
 // ==========================================
-// ADMIN - CARIMBO DIRETO
+// PAINEL ADMIN - CARIMBO DIRETO
 // ==========================================
 
 async function carimboDiretoAdmin(
@@ -1481,7 +1495,6 @@ async function carimboDiretoAdmin(
 
 
         if (!pin) {
-
             return;
         }
     }
@@ -1491,9 +1504,15 @@ async function carimboDiretoAdmin(
 
         const url =
             `${API_URL}?action=add_stamp` +
-            `&whatsapp=${encodeURIComponent(whatsapp)}` +
-            `&nome=${encodeURIComponent(nome)}` +
-            `&pin=${encodeURIComponent(pin)}`;
+            `&whatsapp=${encodeURIComponent(
+                whatsapp
+            )}` +
+            `&nome=${encodeURIComponent(
+                nome
+            )}` +
+            `&pin=${encodeURIComponent(
+                pin
+            )}`;
 
 
         const response =
@@ -1523,6 +1542,10 @@ async function carimboDiretoAdmin(
         }
 
 
+        // ==========================================
+        // MENSAGEM DO CARIMBO
+        // ==========================================
+
         if (data.cicloResetado) {
 
             alert(
@@ -1545,17 +1568,22 @@ async function carimboDiretoAdmin(
         }
 
 
+        // ==========================================
+        // ATUALIZA PAINEL DO ADMIN
+        // ==========================================
+
         await atualizarPainelAdmin();
 
 
         // ==========================================
-        // SE FOR O CLIENTE ATUAL
-        // ATUALIZA O CARTÃO TAMBÉM
+        // SE O ADMIN E O CLIENTE ESTIVEREM
+        // NA MESMA PÁGINA, ATUALIZA TAMBÉM
         // ==========================================
 
         if (
             clienteAtual &&
-            String(clienteAtual.whatsapp) === String(whatsapp)
+            String(clienteAtual.whatsapp) ===
+            String(whatsapp)
         ) {
 
             clienteAtual.carimbos =
@@ -1585,7 +1613,7 @@ async function carimboDiretoAdmin(
 
 
 // ==========================================
-// ADMIN - EXCLUIR CLIENTE
+// PAINEL ADMIN - EXCLUIR CLIENTE
 // ==========================================
 
 async function excluirClienteAdmin(
@@ -1593,12 +1621,13 @@ async function excluirClienteAdmin(
     nome
 ) {
 
-    if (
-        !confirm(
+    const confirmar =
+        confirm(
             `Tem certeza que deseja excluir o cliente "${nome}" (${whatsapp})?`
-        )
-    ) {
+        );
 
+
+    if (!confirmar) {
         return;
     }
 
@@ -1616,7 +1645,6 @@ async function excluirClienteAdmin(
 
 
         if (!pin) {
-
             return;
         }
     }
@@ -1626,8 +1654,12 @@ async function excluirClienteAdmin(
 
         const url =
             `${API_URL}?action=delete_client` +
-            `&whatsapp=${encodeURIComponent(whatsapp)}` +
-            `&pin=${encodeURIComponent(pin)}`;
+            `&whatsapp=${encodeURIComponent(
+                whatsapp
+            )}` +
+            `&pin=${encodeURIComponent(
+                pin
+            )}`;
 
 
         const response =
@@ -1664,14 +1696,11 @@ async function excluirClienteAdmin(
 
         const clienteExcluidoEhAtual =
             clienteAtual &&
-            String(clienteAtual.whatsapp) === String(whatsapp);
+            String(clienteAtual.whatsapp) ===
+            String(whatsapp);
 
 
         if (clienteExcluidoEhAtual) {
-
-            // ==========================================
-            // LIMPA COMPLETAMENTE A SESSÃO
-            // ==========================================
 
             limparSessaoCliente();
         }
@@ -1705,13 +1734,12 @@ async function excluirClienteAdmin(
 
 
 // ==========================================
-// ADMIN - ATUALIZAR PAINEL
+// ATUALIZAR PAINEL ADMIN
 // ==========================================
 
 async function atualizarPainelAdmin() {
 
     if (!pinAdminAtual) {
-
         return;
     }
 
@@ -1720,7 +1748,9 @@ async function atualizarPainelAdmin() {
 
         const url =
             `${API_URL}?action=get_all` +
-            `&pin=${encodeURIComponent(pinAdminAtual)}`;
+            `&pin=${encodeURIComponent(
+                pinAdminAtual
+            )}`;
 
 
         const response =
@@ -1774,7 +1804,6 @@ function filtrarClientes() {
 
 
     if (!adminSearch) {
-
         return;
     }
 
@@ -1792,7 +1821,8 @@ function filtrarClientes() {
                 const nome =
                     String(
                         cliente.nome || ""
-                    ).toLowerCase();
+                    )
+                    .toLowerCase();
 
 
                 const whatsapp =
@@ -1850,9 +1880,7 @@ function sair() {
 // ALTERNAR SEÇÕES
 // ==========================================
 
-function alternarSecao(
-    secao
-) {
+function alternarSecao(secao) {
 
     const secLogin =
         document.getElementById(
@@ -1860,7 +1888,7 @@ function alternarSecao(
         );
 
 
-    const secCard =
+    const secCartao =
         document.getElementById(
             "sec-cartao"
         );
@@ -1876,17 +1904,15 @@ function alternarSecao(
         }
 
 
-        if (secCard) {
+        if (secCartao) {
 
-            secCard.classList.add(
+            secCartao.classList.add(
                 "hidden"
             );
         }
 
 
-    } else if (
-        secao === "cartao"
-    ) {
+    } else if (secao === "cartao") {
 
         if (secLogin) {
 
@@ -1896,9 +1922,9 @@ function alternarSecao(
         }
 
 
-        if (secCard) {
+        if (secCartao) {
 
-            secCard.classList.remove(
+            secCartao.classList.remove(
                 "hidden"
             );
         }
@@ -1910,9 +1936,7 @@ function alternarSecao(
 // ESCAPE HTML
 // ==========================================
 
-function escapeHTML(
-    value
-) {
+function escapeHTML(value) {
 
     return String(value)
 

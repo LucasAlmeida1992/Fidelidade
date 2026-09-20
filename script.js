@@ -27,7 +27,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const localName = localStorage.getItem("fidelidade_nome");
 
     // ==========================================
-    // RECUPERAR SESSÃO SALVA
+    // RECUPERAR SESSÃO SALVA (AUTO-LOGIN)
     // ==========================================
 
     if (localPhone) {
@@ -40,9 +40,11 @@ window.addEventListener("DOMContentLoaded", () => {
             inputName.value = localName || "";
         }
 
+        // Passa o nome VAZIO para apenas checar a existência
+        // sem forçar um recadastro se o cliente foi excluído
         carregarDadosCliente(
             localPhone,
-            localName || ""
+            ""
         );
     }
 
@@ -152,7 +154,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 // ==========================================
-// ACESSAR CARTÃO (LOGIN)
+// ACESSAR CARTÃO (LOGIN MANUAL)
 // ==========================================
 
 async function acessarCartao(event) {
@@ -186,16 +188,7 @@ async function acessarCartao(event) {
         return;
     }
 
-    localStorage.setItem(
-        "fidelidade_whatsapp",
-        phone
-    );
-
-    localStorage.setItem(
-        "fidelidade_nome",
-        name
-    );
-
+    // No acesso manual, enviamos o nome digitado para realizar/atualizar o cadastro
     await carregarDadosCliente(
         phone,
         name
@@ -246,15 +239,6 @@ async function carregarDadosCliente(
 
         if (data.success === false) {
 
-            /*
-             * IMPORTANTE:
-             * Se o cliente foi excluído no painel admin,
-             * este navegador ainda pode possuir o WhatsApp
-             * salvo no localStorage.
-             *
-             * Portanto, limpamos a sessão local aqui também.
-             */
-
             limparSessaoCliente();
 
             alert(
@@ -266,8 +250,20 @@ async function carregarDadosCliente(
         }
 
         // ==========================================
-        // CLIENTE ENCONTRADO
+        // CLIENTE ENCONTRADO - SALVA NA SESSÃO
         // ==========================================
+
+        const nomeFinal = data.nome || name || "Cliente";
+
+        localStorage.setItem(
+            "fidelidade_whatsapp",
+            phone
+        );
+
+        localStorage.setItem(
+            "fidelidade_nome",
+            nomeFinal
+        );
 
         clienteAtual = {
 
@@ -276,9 +272,7 @@ async function carregarDadosCliente(
                 phone,
 
             nome:
-                data.nome ||
-                name ||
-                "Cliente",
+                nomeFinal,
 
             carimbos:
                 Number(data.carimbos) ||
@@ -1312,22 +1306,8 @@ function sair() {
 // ==========================================
 // LIMPAR SESSÃO DO CLIENTE
 // ==========================================
-// Esta função centraliza tudo que precisa ser
-// apagado quando o cliente sai ou é excluído.
-//
-// Isso impede que:
-// - o WhatsApp continue salvo;
-// - o nome continue salvo;
-// - clienteAtual continue ativo;
-// - a página faça login automático novamente;
-// - os campos permaneçam preenchidos.
-// ==========================================
 
 function limparSessaoCliente() {
-
-    // ==========================================
-    // APAGAR DADOS SALVOS NO NAVEGADOR
-    // ==========================================
 
     localStorage.removeItem(
         "fidelidade_whatsapp"
@@ -1337,21 +1317,9 @@ function limparSessaoCliente() {
         "fidelidade_nome"
     );
 
-    // ==========================================
-    // LIMPAR VARIÁVEL DA SESSÃO
-    // ==========================================
-
     clienteAtual = null;
 
-    // ==========================================
-    // FECHAR MODAL DE RESGATE
-    // ==========================================
-
     fecharModalResgate();
-
-    // ==========================================
-    // LIMPAR CAMPOS DE LOGIN
-    // ==========================================
 
     const inputPhone =
         document.getElementById(
@@ -1372,10 +1340,6 @@ function limparSessaoCliente() {
 
         inputName.value = "";
     }
-
-    // ==========================================
-    // VOLTAR PARA LOGIN
-    // ==========================================
 
     alternarSecao(
         "login"

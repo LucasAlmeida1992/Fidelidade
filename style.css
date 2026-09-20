@@ -508,6 +508,31 @@ body::before {
     margin-bottom: 0;
     background: linear-gradient(
         135deg,
+        #ff1744 0%,
+        #e5002d 100%
+    );
+    border: 1px solid #ff1744;
+    box-shadow: 0 5px 18px rgba(251, 5, 50, 0.22);
+}
+
+.btn-code-client:hover {
+    background: linear-gradient(
+        135deg,
+        #ff3158 0%,
+        #ec0030 100%
+    );
+    border-color: #ff3158;
+    box-shadow: 0 6px 22px rgba(251, 5, 50, 0.30);
+}
+
+
+/* =========================================================
+   BOTÃO DE INSTALAÇÃO DO APP
+   ========================================================= */
+
+#btn-instalar-app {
+    background: linear-gradient(
+        135deg,
         #1d232d 0%,
         #121720 100%
     );
@@ -515,7 +540,7 @@ body::before {
     box-shadow: 0 5px 18px rgba(0, 0, 0, 0.20);
 }
 
-.btn-code-client:hover {
+#btn-instalar-app:hover {
     background: linear-gradient(
         135deg,
         #252d39 0%,

@@ -109,6 +109,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
     // ==========================================
+    // ENTER NO LOGIN
+    // ==========================================
+
+    configurarEnterLogin();
+
+
+    // ==========================================
     // SAIR
     // ==========================================
 
@@ -206,7 +213,117 @@ window.addEventListener("DOMContentLoaded", () => {
         );
     }
 
+
+    // ==========================================
+    // ENTER NO CÓDIGO DO ESTÚDIO
+    // ==========================================
+
+    configurarEnterCodigo();
+
 });
+
+
+// ==========================================
+// ENTER NO LOGIN
+// ==========================================
+
+function configurarEnterLogin() {
+
+    const inputPhone = document.getElementById("cli-phone");
+    const inputName = document.getElementById("cli-name");
+
+    if (inputPhone) {
+
+        inputPhone.addEventListener(
+            "keydown",
+            function(event) {
+
+                if (event.key === "Enter") {
+
+                    event.preventDefault();
+
+                    const btnAcessar = document.getElementById(
+                        "btn-acessar"
+                    );
+
+                    if (
+                        btnAcessar &&
+                        !btnAcessar.disabled
+                    ) {
+
+                        btnAcessar.click();
+                    }
+                }
+            }
+        );
+    }
+
+
+    if (inputName) {
+
+        inputName.addEventListener(
+            "keydown",
+            function(event) {
+
+                if (event.key === "Enter") {
+
+                    event.preventDefault();
+
+                    const btnAcessar = document.getElementById(
+                        "btn-acessar"
+                    );
+
+                    if (
+                        btnAcessar &&
+                        !btnAcessar.disabled
+                    ) {
+
+                        btnAcessar.click();
+                    }
+                }
+            }
+        );
+    }
+}
+
+
+// ==========================================
+// ENTER NO CÓDIGO DO ESTÚDIO
+// ==========================================
+
+function configurarEnterCodigo() {
+
+    const inputCodigo = document.getElementById(
+        "input-codigo-resgate"
+    );
+
+    if (!inputCodigo) {
+        return;
+    }
+
+    inputCodigo.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                const btnConfirmar = document.getElementById(
+                    "btn-confirmar-resgate"
+                );
+
+                if (
+                    btnConfirmar &&
+                    !btnConfirmar.disabled
+                ) {
+
+                    btnConfirmar.click();
+                }
+            }
+        }
+    );
+}
 
 
 // ==========================================
@@ -908,7 +1025,7 @@ async function confirmarResgateCodigo() {
 
 
         // ==========================================
-        // ATUALIZA CARTÃO
+        // ATUALIZA DADOS LOCAIS
         // ==========================================
 
         clienteAtual.carimbos =
@@ -919,6 +1036,19 @@ async function confirmarResgateCodigo() {
             clienteAtual.nome,
             clienteAtual.carimbos
         );
+
+
+        // ==========================================
+        // RECARREGA A PÁGINA
+        //
+        // A sessão está salva no localStorage.
+        // Ao recarregar, o sistema consulta novamente
+        // a API e mostra os dados reais da planilha.
+        // ==========================================
+
+        window.location.reload();
+
+        return;
 
 
     } catch (error) {

@@ -14,7 +14,7 @@ const API_URL =
 // Verifica a existência do cliente e atualiza
 // os carimbos a cada 5 segundos.
 const INTERVALO_MONITORAMENTO =
-    10000;
+    5000;
 
 
 // ==========================================

@@ -5,11 +5,13 @@
 
 const API_URL = "https://script.google.com/macros/s/AKfycbyI0svNzI2nIktgvCNTm76FQmBGXk0119W0claQhsf8Jz7XvnXQ9DiT09pZJFoYsgTF/exec";
 
-// SVGs Configuráveis
+// ==========================================
+// SVGs CONFIGURÁVEIS
+// ==========================================
+
 const SVG_CHECK = `<svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="currentColor"><path d="m424-312 282-282-56-56-226 226-114-114-56 56 170 170ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z"/></svg>`;
 
 const SVG_CIRCLE = `<svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>`;
-
 
 // ==========================================
 // VARIÁVEIS GLOBAIS
@@ -18,6 +20,40 @@ const SVG_CIRCLE = `<svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBo
 let clienteAtual = null;
 let pinAdminAtual = null;
 let todosClientes = [];
+
+
+// ==========================================
+// FUNÇÃO CENTRAL PARA LIMPAR SESSÃO
+// ==========================================
+
+function limparSessaoCliente() {
+
+    // Remove todos os dados de login
+    localStorage.removeItem("fidelidade_whatsapp");
+    localStorage.removeItem("fidelidade_nome");
+    localStorage.removeItem("fidelidade_sessao_ativa");
+
+    // Limpa memória da página
+    clienteAtual = null;
+
+    // Fecha modal caso esteja aberto
+    fecharModalResgate();
+
+    // Volta para a tela de login
+    alternarSecao("login");
+
+    // Limpa os campos
+    const inputPhone = document.getElementById("cli-phone");
+    const inputName = document.getElementById("cli-name");
+
+    if (inputPhone) {
+        inputPhone.value = "";
+    }
+
+    if (inputName) {
+        inputName.value = "";
+    }
+}
 
 
 // ==========================================
@@ -31,17 +67,16 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const localPhone = localStorage.getItem("fidelidade_whatsapp");
     const localName = localStorage.getItem("fidelidade_nome");
+    const sessaoAtiva = localStorage.getItem("fidelidade_sessao_ativa");
 
     // =====================================================
-    // SE EXISTIR LOGIN SALVO, TENTA VALIDAR NOVAMENTE
-    // NA PLANILHA.
-    //
-    // Se o cliente tiver sido excluído, a função
-    // carregarDadosCliente() vai apagar o localStorage
-    // e voltar para a tela de login.
+    // RESTAURA LOGIN SOMENTE SE A SESSÃO ESTIVER ATIVA
     // =====================================================
 
-    if (localPhone) {
+    if (
+        localPhone &&
+        sessaoAtiva === "true"
+    ) {
 
         if (inputPhone) {
             inputPhone.value = localPhone;
@@ -53,10 +88,10 @@ window.addEventListener("DOMContentLoaded", () => {
 
         carregarDadosCliente(
             localPhone,
-            localName || ""
+            localName || "",
+            true
         );
     }
-
 
     // ==========================================
     // LOGIN
@@ -181,10 +216,8 @@ window.addEventListener("DOMContentLoaded", () => {
 async function acessarCartao(event) {
 
     if (event) {
-
         event.preventDefault();
     }
-
 
     const inputPhone = document.getElementById(
         "cli-phone"
@@ -216,17 +249,15 @@ async function acessarCartao(event) {
 
 
     // =====================================================
-    // IMPORTANTE:
+    // NÃO SALVA A SESSÃO AINDA.
     //
-    // NÃO salva mais o login aqui.
-    //
-    // O localStorage só será salvo depois que
-    // carregarDadosCliente() confirmar que o cliente existe.
+    // Primeiro a API precisa confirmar que o cliente existe.
     // =====================================================
 
     await carregarDadosCliente(
         phone,
-        name
+        name,
+        false
     );
 }
 
@@ -237,7 +268,8 @@ async function acessarCartao(event) {
 
 async function carregarDadosCliente(
     phone,
-    name = ""
+    name = "",
+    restaurandoSessao = false
 ) {
 
     const btnAcessar = document.getElementById(
@@ -282,60 +314,22 @@ async function carregarDadosCliente(
 
         if (data.success === false) {
 
-            // Apaga qualquer login antigo
-            // que ainda esteja salvo no navegador.
+            limparSessaoCliente();
 
-            localStorage.removeItem(
-                "fidelidade_whatsapp"
-            );
+            if (restaurandoSessao) {
 
-            localStorage.removeItem(
-                "fidelidade_nome"
-            );
-
-
-            // Limpa sessão atual
-
-            clienteAtual = null;
-
-
-            // Volta para login
-
-            alternarSecao(
-                "login"
-            );
-
-
-            // Limpa campos
-
-            const inputPhone =
-                document.getElementById(
-                    "cli-phone"
+                alert(
+                    data.error ||
+                    "Seu cadastro não foi encontrado. Faça o login novamente."
                 );
 
-            const inputName =
-                document.getElementById(
-                    "cli-name"
+            } else {
+
+                alert(
+                    data.error ||
+                    "Cliente não encontrado. Faça o cadastro novamente."
                 );
-
-
-            if (inputPhone) {
-
-                inputPhone.value = "";
             }
-
-
-            if (inputName) {
-
-                inputName.value = "";
-            }
-
-
-            alert(
-                data.error ||
-                "Cliente não encontrado. Faça o cadastro novamente."
-            );
-
 
             return;
         }
@@ -348,7 +342,8 @@ async function carregarDadosCliente(
         clienteAtual = {
 
             whatsapp:
-                data.whatsapp || phone,
+                data.whatsapp ||
+                phone,
 
             nome:
                 data.nome ||
@@ -361,7 +356,7 @@ async function carregarDadosCliente(
 
 
         // ==========================================
-        // AGORA SIM SALVA O LOGIN
+        // AGORA SIM A SESSÃO É SALVA
         // ==========================================
 
         localStorage.setItem(
@@ -373,6 +368,12 @@ async function carregarDadosCliente(
         localStorage.setItem(
             "fidelidade_nome",
             clienteAtual.nome
+        );
+
+
+        localStorage.setItem(
+            "fidelidade_sessao_ativa",
+            "true"
         );
 
 
@@ -401,6 +402,32 @@ async function carregarDadosCliente(
             "Erro ao carregar cliente:",
             error
         );
+
+
+        // Se foi uma tentativa de restaurar
+        // uma sessão antiga e houve erro,
+        // não deixa uma sessão quebrada presa.
+
+        if (restaurandoSessao) {
+
+            localStorage.removeItem(
+                "fidelidade_whatsapp"
+            );
+
+            localStorage.removeItem(
+                "fidelidade_nome"
+            );
+
+            localStorage.removeItem(
+                "fidelidade_sessao_ativa"
+            );
+
+            clienteAtual = null;
+
+            alternarSecao(
+                "login"
+            );
+        }
 
 
         alert(
@@ -559,7 +586,6 @@ function atualizarSlot(
 
 
     if (!slot) {
-
         return;
     }
 
@@ -784,12 +810,10 @@ async function confirmarResgateCodigo() {
             "Sessão expirada. Faça login novamente."
         );
 
+        limparSessaoCliente();
+
         return;
     }
-
-
-    const cicloCompleto =
-        Number(clienteAtual.carimbos) >= 2;
 
 
     const btnConfirmar =
@@ -1401,7 +1425,7 @@ async function carimboDiretoAdmin(
 
         if (
             clienteAtual &&
-            clienteAtual.whatsapp === whatsapp
+            String(clienteAtual.whatsapp) === String(whatsapp)
         ) {
 
             clienteAtual.carimbos =
@@ -1504,66 +1528,22 @@ async function excluirClienteAdmin(
 
 
         // ==========================================
-        // SE O CLIENTE EXCLUÍDO ESTÁ LOGADO
+        // VERIFICA SE O CLIENTE EXCLUÍDO
+        // É O CLIENTE ATUAL
         // ==========================================
 
-        if (
+        const clienteExcluidoEhAtual =
             clienteAtual &&
-            String(clienteAtual.whatsapp) === String(whatsapp)
-        ) {
-
-            // Apaga login salvo
-
-            localStorage.removeItem(
-                "fidelidade_whatsapp"
-            );
-
-            localStorage.removeItem(
-                "fidelidade_nome"
-            );
+            String(clienteAtual.whatsapp) === String(whatsapp);
 
 
-            // Encerra sessão
+        if (clienteExcluidoEhAtual) {
 
-            clienteAtual = null;
+            // ==========================================
+            // LIMPA COMPLETAMENTE A SESSÃO
+            // ==========================================
 
-
-            // Fecha modal se estiver aberto
-
-            fecharModalResgate();
-
-
-            // Volta para login
-
-            alternarSecao(
-                "login"
-            );
-
-
-            // Limpa campos
-
-            const inputPhone =
-                document.getElementById(
-                    "cli-phone"
-                );
-
-
-            const inputName =
-                document.getElementById(
-                    "cli-name"
-                );
-
-
-            if (inputPhone) {
-
-                inputPhone.value = "";
-            }
-
-
-            if (inputName) {
-
-                inputName.value = "";
-            }
+            limparSessaoCliente();
         }
 
 
@@ -1572,7 +1552,9 @@ async function excluirClienteAdmin(
         );
 
 
-        // Atualiza painel
+        // ==========================================
+        // ATUALIZA PAINEL ADMIN
+        // ==========================================
 
         await atualizarPainelAdmin();
 
@@ -1730,54 +1712,7 @@ function fecharAdmin() {
 
 function sair() {
 
-    // Apaga login salvo
-
-    localStorage.removeItem(
-        "fidelidade_whatsapp"
-    );
-
-
-    localStorage.removeItem(
-        "fidelidade_nome"
-    );
-
-
-    // Limpa sessão
-
-    clienteAtual = null;
-
-
-    // Volta para login
-
-    alternarSecao(
-        "login"
-    );
-
-
-    // Limpa campos
-
-    const inputPhone =
-        document.getElementById(
-            "cli-phone"
-        );
-
-
-    const inputName =
-        document.getElementById(
-            "cli-name"
-        );
-
-
-    if (inputPhone) {
-
-        inputPhone.value = "";
-    }
-
-
-    if (inputName) {
-
-        inputName.value = "";
-    }
+    limparSessaoCliente();
 }
 
 

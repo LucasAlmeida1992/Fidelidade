@@ -647,6 +647,27 @@ function atualizarInterfaceCartao(
         }
     }
 
+    // ==========================================
+    // ALTERA O TEXTO DO BOTÃO CONFORME O STATUS
+    // ==========================================
+
+    const btnAbrirResgate =
+        document.getElementById("btn-abrir-resgate");
+
+    if (btnAbrirResgate) {
+
+        if (carimbos >= 2) {
+
+            btnAbrirResgate.innerText =
+                "🔄 Reiniciar Cartão";
+
+        } else {
+
+            btnAbrirResgate.innerText =
+                "🔑 Digitar Código do Estúdio";
+        }
+    }
+
     atualizarSlot(
         "slot-1",
         carimbos >= 1,

@@ -7,6 +7,7 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyI0svNzI2nIktgvCNTm76F
 
 // SVGs Configuráveis
 const SVG_CHECK = `<svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="currentColor"><path d="m424-312 282-282-56-56-226 226-114-114-56 56 170 170ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z"/></svg>`;
+
 const SVG_CIRCLE = `<svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>`;
 
 // Variáveis Globais
@@ -17,36 +18,47 @@ let todosClientes = [];
 // ==========================================
 // INICIALIZAÇÃO
 // ==========================================
-
 window.addEventListener("DOMContentLoaded", () => {
 
     const inputPhone = document.getElementById("cli-phone");
     const inputName = document.getElementById("cli-name");
 
-    const localPhone = localStorage.getItem("fidelidade_whatsapp");
-    const localName = localStorage.getItem("fidelidade_nome");
-
     // ==========================================
-    // RECUPERAR SESSÃO SALVA (AUTO-LOGIN)
+    // NÃO EXISTE LOGIN AUTOMÁTICO
     // ==========================================
+    // Apaga qualquer vestígio de sessão antiga
+    // que tenha sido salvo por versões anteriores.
+    localStorage.removeItem("fidelidade_whatsapp");
+    localStorage.removeItem("fidelidade_nome");
+    sessionStorage.removeItem("fidelidade_whatsapp");
+    sessionStorage.removeItem("fidelidade_nome");
 
-    if (localPhone) {
-
-        if (inputPhone) {
-            inputPhone.value = localPhone;
-        }
-
-        if (inputName) {
-            inputName.value = localName || "";
-        }
-
-        // Passa o nome VAZIO para apenas checar a existência
-        // sem forçar um recadastro se o cliente foi excluído
-        carregarDadosCliente(
-            localPhone,
-            ""
-        );
+    // Limpa os campos imediatamente
+    if (inputPhone) {
+        inputPhone.value = "";
+        inputPhone.setAttribute("autocomplete", "off");
     }
+
+    if (inputName) {
+        inputName.value = "";
+        inputName.setAttribute("autocomplete", "off");
+    }
+
+    // Limpeza extra após o navegador terminar autofill
+    setTimeout(() => {
+
+        if (!clienteAtual) {
+
+            if (inputPhone) {
+                inputPhone.value = "";
+            }
+
+            if (inputName) {
+                inputName.value = "";
+            }
+        }
+
+    }, 100);
 
     // ==========================================
     // BOTÃO ACESSAR
@@ -156,7 +168,6 @@ window.addEventListener("DOMContentLoaded", () => {
 // ==========================================
 // ACESSAR CARTÃO (LOGIN MANUAL)
 // ==========================================
-
 async function acessarCartao(event) {
 
     if (event) {
@@ -188,7 +199,6 @@ async function acessarCartao(event) {
         return;
     }
 
-    // No acesso manual, enviamos o nome digitado para realizar/atualizar o cadastro
     await carregarDadosCliente(
         phone,
         name
@@ -196,29 +206,48 @@ async function acessarCartao(event) {
 }
 
 // ==========================================
-// BUSCAR DADOS DO CLIENTE NA API
+// BUSCAR / CADASTRAR CLIENTE
 // ==========================================
-
 async function carregarDadosCliente(
     phone,
     name = ""
 ) {
 
     const btnAcessar =
-        document.getElementById("btn-acessar");
+        document.getElementById(
+            "btn-acessar"
+        );
 
     try {
 
         if (btnAcessar) {
 
-            btnAcessar.disabled = true;
+            btnAcessar.disabled =
+                true;
 
             btnAcessar.innerText =
                 "Acessando...";
         }
 
+        // ==========================================
+        // IMPORTANTE
+        // cadastrar=true significa:
+        //
+        // - se o cliente existe:
+        //   carrega o cadastro existente
+        //
+        // - se não existe:
+        //   cria novo cadastro com 0 carimbos
+        //
+        // Isso acontece somente porque o usuário
+        // clicou manualmente em "Acessar Cartão".
+        // ==========================================
+
         const url =
-            `${API_URL}?action=get_client&whatsapp=${encodeURIComponent(phone)}&nome=${encodeURIComponent(name)}`;
+            `${API_URL}?action=get_client` +
+            `&whatsapp=${encodeURIComponent(phone)}` +
+            `&nome=${encodeURIComponent(name)}` +
+            `&cadastrar=true`;
 
         const response =
             await fetch(url);
@@ -234,36 +263,41 @@ async function carregarDadosCliente(
             await response.json();
 
         // ==========================================
-        // CLIENTE NÃO ENCONTRADO / EXCLUÍDO
+        // ERRO DE API
         // ==========================================
 
         if (data.success === false) {
 
-            limparSessaoCliente();
-
             alert(
                 data.error ||
-                "Este cliente não está mais cadastrado."
+                "Erro ao consultar cliente."
             );
 
             return;
         }
 
         // ==========================================
-        // CLIENTE ENCONTRADO - SALVA NA SESSÃO
+        // CADASTRO NÃO ENCONTRADO
+        // ==========================================
+        // Em princípio não deve acontecer com
+        // cadastrar=true, mas tratamos corretamente.
         // ==========================================
 
-        const nomeFinal = data.nome || name || "Cliente";
+        if (
+            data.found === false
+        ) {
 
-        localStorage.setItem(
-            "fidelidade_whatsapp",
-            phone
-        );
+            alert(
+                data.message ||
+                "Cliente não encontrado."
+            );
 
-        localStorage.setItem(
-            "fidelidade_nome",
-            nomeFinal
-        );
+            return;
+        }
+
+        // ==========================================
+        // CLIENTE ENCONTRADO / CADASTRADO
+        // ==========================================
 
         clienteAtual = {
 
@@ -272,11 +306,14 @@ async function carregarDadosCliente(
                 phone,
 
             nome:
-                nomeFinal,
+                data.nome ||
+                name ||
+                "Cliente",
 
             carimbos:
-                Number(data.carimbos) ||
-                0
+                Number(
+                    data.carimbos
+                ) || 0
         };
 
         atualizarInterfaceCartao(
@@ -303,7 +340,8 @@ async function carregarDadosCliente(
 
         if (btnAcessar) {
 
-            btnAcessar.disabled = false;
+            btnAcessar.disabled =
+                false;
 
             btnAcessar.innerText =
                 "Acessar Cartão";
@@ -417,6 +455,10 @@ function atualizarInterfaceCartao(
     );
 }
 
+// ==========================================
+// ATUALIZAR SLOT
+// ==========================================
+
 function atualizarSlot(
     id,
     ativo,
@@ -425,7 +467,9 @@ function atualizarSlot(
 ) {
 
     const slot =
-        document.getElementById(id);
+        document.getElementById(
+            id
+        );
 
     if (!slot) return;
 
@@ -435,7 +479,9 @@ function atualizarSlot(
             : "stamp-slot";
 
     const iconSpan =
-        slot.querySelector(".icon");
+        slot.querySelector(
+            ".icon"
+        );
 
     if (iconSpan) {
 
@@ -488,7 +534,9 @@ function abrirModalResgate() {
 
     const cicloCompleto =
         !!clienteAtual &&
-        Number(clienteAtual.carimbos) >= 2;
+        Number(
+            clienteAtual.carimbos
+        ) >= 2;
 
     if (titulo) {
 
@@ -537,6 +585,10 @@ function abrirModalResgate() {
     }
 }
 
+// ==========================================
+// FECHAR MODAL
+// ==========================================
+
 function fecharModalResgate() {
 
     const modal =
@@ -568,7 +620,9 @@ async function confirmarResgateCodigo() {
             ? inputCodigo.value.trim()
             : "";
 
-    if (codigo.length !== 4) {
+    if (
+        codigo.length !== 4
+    ) {
 
         alert(
             "Digite o código de 4 dígitos fornecido pelo tatuador."
@@ -592,7 +646,9 @@ async function confirmarResgateCodigo() {
     try {
 
         const url =
-            `${API_URL}?action=redeem_token&whatsapp=${encodeURIComponent(clienteAtual.whatsapp)}&codigo=${encodeURIComponent(codigo)}`;
+            `${API_URL}?action=redeem_token` +
+            `&whatsapp=${encodeURIComponent(clienteAtual.whatsapp)}` +
+            `&codigo=${encodeURIComponent(codigo)}`;
 
         const response =
             await fetch(url);
@@ -625,7 +681,9 @@ async function confirmarResgateCodigo() {
                 "🎉 Desconto resgatado com sucesso!\nO seu cartão foi reiniciado para o próximo ciclo."
             );
 
-        } else if (data.descontoLiberado) {
+        } else if (
+            data.descontoLiberado
+        ) {
 
             alert(
                 "🎉 Carimbo adicionado!\nVocê liberou 10% de desconto para a próxima tattoo!"
@@ -639,7 +697,9 @@ async function confirmarResgateCodigo() {
         }
 
         clienteAtual.carimbos =
-            data.carimbos;
+            Number(
+                data.carimbos
+            ) || 0;
 
         atualizarInterfaceCartao(
             clienteAtual.nome,
@@ -675,7 +735,8 @@ async function promptAdmin() {
     try {
 
         const url =
-            `${API_URL}?action=get_all&pin=${encodeURIComponent(pin)}`;
+            `${API_URL}?action=get_all` +
+            `&pin=${encodeURIComponent(pin)}`;
 
         const response =
             await fetch(url);
@@ -704,7 +765,9 @@ async function promptAdmin() {
             pin;
 
         todosClientes =
-            Array.isArray(data.clients)
+            Array.isArray(
+                data.clients
+            )
                 ? data.clients
                 : [];
 
@@ -826,6 +889,10 @@ function renderizarClientesAdmin(
                 </div>
             `;
 
+            // ==========================================
+            // GERAR CÓDIGO
+            // ==========================================
+
             const botaoCodigo =
                 item.querySelector(
                     ".btn-code-admin"
@@ -845,6 +912,10 @@ function renderizarClientesAdmin(
                 );
             }
 
+            // ==========================================
+            // CARIMBO DIRETO
+            // ==========================================
+
             const botaoCarimbo =
                 item.querySelector(
                     ".btn-add-admin"
@@ -863,6 +934,10 @@ function renderizarClientesAdmin(
                     }
                 );
             }
+
+            // ==========================================
+            // EXCLUIR
+            // ==========================================
 
             const botaoExcluir =
                 item.querySelector(
@@ -891,7 +966,7 @@ function renderizarClientesAdmin(
 }
 
 // ==========================================
-// PAINEL ADMIN - GERAR CÓDIGO TEMPORÁRIO
+// PAINEL ADMIN - GERAR CÓDIGO
 // ==========================================
 
 async function gerarCodigoAdmin(
@@ -915,7 +990,9 @@ async function gerarCodigoAdmin(
     try {
 
         const url =
-            `${API_URL}?action=generate_token&whatsapp=${encodeURIComponent(whatsapp)}&pin=${encodeURIComponent(pin)}`;
+            `${API_URL}?action=generate_token` +
+            `&whatsapp=${encodeURIComponent(whatsapp)}` +
+            `&pin=${encodeURIComponent(pin)}`;
 
         const response =
             await fetch(url);
@@ -984,7 +1061,10 @@ async function carimboDiretoAdmin(
     try {
 
         const url =
-            `${API_URL}?action=add_stamp&whatsapp=${encodeURIComponent(whatsapp)}&nome=${encodeURIComponent(nome)}&pin=${encodeURIComponent(pin)}`;
+            `${API_URL}?action=add_stamp` +
+            `&whatsapp=${encodeURIComponent(whatsapp)}` +
+            `&nome=${encodeURIComponent(nome)}` +
+            `&pin=${encodeURIComponent(pin)}`;
 
         const response =
             await fetch(url);
@@ -1032,13 +1112,24 @@ async function carimboDiretoAdmin(
 
         await atualizarPainelAdmin();
 
+        // ==========================================
+        // ATUALIZAR CARTÃO ABERTO
+        // ==========================================
+
         if (
             clienteAtual &&
-            clienteAtual.whatsapp === whatsapp
+            normalizarWhatsApp(
+                clienteAtual.whatsapp
+            ) ===
+            normalizarWhatsApp(
+                whatsapp
+            )
         ) {
 
             clienteAtual.carimbos =
-                data.carimbos;
+                Number(
+                    data.carimbos
+                ) || 0;
 
             atualizarInterfaceCartao(
                 clienteAtual.nome,
@@ -1093,7 +1184,9 @@ async function excluirClienteAdmin(
     try {
 
         const url =
-            `${API_URL}?action=delete_client&whatsapp=${encodeURIComponent(whatsapp)}&pin=${encodeURIComponent(pin)}`;
+            `${API_URL}?action=delete_client` +
+            `&whatsapp=${encodeURIComponent(whatsapp)}` +
+            `&pin=${encodeURIComponent(pin)}`;
 
         const response =
             await fetch(url);
@@ -1119,41 +1212,44 @@ async function excluirClienteAdmin(
         }
 
         // ==========================================
-        // VERIFICAR SE O CLIENTE EXCLUÍDO
-        // É O CLIENTE LOGADO NESTE NAVEGADOR
+        // VERIFICAR SE É O CLIENTE ABERTO
         // ==========================================
 
         const whatsappExcluido =
-            String(whatsapp)
-                .replace(/\D/g, "");
+            normalizarWhatsApp(
+                whatsapp
+            );
 
-        const whatsappLogado =
+        const whatsappAtual =
             clienteAtual &&
             clienteAtual.whatsapp
-                ? String(
+                ? normalizarWhatsApp(
                     clienteAtual.whatsapp
-                ).replace(/\D/g, "")
-                : String(
-                    localStorage.getItem(
-                        "fidelidade_whatsapp"
-                    ) || ""
-                ).replace(/\D/g, "");
+                )
+                : "";
 
         const mesmoCliente =
             whatsappExcluido !== "" &&
-            whatsappExcluido === whatsappLogado;
+            whatsappExcluido === whatsappAtual;
 
         // ==========================================
-        // SE FOR O CLIENTE LOGADO:
-        // ENCERRA A SESSÃO E LIMPA OS DADOS
+        // SE FOR O CLIENTE ATUAL:
+        // DESLOGAR E LIMPAR
         // ==========================================
 
         if (mesmoCliente) {
 
             limparSessaoCliente();
+        }
+
+        // ==========================================
+        // AVISO
+        // ==========================================
+
+        if (mesmoCliente) {
 
             alert(
-                `🗑️ Cliente ${nome} excluído com sucesso!\n\nA sessão deste cliente foi encerrada e os dados locais foram apagados.`
+                `🗑️ Cliente ${nome} excluído com sucesso!\n\nA sessão foi encerrada e os campos foram apagados.`
             );
 
         } else {
@@ -1189,7 +1285,8 @@ async function atualizarPainelAdmin() {
     try {
 
         const url =
-            `${API_URL}?action=get_all&pin=${encodeURIComponent(pinAdminAtual)}`;
+            `${API_URL}?action=get_all` +
+            `&pin=${encodeURIComponent(pinAdminAtual)}`;
 
         const response =
             await fetch(url);
@@ -1226,7 +1323,7 @@ async function atualizarPainelAdmin() {
 }
 
 // ==========================================
-// UTILITÁRIOS
+// FILTRAR CLIENTES
 // ==========================================
 
 function filtrarClientes() {
@@ -1295,7 +1392,7 @@ function fecharAdmin() {
 }
 
 // ==========================================
-// SAIR NORMALMENTE
+// SAIR
 // ==========================================
 
 function sair() {
@@ -1304,10 +1401,14 @@ function sair() {
 }
 
 // ==========================================
-// LIMPAR SESSÃO DO CLIENTE
+// LIMPAR SESSÃO
 // ==========================================
 
 function limparSessaoCliente() {
+
+    // ==========================================
+    // REMOVER DADOS DE VERSÕES ANTIGAS
+    // ==========================================
 
     localStorage.removeItem(
         "fidelidade_whatsapp"
@@ -1317,9 +1418,30 @@ function limparSessaoCliente() {
         "fidelidade_nome"
     );
 
-    clienteAtual = null;
+    sessionStorage.removeItem(
+        "fidelidade_whatsapp"
+    );
+
+    sessionStorage.removeItem(
+        "fidelidade_nome"
+    );
+
+    // ==========================================
+    // LIMPAR CLIENTE ATUAL
+    // ==========================================
+
+    clienteAtual =
+        null;
+
+    // ==========================================
+    // FECHAR MODAL
+    // ==========================================
 
     fecharModalResgate();
+
+    // ==========================================
+    // LIMPAR CAMPOS
+    // ==========================================
 
     const inputPhone =
         document.getElementById(
@@ -1333,16 +1455,38 @@ function limparSessaoCliente() {
 
     if (inputPhone) {
 
-        inputPhone.value = "";
+        inputPhone.value =
+            "";
     }
 
     if (inputName) {
 
-        inputName.value = "";
+        inputName.value =
+            "";
     }
+
+    // ==========================================
+    // VOLTAR PARA LOGIN
+    // ==========================================
 
     alternarSecao(
         "login"
+    );
+}
+
+// ==========================================
+// NORMALIZAR WHATSAPP
+// ==========================================
+
+function normalizarWhatsApp(
+    numero
+) {
+
+    return String(
+        numero || ""
+    ).replace(
+        /\D/g,
+        ""
     );
 }
 
@@ -1364,7 +1508,9 @@ function alternarSecao(
             "sec-cartao"
         );
 
-    if (secao === "login") {
+    if (
+        secao === "login"
+    ) {
 
         if (secLogin) {
 
@@ -1404,7 +1550,9 @@ function alternarSecao(
 // ESCAPAR HTML
 // ==========================================
 
-function escapeHTML(value) {
+function escapeHTML(
+    value
+) {
 
     return String(value)
         .replace(

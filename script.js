@@ -1,6 +1,6 @@
 // ==========================================
 // CONFIGURAÇÃO DA API (GOOGLE APPS SCRIPT)
-// CARTÃO FIDELIDADE - LUCAS FRANÇA TATTOO
+// CARTÃO FIDELIDADE - LUCAS FRANCA TATTOO
 // ==========================================
 
 const API_URL = "https://script.google.com/macros/s/AKfycbyI0svNzI2nIktgvCNTm76FQmBGXk0119W0claQhsf8Jz7XvnXQ9DiT09pZJFoYsgTF/exec";
@@ -538,74 +538,15 @@ async function carregarDadosCliente(
             await response.json();
 
         // ==========================================
-        // CLIENTE EXCLUÍDO
+        // ERRO DA API
+        // ==========================================
+        //
+        // Não tratamos mais "deleted" como bloqueio.
+        // O Backend agora permite novo cadastro após
+        // exclusão.
         // ==========================================
 
         if (data.success === false) {
-
-            if (data.deleted === true) {
-
-                // ------------------------------------------
-                // LIMPA OS DADOS SALVOS
-                // ------------------------------------------
-
-                localStorage.removeItem(
-                    "fidelidade_whatsapp"
-                );
-
-                localStorage.removeItem(
-                    "fidelidade_nome"
-                );
-
-                // ------------------------------------------
-                // LIMPA CLIENTE ATUAL
-                // ------------------------------------------
-
-                clienteAtual = null;
-
-                // ------------------------------------------
-                // LIMPA OS CAMPOS DO LOGIN
-                // ------------------------------------------
-
-                const inputPhone =
-                    document.getElementById(
-                        "cli-phone"
-                    );
-
-                const inputName =
-                    document.getElementById(
-                        "cli-name"
-                    );
-
-                if (inputPhone) {
-                    inputPhone.value = "";
-                }
-
-                if (inputName) {
-                    inputName.value = "";
-                }
-
-                // ------------------------------------------
-                // VOLTA PARA A TELA DE LOGIN
-                // ------------------------------------------
-
-                alternarSecao("login");
-
-                // ------------------------------------------
-                // AVISA O CLIENTE
-                // ------------------------------------------
-
-                alert(
-                    "Este cliente foi excluído.\n\n" +
-                    "Os dados foram limpos. Faça um novo cadastro com o tatuador."
-                );
-
-                return;
-            }
-
-            // ==========================================
-            // OUTRO TIPO DE ERRO
-            // ==========================================
 
             alert(
                 data.error ||
@@ -614,6 +555,10 @@ async function carregarDadosCliente(
 
             return;
         }
+
+        // ==========================================
+        // CLIENTE CARREGADO COM SUCESSO
+        // ==========================================
 
         clienteAtual = {
 
@@ -1396,16 +1341,44 @@ async function excluirClienteAdmin(
 
         // ==========================================
         // VERIFICA SE O CLIENTE EXCLUÍDO
-        // ERA O CLIENTE SALVO
+        // É O CLIENTE SALVO NO NAVEGADOR
         // ==========================================
 
         const whatsappSalvo =
-            localStorage.getItem(
-                "fidelidade_whatsapp"
+            limparWhatsAppLocal(
+                localStorage.getItem(
+                    "fidelidade_whatsapp"
+                )
             );
 
-        if (whatsappSalvo === whatsapp) {
+        const whatsappExcluido =
+            limparWhatsAppLocal(
+                whatsapp
+            );
 
+        const clienteAberto =
+            clienteAtual &&
+            limparWhatsAppLocal(
+                clienteAtual.whatsapp
+            ) === whatsappExcluido;
+
+        const clienteSalvo =
+            whatsappSalvo === whatsappExcluido;
+
+        // ==========================================
+        // SE O CLIENTE EXCLUÍDO ESTAVA LOGADO,
+        // DESLOGA COMPLETAMENTE
+        // ==========================================
+
+        if (
+            clienteAberto ||
+            clienteSalvo
+        ) {
+
+            // Limpa memória da sessão
+            clienteAtual = null;
+
+            // Limpa dados persistidos
             localStorage.removeItem(
                 "fidelidade_whatsapp"
             );
@@ -1414,6 +1387,7 @@ async function excluirClienteAdmin(
                 "fidelidade_nome"
             );
 
+            // Limpa campos do login
             const inputPhone =
                 document.getElementById(
                     "cli-phone"
@@ -1431,39 +1405,12 @@ async function excluirClienteAdmin(
             if (inputName) {
                 inputName.value = "";
             }
-        }
 
-        // ==========================================
-        // SE ERA O CLIENTE ATUALMENTE ABERTO,
-        // ENCERRA A SESSÃO DO CLIENTE
-        // ==========================================
+            // Fecha modal de código caso esteja aberto
+            fecharModalResgate();
 
-        if (
-            clienteAtual &&
-            clienteAtual.whatsapp === whatsapp
-        ) {
-
-            clienteAtual = null;
-
+            // Volta para o login
             alternarSecao("login");
-
-            const inputPhone =
-                document.getElementById(
-                    "cli-phone"
-                );
-
-            const inputName =
-                document.getElementById(
-                    "cli-name"
-                );
-
-            if (inputPhone) {
-                inputPhone.value = "";
-            }
-
-            if (inputName) {
-                inputName.value = "";
-            }
         }
 
         // ==========================================
@@ -1491,6 +1438,20 @@ async function excluirClienteAdmin(
             "Erro de conexão ao tentar excluir."
         );
     }
+}
+
+// ==========================================
+// UTILITÁRIO - LIMPAR WHATSAPP LOCAL
+// ==========================================
+
+function limparWhatsAppLocal(numero) {
+
+    if (!numero) {
+        return "";
+    }
+
+    return String(numero)
+        .replace(/\D/g, "");
 }
 
 // ==========================================

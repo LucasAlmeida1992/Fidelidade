@@ -1,24 +1,24 @@
 // ==========================================
-// CONFIGURAÇÃO DA API (GOOGLE APPS SCRIPT)
-// CARTÃO FIDELIDADE - LUCAS FRANÇA TATTOO
+// LUCAS FRANCA TATTOO
+// CARTÃO FIDELIDADE VIP
 // ==========================================
 
-const API_URL = "https://script.google.com/macros/s/AKfycbyI0svNzI2nIktgvCNTm76FQmBGXk0119W0claQhsf8Jz7XvnXQ9DiT09pZJFoYsgTF/exec";
+const API_URL =
+    "https://script.google.com/macros/s/AKfycbyI0svNzI2nIktgvCNTm76FQmBGXk0119W0claQhsf8Jz7XvnXQ9DiT09pZJFoYsgTF/exec";
 
-// SVGs Configuráveis
-const SVG_CHECK = `<svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="currentColor"><path d="m424-312 282-282-56-56-226 226-114-114-56 56 170 170ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z"/></svg>`;
-
-const SVG_CIRCLE = `<svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>`;
 
 // ==========================================
 // VARIÁVEIS GLOBAIS
 // ==========================================
 
 let clienteAtual = null;
+
 let pinAdminAtual = null;
+
 let todosClientes = [];
 
 let monitorCartaoInterval = null;
+
 let monitorCartaoEmAndamento = false;
 
 
@@ -26,256 +26,388 @@ let monitorCartaoEmAndamento = false;
 // INICIALIZAÇÃO
 // ==========================================
 
-window.addEventListener("DOMContentLoaded", () => {
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-    const inputPhone = document.getElementById("cli-phone");
-    const inputName = document.getElementById("cli-name");
+        const whatsappSalvo =
+            localStorage.getItem(
+                "fidelidade_whatsapp"
+            );
 
-    const localPhone = localStorage.getItem("fidelidade_whatsapp");
-    const localName = localStorage.getItem("fidelidade_nome");
-    const sessaoAtiva = localStorage.getItem("fidelidade_sessao_ativa");
+        const nomeSalvo =
+            localStorage.getItem(
+                "fidelidade_nome"
+            );
 
-    // ==========================================
-    // RESTAURA SESSÃO SOMENTE SE ESTIVER ATIVA
-    // ==========================================
+        const sessaoSalva =
+            localStorage.getItem(
+                "fidelidade_sessao_ativa"
+            );
 
-    if (localPhone && sessaoAtiva === "true") {
 
-        if (inputPhone) {
-            inputPhone.value = localPhone;
+        // --------------------------------------
+        // Restaurar campos
+        // --------------------------------------
+
+        const inputTelefone =
+            document.getElementById(
+                "cli-phone"
+            );
+
+        const inputNome =
+            document.getElementById(
+                "cli-name"
+            );
+
+
+        if (
+            inputTelefone &&
+            whatsappSalvo
+        ) {
+
+            inputTelefone.value =
+                whatsappSalvo;
         }
 
-        if (inputName) {
-            inputName.value = localName || "";
+
+        if (
+            inputNome &&
+            nomeSalvo
+        ) {
+
+            inputNome.value =
+                nomeSalvo;
         }
 
-        carregarDadosCliente(
-            localPhone,
-            localName || "",
-            true
-        );
 
-    }
+        // --------------------------------------
+        // Restaurar sessão
+        //
+        // Compatibilidade:
+        // se o usuário já estava usando a
+        // versão antiga, não obrigamos a nova
+        // chave de sessão.
+        // --------------------------------------
 
-    // ==========================================
-    // BOTÃO ACESSAR
-    // ==========================================
+        if (
+            whatsappSalvo &&
+            (
+                sessaoSalva === "true" ||
+                sessaoSalva === null
+            )
+        ) {
 
-    const btnAcessar = document.getElementById("btn-acessar");
-
-    if (btnAcessar) {
-        btnAcessar.addEventListener("click", acessarCartao);
-    }
-
-    // ==========================================
-    // BOTÃO SAIR
-    // ==========================================
-
-    const btnSair = document.getElementById("btn-sair");
-
-    if (btnSair) {
-        btnSair.addEventListener("click", sair);
-    }
-
-    // ==========================================
-    // BOTÃO ADMIN
-    // ==========================================
-
-    const btnAdmin = document.getElementById("btn-admin-toggle");
-
-    if (btnAdmin) {
-        btnAdmin.addEventListener("click", promptAdmin);
-    }
-
-    // ==========================================
-    // FECHAR ADMIN
-    // ==========================================
-
-    const btnFecharAdmin = document.getElementById("btn-fechar-admin");
-
-    if (btnFecharAdmin) {
-        btnFecharAdmin.addEventListener("click", fecharAdmin);
-    }
-
-    // ==========================================
-    // PESQUISA ADMIN
-    // ==========================================
-
-    const adminSearch = document.getElementById("admin-search");
-
-    if (adminSearch) {
-        adminSearch.addEventListener("input", filtrarClientes);
-    }
-
-    // ==========================================
-    // MODAL DE RESGATE
-    // ==========================================
-
-    const btnAbrirResgate = document.getElementById("btn-abrir-resgate");
-
-    if (btnAbrirResgate) {
-        btnAbrirResgate.addEventListener(
-            "click",
-            abrirModalResgate
-        );
-    }
-
-    const btnCancelarResgate =
-        document.getElementById("btn-cancelar-resgate");
-
-    if (btnCancelarResgate) {
-        btnCancelarResgate.addEventListener(
-            "click",
-            fecharModalResgate
-        );
-    }
-
-    const btnConfirmarResgate =
-        document.getElementById("btn-confirmar-resgate");
-
-    if (btnConfirmarResgate) {
-        btnConfirmarResgate.addEventListener(
-            "click",
-            confirmarResgateCodigo
-        );
-    }
-
-    // ==========================================
-    // ENTER NO LOGIN
-    // ==========================================
-
-    configurarEnterLogin();
-
-    // ==========================================
-    // ENTER NO CÓDIGO
-    // ==========================================
-
-    configurarEnterCodigo();
-});
-
-
-// ==========================================
-// ENTER NO LOGIN
-// ==========================================
-
-function configurarEnterLogin() {
-
-    const inputPhone = document.getElementById("cli-phone");
-    const inputName = document.getElementById("cli-name");
-    const btnAcessar = document.getElementById("btn-acessar");
-
-    if (!btnAcessar) {
-        return;
-    }
-
-    if (inputPhone) {
-
-        inputPhone.addEventListener("keydown", (event) => {
-
-            if (event.key === "Enter") {
-
-                event.preventDefault();
-
-                btnAcessar.click();
-
-            }
-
-        });
-
-    }
-
-    if (inputName) {
-
-        inputName.addEventListener("keydown", (event) => {
-
-            if (event.key === "Enter") {
-
-                event.preventDefault();
-
-                btnAcessar.click();
-
-            }
-
-        });
-
-    }
-
-}
-
-
-// ==========================================
-// ENTER NO CÓDIGO
-// ==========================================
-
-function configurarEnterCodigo() {
-
-    const inputCodigo =
-        document.getElementById("input-codigo-resgate");
-
-    const btnConfirmar =
-        document.getElementById("btn-confirmar-resgate");
-
-    if (!inputCodigo || !btnConfirmar) {
-        return;
-    }
-
-    inputCodigo.addEventListener("keydown", (event) => {
-
-        if (event.key === "Enter") {
-
-            event.preventDefault();
-
-            btnConfirmar.click();
-
+            carregarDadosCliente(
+                whatsappSalvo,
+                nomeSalvo || ""
+            );
         }
 
-    });
 
-}
+        // --------------------------------------
+        // Enter no telefone
+        // --------------------------------------
+
+        if (inputTelefone) {
+
+            inputTelefone.addEventListener(
+                "keydown",
+                event => {
+
+                    if (
+                        event.key === "Enter"
+                    ) {
+
+                        event.preventDefault();
+
+                        acessarCartao();
+                    }
+                }
+            );
+        }
 
 
-// ==========================================
-// ACESSAR CARTÃO - LOGIN
-// ==========================================
+        // --------------------------------------
+        // Enter no nome
+        // --------------------------------------
 
-async function acessarCartao(event) {
+        if (inputNome) {
 
-    if (event) {
-        event.preventDefault();
+            inputNome.addEventListener(
+                "keydown",
+                event => {
+
+                    if (
+                        event.key === "Enter"
+                    ) {
+
+                        event.preventDefault();
+
+                        acessarCartao();
+                    }
+                }
+            );
+        }
+
+
+        // --------------------------------------
+        // Enter no código do estúdio
+        // --------------------------------------
+
+        const inputCodigo =
+            document.getElementById(
+                "input-codigo-resgate"
+            );
+
+        if (inputCodigo) {
+
+            inputCodigo.addEventListener(
+                "keydown",
+                event => {
+
+                    if (
+                        event.key === "Enter"
+                    ) {
+
+                        event.preventDefault();
+
+                        confirmarResgate();
+                    }
+                }
+            );
+        }
+
+
+        // --------------------------------------
+        // Botão acessar
+        // --------------------------------------
+
+        const btnAcessar =
+            document.getElementById(
+                "btn-acessar"
+            );
+
+        if (btnAcessar) {
+
+            btnAcessar.addEventListener(
+                "click",
+                acessarCartao
+            );
+        }
+
+
+        // --------------------------------------
+        // Botão sair
+        // --------------------------------------
+
+        const btnSair =
+            document.getElementById(
+                "btn-sair"
+            );
+
+        if (btnSair) {
+
+            btnSair.addEventListener(
+                "click",
+                sair
+            );
+        }
+
+
+        // --------------------------------------
+        // Abrir admin
+        // --------------------------------------
+
+        const btnAdmin =
+            document.getElementById(
+                "btn-admin-toggle"
+            );
+
+        if (btnAdmin) {
+
+            btnAdmin.addEventListener(
+                "click",
+                abrirAdmin
+            );
+        }
+
+
+        // --------------------------------------
+        // Fechar admin
+        // --------------------------------------
+
+        const btnFecharAdmin =
+            document.getElementById(
+                "btn-fechar-admin"
+            );
+
+        if (btnFecharAdmin) {
+
+            btnFecharAdmin.addEventListener(
+                "click",
+                fecharAdmin
+            );
+        }
+
+
+        // --------------------------------------
+        // Pesquisa admin
+        // --------------------------------------
+
+        const pesquisaAdmin =
+            document.getElementById(
+                "admin-search"
+            );
+
+        if (pesquisaAdmin) {
+
+            pesquisaAdmin.addEventListener(
+                "input",
+                renderizarClientesAdmin
+            );
+        }
+
+
+        // --------------------------------------
+        // Abrir resgate
+        // --------------------------------------
+
+        const btnAbrirResgate =
+            document.getElementById(
+                "btn-abrir-resgate"
+            );
+
+        if (btnAbrirResgate) {
+
+            btnAbrirResgate.addEventListener(
+                "click",
+                abrirModalResgate
+            );
+        }
+
+
+        // --------------------------------------
+        // Cancelar resgate
+        // --------------------------------------
+
+        const btnCancelarResgate =
+            document.getElementById(
+                "btn-cancelar-resgate"
+            );
+
+        if (btnCancelarResgate) {
+
+            btnCancelarResgate.addEventListener(
+                "click",
+                fecharModalResgate
+            );
+        }
+
+
+        // --------------------------------------
+        // Confirmar resgate
+        // --------------------------------------
+
+        const btnConfirmarResgate =
+            document.getElementById(
+                "btn-confirmar-resgate"
+            );
+
+        if (btnConfirmarResgate) {
+
+            btnConfirmarResgate.addEventListener(
+                "click",
+                confirmarResgate
+            );
+        }
+
+
+        // --------------------------------------
+        // Fechar modal clicando fora
+        // --------------------------------------
+
+        const modal =
+            document.getElementById(
+                "modal-resgate"
+            );
+
+        if (modal) {
+
+            modal.addEventListener(
+                "click",
+                event => {
+
+                    if (
+                        event.target === modal
+                    ) {
+
+                        fecharModalResgate();
+                    }
+                }
+            );
+        }
     }
+);
 
-    const inputPhone =
-        document.getElementById("cli-phone");
 
-    const inputName =
-        document.getElementById("cli-name");
+// ==========================================
+// ACESSAR CARTÃO
+// ==========================================
 
-    const phone =
-        inputPhone
-            ? inputPhone.value.replace(/\D/g, "")
+async function acessarCartao() {
+
+    const inputTelefone =
+        document.getElementById(
+            "cli-phone"
+        );
+
+    const inputNome =
+        document.getElementById(
+            "cli-name"
+        );
+
+
+    const whatsapp =
+        limparWhatsApp(
+            inputTelefone
+                ? inputTelefone.value
+                : ""
+        );
+
+
+    const nome =
+        inputNome
+            ? inputNome.value.trim()
             : "";
 
-    const name =
-        inputName
-            ? inputName.value.trim()
-            : "";
 
-    if (!phone) {
+    if (!whatsapp) {
 
-        alert("Digite o número do seu WhatsApp.");
+        alert(
+            "Digite seu WhatsApp."
+        );
+
+        if (inputTelefone) {
+            inputTelefone.focus();
+        }
 
         return;
     }
 
-    // Salva sessão
+
+    // ------------------------------------------
+    // Guardar imediatamente
+    // ------------------------------------------
+
     localStorage.setItem(
         "fidelidade_whatsapp",
-        phone
+        whatsapp
     );
 
     localStorage.setItem(
         "fidelidade_nome",
-        name
+        nome
     );
 
     localStorage.setItem(
@@ -283,102 +415,106 @@ async function acessarCartao(event) {
         "true"
     );
 
+
     await carregarDadosCliente(
-        phone,
-        name,
-        false
+        whatsapp,
+        nome
     );
 }
 
 
 // ==========================================
-// BUSCAR DADOS DO CLIENTE NA API
+// CARREGAR DADOS DO CLIENTE
+//
+// Esta chamada pode criar cliente novo.
 // ==========================================
 
 async function carregarDadosCliente(
-    phone,
-    name = "",
-    restaurandoSessao = false
+    whatsapp,
+    nome
 ) {
 
-    const btnAcessar =
-        document.getElementById("btn-acessar");
+    whatsapp =
+        limparWhatsApp(whatsapp);
+
+
+    if (!whatsapp) {
+        return;
+    }
+
 
     try {
 
-        if (btnAcessar) {
-
-            btnAcessar.disabled = true;
-
-            btnAcessar.innerText =
-                "Acessando...";
-
-        }
-
         const url =
-            `${API_URL}?action=get_client` +
-            `&whatsapp=${encodeURIComponent(phone)}` +
-            `&nome=${encodeURIComponent(name)}` +
+            `${API_URL}` +
+            `?action=get_client` +
+            `&whatsapp=${encodeURIComponent(whatsapp)}` +
+            `&nome=${encodeURIComponent(nome || "")}` +
             `&_ts=${Date.now()}`;
 
-        const response = await fetch(
-            url,
-            {
-                method: "GET",
-                cache: "no-store"
-            }
-        );
+
+        const response =
+            await fetch(
+                url,
+                {
+                    method: "GET",
+                    cache: "no-store"
+                }
+            );
+
 
         if (!response.ok) {
 
             throw new Error(
-                "HTTP " + response.status
+                "Falha na comunicação com o servidor."
             );
-
         }
+
 
         const data =
             await response.json();
 
-        // ==========================================
-        // CLIENTE NÃO ENCONTRADO / EXCLUÍDO
-        // ==========================================
 
-        if (data.success === false) {
+        if (
+            data.success === false
+        ) {
 
             limparSessaoCliente();
 
             alert(
                 data.error ||
-                "Seu cadastro não foi encontrado."
+                "Não foi possível carregar seu cartão."
+            );
+
+            alternarSecao(
+                "login"
             );
 
             return;
         }
 
-        // ==========================================
-        // ATUALIZA CLIENTE ATUAL
-        // ==========================================
 
         clienteAtual = {
 
             whatsapp:
                 data.whatsapp ||
-                phone,
+                whatsapp,
 
             nome:
                 data.nome ||
-                name ||
+                nome ||
                 "Cliente",
 
             carimbos:
-                Number(data.carimbos) || 0
+                Number(
+                    data.carimbos
+                ) || 0,
 
+            ultimaVisita:
+                data.ultimaVisita ||
+                ""
         };
 
-        // ==========================================
-        // SALVA DADOS ATUAIS
-        // ==========================================
 
         localStorage.setItem(
             "fidelidade_whatsapp",
@@ -395,20 +531,17 @@ async function carregarDadosCliente(
             "true"
         );
 
-        // ==========================================
-        // ATUALIZA TELA
-        // ==========================================
 
         atualizarInterfaceCartao(
             clienteAtual.nome,
             clienteAtual.carimbos
         );
 
-        alternarSecao("cartao");
 
-        // ==========================================
-        // INICIA MONITORAMENTO
-        // ==========================================
+        alternarSecao(
+            "cartao"
+        );
+
 
         iniciarMonitorCartao();
 
@@ -420,46 +553,26 @@ async function carregarDadosCliente(
         );
 
         alert(
-            "Erro ao conectar com a planilha. " +
-            "Verifique a URL da API."
+            "Não foi possível conectar ao cartão agora. Tente novamente."
         );
-
-        if (restaurandoSessao) {
-
-            limparSessaoCliente();
-
-        }
-
-    } finally {
-
-        if (btnAcessar) {
-
-            btnAcessar.disabled = false;
-
-            btnAcessar.innerText =
-                "Acessar Cartão";
-
-        }
-
     }
-
 }
 
 
 // ==========================================
-// MONITORAMENTO AUTOMÁTICO DO CARTÃO
+// MONITORAMENTO AUTOMÁTICO
+//
+// Consulta o servidor a cada 3 segundos.
 //
 // IMPORTANTE:
-// NÃO RECARREGA A PÁGINA.
-//
-// Ele apenas consulta a planilha e,
-// se o número de carimbos mudar,
-// atualiza a interface diretamente.
+// usa check_client,
+// que NÃO cria cliente novo.
 // ==========================================
 
 function iniciarMonitorCartao() {
 
     pararMonitorCartao();
+
 
     if (
         !clienteAtual ||
@@ -469,22 +582,17 @@ function iniciarMonitorCartao() {
         return;
     }
 
-    // ==========================================
-    // PRIMEIRA VERIFICAÇÃO
-    // ==========================================
 
+    // Fazer uma verificação imediatamente
     verificarAlteracaoCartao();
 
-    // ==========================================
-    // VERIFICA A CADA 3 SEGUNDOS
-    // ==========================================
 
+    // Depois continuar verificando
     monitorCartaoInterval =
         setInterval(
             verificarAlteracaoCartao,
             3000
         );
-
 }
 
 
@@ -494,21 +602,22 @@ function iniciarMonitorCartao() {
 
 function pararMonitorCartao() {
 
-    if (monitorCartaoInterval) {
+    if (
+        monitorCartaoInterval
+    ) {
 
         clearInterval(
             monitorCartaoInterval
         );
 
-        monitorCartaoInterval = null;
-
+        monitorCartaoInterval =
+            null;
     }
-
 }
 
 
 // ==========================================
-// VERIFICAR SE O CARTÃO MUDOU
+// VERIFICAR ALTERAÇÃO DO CARTÃO
 // ==========================================
 
 async function verificarAlteracaoCartao() {
@@ -521,124 +630,153 @@ async function verificarAlteracaoCartao() {
         return;
     }
 
-    // Evita duas consultas simultâneas
-    if (monitorCartaoEmAndamento) {
+
+    if (
+        monitorCartaoEmAndamento
+    ) {
 
         return;
     }
 
-    monitorCartaoEmAndamento = true;
+
+    monitorCartaoEmAndamento =
+        true;
+
 
     try {
 
         const url =
-            `${API_URL}?action=get_client` +
+            `${API_URL}` +
+            `?action=check_client` +
             `&whatsapp=${encodeURIComponent(clienteAtual.whatsapp)}` +
-            `&nome=${encodeURIComponent(clienteAtual.nome || "")}` +
             `&_ts=${Date.now()}`;
 
-        const response = await fetch(
-            url,
-            {
-                method: "GET",
-                cache: "no-store"
-            }
-        );
+
+        const response =
+            await fetch(
+                url,
+                {
+                    method: "GET",
+                    cache: "no-store"
+                }
+            );
+
 
         if (!response.ok) {
 
             return;
         }
 
+
         const data =
             await response.json();
 
-        // ==========================================
-        // CLIENTE NÃO EXISTE MAIS
-        // ==========================================
 
-        if (data.success === false) {
+        // --------------------------------------
+        // Cliente excluído
+        // --------------------------------------
+
+        if (
+            data.success === false
+        ) {
 
             pararMonitorCartao();
 
             limparSessaoCliente();
+
 
             alert(
                 data.error ||
                 "Seu cadastro não foi encontrado."
             );
 
+
+            alternarSecao(
+                "login"
+            );
+
+
             return;
         }
 
-        // ==========================================
-        // NOVA QUANTIDADE DE CARIMBOS
-        // ==========================================
 
         const novosCarimbos =
-            Number(data.carimbos) || 0;
+            Number(
+                data.carimbos
+            ) || 0;
+
 
         const carimbosAtuais =
-            Number(clienteAtual.carimbos) || 0;
+            Number(
+                clienteAtual.carimbos
+            ) || 0;
 
-        // ==========================================
-        // NADA MUDOU
-        // ==========================================
+
+        // --------------------------------------
+        // Atualizar somente se mudou
+        // --------------------------------------
 
         if (
-            novosCarimbos ===
+            novosCarimbos !==
             carimbosAtuais
         ) {
 
-            return;
+            clienteAtual.carimbos =
+                novosCarimbos;
+
+
+            atualizarInterfaceCartao(
+                clienteAtual.nome,
+                novosCarimbos
+            );
         }
 
-        console.log(
-            "Alteração detectada no cartão:",
-            carimbosAtuais,
-            "->",
-            novosCarimbos
-        );
 
-        // ==========================================
-        // ATUALIZA O ESTADO LOCAL
-        // ==========================================
+        // --------------------------------------
+        // Atualizar nome caso tenha mudado
+        // --------------------------------------
 
-        clienteAtual.carimbos =
-            novosCarimbos;
-
-        // ==========================================
-        // ATUALIZA SOMENTE A INTERFACE
-        //
-        // SEM reload
-        // SEM window.location.reload()
-        // ==========================================
-
-        atualizarInterfaceCartao(
-            clienteAtual.nome,
-            novosCarimbos
-        );
-
-        // ==========================================
-        // ATUALIZA O NOME CASO TENHA MUDADO
-        // ==========================================
-
-        if (data.nome) {
+        if (
+            data.nome &&
+            data.nome !==
+            clienteAtual.nome
+        ) {
 
             clienteAtual.nome =
                 data.nome;
+
 
             localStorage.setItem(
                 "fidelidade_nome",
                 data.nome
             );
 
+
+            atualizarInterfaceCartao(
+                data.nome,
+                novosCarimbos
+            );
+        }
+
+
+        // --------------------------------------
+        // Atualizar última visita
+        // --------------------------------------
+
+        if (
+            data.ultimaVisita
+        ) {
+
+            clienteAtual.ultimaVisita =
+                data.ultimaVisita;
         }
 
     } catch (error) {
 
-        // Falhas momentâneas de internet/API
-        // não devem derrubar a sessão.
+        // --------------------------------------
+        // Não mostrar alerta a cada erro de
+        // internet. O monitoramento continuará.
+        // --------------------------------------
 
         console.error(
             "Erro ao verificar atualização do cartão:",
@@ -647,10 +785,9 @@ async function verificarAlteracaoCartao() {
 
     } finally {
 
-        monitorCartaoEmAndamento = false;
-
+        monitorCartaoEmAndamento =
+            false;
     }
-
 }
 
 
@@ -666,178 +803,163 @@ function atualizarInterfaceCartao(
     carimbos =
         Number(carimbos) || 0;
 
-    // Limita visualmente ao ciclo atual
+
     if (carimbos < 0) {
         carimbos = 0;
     }
 
-    if (carimbos > 2) {
+
+    if (
+        carimbos >
+        2
+    ) {
+
         carimbos = 2;
     }
 
-    const dispNome =
+
+    // ------------------------------------------
+    // Nome
+    // ------------------------------------------
+
+    const displayNome =
         document.getElementById(
             "disp-nome"
         );
 
-    const dispDesconto =
+    if (displayNome) {
+
+        displayNome.textContent =
+            nome ||
+            "Cliente";
+    }
+
+
+    // ------------------------------------------
+    // Carimbos
+    // ------------------------------------------
+
+    for (
+        let i = 1;
+        i <= 3;
+        i++
+    ) {
+
+        const slot =
+            document.getElementById(
+                `slot-${i}`
+            );
+
+        if (!slot) {
+            continue;
+        }
+
+
+        if (
+            i <= carimbos
+        ) {
+
+            slot.classList.add(
+                "filled"
+            );
+
+        } else {
+
+            slot.classList.remove(
+                "filled"
+            );
+        }
+    }
+
+
+    // ------------------------------------------
+    // Texto de desconto
+    // ------------------------------------------
+
+    const displayDesconto =
         document.getElementById(
             "disp-desconto"
         );
 
-    const btnCodigo =
+
+    if (displayDesconto) {
+
+        if (
+            carimbos >= 2
+        ) {
+
+            displayDesconto.textContent =
+                "🎁 Desconto liberado!";
+
+        } else {
+
+            displayDesconto.textContent =
+                `Faltam ${
+                    2 - carimbos
+                } carimbo${
+                    (2 - carimbos) === 1
+                        ? ""
+                        : "s"
+                } para liberar o desconto.`;
+        }
+    }
+
+
+    // ------------------------------------------
+    // Botão principal
+    // ------------------------------------------
+
+    const btnResgate =
         document.getElementById(
             "btn-abrir-resgate"
         );
 
-    // ==========================================
-    // NOME
-    // ==========================================
 
-    if (dispNome) {
+    if (btnResgate) {
 
-        dispNome.innerText =
-            nome || "Cliente";
+        if (
+            carimbos >= 2
+        ) {
 
-    }
-
-    // ==========================================
-    // BOTÃO PRINCIPAL
-    // ==========================================
-
-    if (btnCodigo) {
-
-        if (carimbos >= 2) {
-
-            btnCodigo.innerText =
+            btnResgate.innerHTML =
                 "🔄 Reiniciar Cartão";
 
-            btnCodigo.title =
-                "Digite o código do estúdio para resgatar o desconto e reiniciar o cartão.";
-
         } else {
 
-            btnCodigo.innerText =
+            btnResgate.innerHTML =
                 "🔑 Digitar Código do Estúdio";
-
-            btnCodigo.title =
-                "Digite o código temporário fornecido pelo tatuador.";
-
         }
-
     }
-
-    // ==========================================
-    // MENSAGEM DE DESCONTO
-    // ==========================================
-
-    if (dispDesconto) {
-
-        if (carimbos <= 0) {
-
-            dispDesconto.innerText =
-                "Faça sua 1ª tattoo para iniciar o cartão!";
-
-        } else if (carimbos === 1) {
-
-            dispDesconto.innerText =
-                "Falta 1 tattoo para liberar 10% OFF na próxima!";
-
-        } else {
-
-            dispDesconto.innerText =
-                "🎉 10% DE DESCONTO LIBERADO PARA A PRÓXIMA TATTOO!";
-
-        }
-
-    }
-
-    // ==========================================
-    // CARIMBOS
-    // ==========================================
-
-    atualizarSlot(
-        "slot-1",
-        carimbos >= 1,
-        SVG_CHECK,
-        SVG_CIRCLE
-    );
-
-    atualizarSlot(
-        "slot-2",
-        carimbos >= 2,
-        SVG_CHECK,
-        SVG_CIRCLE
-    );
-
-    atualizarSlot(
-        "slot-3",
-        carimbos >= 2,
-        "🏆",
-        "🎁"
-    );
-
 }
 
 
 // ==========================================
-// ATUALIZAR SLOT
-// ==========================================
-
-function atualizarSlot(
-    id,
-    ativo,
-    iconeAtivo,
-    iconeInativo
-) {
-
-    const slot =
-        document.getElementById(id);
-
-    if (!slot) {
-        return;
-    }
-
-    slot.className =
-        ativo
-            ? "stamp-slot active"
-            : "stamp-slot";
-
-    const iconSpan =
-        slot.querySelector(".icon");
-
-    if (iconSpan) {
-
-        iconSpan.innerHTML =
-            ativo
-                ? iconeAtivo
-                : iconeInativo;
-
-    }
-
-}
-
-
-// ==========================================
-// MODAL DE RESGATE POR CÓDIGO
+// ABRIR MODAL DE RESGATE
 // ==========================================
 
 function abrirModalResgate() {
+
+    if (!clienteAtual) {
+
+        alert(
+            "Faça login no cartão primeiro."
+        );
+
+        return;
+    }
+
 
     const modal =
         document.getElementById(
             "modal-resgate"
         );
 
-    const inputCodigo =
-        document.getElementById(
-            "input-codigo-resgate"
-        );
 
     const titulo =
         document.getElementById(
             "titulo-resgate"
         );
+
 
     const descricao =
         modal
@@ -846,94 +968,88 @@ function abrirModalResgate() {
             )
             : null;
 
-    const aviso =
+
+    const expire =
         modal
             ? modal.querySelector(
                 ".modal-expire"
             )
             : null;
 
-    const botaoConfirmar =
+
+    const input =
         document.getElementById(
-            "btn-confirmar-resgate"
+            "input-codigo-resgate"
         );
 
-    const cicloCompleto =
-        !!clienteAtual &&
-        Number(clienteAtual.carimbos) >= 2;
 
-    // ==========================================
-    // TÍTULO
-    // ==========================================
-
-    if (titulo) {
-
-        titulo.innerText =
-            cicloCompleto
-                ? "Reiniciar Cartão"
-                : "Código do Estúdio";
-
+    if (!modal) {
+        return;
     }
 
-    // ==========================================
-    // DESCRIÇÃO
-    // ==========================================
 
-    if (descricao) {
+    const carimbos =
+        Number(
+            clienteAtual.carimbos
+        ) || 0;
 
-        descricao.innerText =
-            cicloCompleto
 
-                ? "Digite o código de 4 dígitos fornecido pelo tatuador para resgatar seu desconto e reiniciar o cartão."
+    // ------------------------------------------
+    // Texto do modal
+    // ------------------------------------------
 
-                : "Digite o código de 4 dígitos fornecido pelo tatuador para registrar sua tattoo.";
+    if (
+        carimbos >= 2
+    ) {
 
+        if (titulo) {
+
+            titulo.textContent =
+                "Reiniciar cartão";
+        }
+
+
+        if (descricao) {
+
+            descricao.textContent =
+                "Digite o código de 4 dígitos fornecido pelo estúdio para resgatar seu desconto e iniciar um novo ciclo.";
+        }
+
+    } else {
+
+        if (titulo) {
+
+            titulo.textContent =
+                "Código do Estúdio";
+        }
+
+
+        if (descricao) {
+
+            descricao.textContent =
+                "Digite o código de 4 dígitos fornecido pelo estúdio para adicionar um carimbo ao seu cartão.";
+        }
     }
 
-    // ==========================================
-    // AVISO
-    // ==========================================
 
-    if (aviso) {
+    if (expire) {
 
-        aviso.innerText =
-            "O código é temporário e pode ser usado uma única vez.";
-
+        expire.textContent =
+            "O código é válido por 60 segundos.";
     }
 
-    // ==========================================
-    // BOTÃO
-    // ==========================================
 
-    if (botaoConfirmar) {
+    if (input) {
 
-        botaoConfirmar.innerText =
-            cicloCompleto
-                ? "Reiniciar Cartão"
-                : "Confirmar Código";
+        input.value = "";
 
+        input.focus();
     }
 
-    // ==========================================
-    // ABRIR MODAL
-    // ==========================================
 
-    if (modal) {
-
-        modal.classList.remove(
-            "hidden"
-        );
-
-    }
-
-    if (inputCodigo) {
-
-        inputCodigo.value = "";
-
-        inputCodigo.focus();
-
-    }
-
+    modal.classList.add(
+        "active"
+    );
 }
 
 
@@ -948,72 +1064,93 @@ function fecharModalResgate() {
             "modal-resgate"
         );
 
+
     if (modal) {
 
-        modal.classList.add(
-            "hidden"
+        modal.classList.remove(
+            "active"
         );
-
     }
-
 }
 
 
 // ==========================================
-// CONFIRMAR CÓDIGO
+// CONFIRMAR RESGATE
 // ==========================================
 
-async function confirmarResgateCodigo() {
+async function confirmarResgate() {
 
-    const inputCodigo =
+    if (!clienteAtual) {
+
+        alert(
+            "Faça login no cartão primeiro."
+        );
+
+        return;
+    }
+
+
+    const input =
         document.getElementById(
             "input-codigo-resgate"
         );
 
+
+    if (!input) {
+        return;
+    }
+
+
     const codigo =
-        inputCodigo
-            ? inputCodigo.value.trim()
+        input.value
+            .replace(/\D/g, "")
+            .trim();
+
+
+    if (
+        codigo.length !== 4
+    ) {
+
+        alert(
+            "Digite o código de 4 dígitos."
+        );
+
+        input.focus();
+
+        return;
+    }
+
+
+    const btn =
+        document.getElementById(
+            "btn-confirmar-resgate"
+        );
+
+
+    const textoOriginal =
+        btn
+            ? btn.textContent
             : "";
 
-    // ==========================================
-    // VALIDAR CÓDIGO
-    // ==========================================
 
-    if (
-        codigo.length !== 4 ||
-        !/^\d{4}$/.test(codigo)
-    ) {
+    if (btn) {
 
-        alert(
-            "Digite o código de 4 dígitos fornecido pelo tatuador."
-        );
+        btn.disabled = true;
 
-        return;
+        btn.textContent =
+            "Verificando...";
     }
 
-    // ==========================================
-    // VALIDAR SESSÃO
-    // ==========================================
-
-    if (
-        !clienteAtual ||
-        !clienteAtual.whatsapp
-    ) {
-
-        alert(
-            "Sessão expirada. Faça login novamente."
-        );
-
-        return;
-    }
 
     try {
 
         const url =
-            `${API_URL}?action=redeem_token` +
+            `${API_URL}` +
+            `?action=redeem_token` +
             `&whatsapp=${encodeURIComponent(clienteAtual.whatsapp)}` +
             `&codigo=${encodeURIComponent(codigo)}` +
             `&_ts=${Date.now()}`;
+
 
         const response =
             await fetch(
@@ -1024,74 +1161,83 @@ async function confirmarResgateCodigo() {
                 }
             );
 
+
         if (!response.ok) {
 
             throw new Error(
-                "HTTP " + response.status
+                "Falha na comunicação com o servidor."
             );
-
         }
+
 
         const data =
             await response.json();
 
-        // ==========================================
-        // CÓDIGO INVÁLIDO
-        // ==========================================
 
-        if (!data.success) {
+        if (
+            data.success === false
+        ) {
 
             alert(
                 data.error ||
-                "Código inválido ou expirado!"
+                "Código inválido ou expirado."
             );
 
             return;
         }
 
-        // ==========================================
-        // FECHAR MODAL
-        // ==========================================
 
-        fecharModalResgate();
-
-        // ==========================================
-        // MENSAGENS
-        // ==========================================
-
-        if (data.cicloResetado) {
-
-            alert(
-                "🎉 Desconto resgatado com sucesso!\n" +
-                "O seu cartão foi reiniciado para o próximo ciclo."
-            );
-
-        } else if (data.descontoLiberado) {
-
-            alert(
-                "🎉 Carimbo adicionado!\n" +
-                "Você liberou 10% de desconto para a próxima tattoo!"
-            );
-
-        } else {
-
-            alert(
-                "✅ Carimbo adicionado com sucesso!"
-            );
-
-        }
-
-        // ==========================================
-        // ATUALIZA SEM RECARREGAR
-        // ==========================================
+        // --------------------------------------
+        // Atualizar imediatamente
+        // sem reload
+        // --------------------------------------
 
         clienteAtual.carimbos =
-            Number(data.carimbos) || 0;
+            Number(
+                data.carimbos
+            ) || 0;
+
+
+        if (data.nome) {
+
+            clienteAtual.nome =
+                data.nome;
+
+            localStorage.setItem(
+                "fidelidade_nome",
+                data.nome
+            );
+        }
+
 
         atualizarInterfaceCartao(
             clienteAtual.nome,
             clienteAtual.carimbos
         );
+
+
+        fecharModalResgate();
+
+
+        // --------------------------------------
+        // Mensagem de acordo com resultado
+        // --------------------------------------
+
+        if (
+            data.cicloResetado
+        ) {
+
+            alert(
+                data.mensagem ||
+                "Desconto resgatado! Novo ciclo iniciado."
+            );
+
+        } else {
+
+            alert(
+                "Carimbo adicionado com sucesso!"
+            );
+        }
 
     } catch (error) {
 
@@ -1100,760 +1246,37 @@ async function confirmarResgateCodigo() {
             error
         );
 
-        alert(
-            "Erro ao validar o código."
-        );
-
-    }
-
-}
-
-
-// ==========================================
-// PAINEL ADMIN - LOGIN
-// ==========================================
-
-async function promptAdmin() {
-
-    const pin =
-        prompt(
-            "Digite a senha de Administrador:"
-        );
-
-    if (!pin) {
-        return;
-    }
-
-    try {
-
-        const url =
-            `${API_URL}?action=get_all` +
-            `&pin=${encodeURIComponent(pin)}` +
-            `&_ts=${Date.now()}`;
-
-        const response =
-            await fetch(
-                url,
-                {
-                    method: "GET",
-                    cache: "no-store"
-                }
-            );
-
-        if (!response.ok) {
-
-            throw new Error(
-                "HTTP " + response.status
-            );
-
-        }
-
-        const data =
-            await response.json();
-
-        if (!data.success) {
-
-            alert(
-                data.error ||
-                "Senha incorreta!"
-            );
-
-            return;
-        }
-
-        pinAdminAtual = pin;
-
-        todosClientes =
-            Array.isArray(data.clients)
-                ? data.clients
-                : [];
-
-        renderizarClientesAdmin(
-            todosClientes
-        );
-
-        const secAdmin =
-            document.getElementById(
-                "sec-admin"
-            );
-
-        if (secAdmin) {
-
-            secAdmin.classList.remove(
-                "hidden"
-            );
-
-        }
-
-    } catch (error) {
-
-        console.error(
-            "Erro painel admin:",
-            error
-        );
 
         alert(
-            "Erro ao buscar dados do painel admin."
+            "Não foi possível validar o código agora. Tente novamente."
         );
 
-    }
+    } finally {
 
+        if (btn) {
+
+            btn.disabled = false;
+
+            btn.textContent =
+                textoOriginal;
+        }
+    }
 }
 
 
 // ==========================================
-// PAINEL ADMIN - RENDERIZAR CLIENTES
+// SAIR
 // ==========================================
 
-function renderizarClientesAdmin(lista) {
+function sair() {
 
-    const container =
-        document.getElementById(
-            "lista-clientes-admin"
-        );
-
-    if (!container) {
-        return;
-    }
-
-    container.innerHTML = "";
-
-    if (
-        !Array.isArray(lista) ||
-        lista.length === 0
-    ) {
-
-        container.innerHTML =
-            '<p style="color:#aaa; font-size:13px; text-align:center; padding:12px;">Nenhum cliente cadastrado.</p>';
-
-        return;
-    }
-
-    lista.forEach((cliente) => {
-
-        const item =
-            document.createElement("div");
-
-        item.className =
-            "client-item";
-
-        const nome =
-            cliente.nome ||
-            "Cliente";
-
-        const whatsapp =
-            String(
-                cliente.whatsapp || ""
-            );
-
-        const carimbos =
-            Number(
-                cliente.carimbos
-            ) || 0;
-
-        item.innerHTML = `
-
-            <div class="client-info">
-
-                <strong>
-                    ${escapeHTML(nome)}
-                </strong>
-
-                <span>
-                    ${escapeHTML(whatsapp)}
-                    |
-                    ${carimbos}/2 carimbos
-                </span>
-
-            </div>
-
-            <div style="display:flex; gap:4px;">
-
-                <button
-                    type="button"
-                    class="btn-sm btn-code-admin"
-                    title="Gerar código de 60s"
-                >
-                    🔑 Código
-                </button>
-
-                <button
-                    type="button"
-                    class="btn-sm btn-add-admin"
-                    title="Carimbo direto"
-                >
-                    + Carimbo
-                </button>
-
-                <button
-                    type="button"
-                    class="btn-sm btn-delete-admin"
-                    title="Excluir"
-                >
-                    Excluir
-                </button>
-
-            </div>
-
-        `;
-
-        // ==========================================
-        // BOTÃO CÓDIGO
-        // ==========================================
-
-        const botaoCodigo =
-            item.querySelector(
-                ".btn-code-admin"
-            );
-
-        if (botaoCodigo) {
-
-            botaoCodigo.addEventListener(
-                "click",
-                () => {
-
-                    gerarCodigoAdmin(
-                        whatsapp,
-                        nome
-                    );
-
-                }
-            );
-
-        }
-
-        // ==========================================
-        // BOTÃO CARIMBO DIRETO
-        // ==========================================
-
-        const botaoCarimbo =
-            item.querySelector(
-                ".btn-add-admin"
-            );
-
-        if (botaoCarimbo) {
-
-            botaoCarimbo.addEventListener(
-                "click",
-                () => {
-
-                    carimboDiretoAdmin(
-                        whatsapp,
-                        nome
-                    );
-
-                }
-            );
-
-        }
-
-        // ==========================================
-        // BOTÃO EXCLUIR
-        // ==========================================
-
-        const botaoExcluir =
-            item.querySelector(
-                ".btn-delete-admin"
-            );
-
-        if (botaoExcluir) {
-
-            botaoExcluir.addEventListener(
-                "click",
-                () => {
-
-                    excluirClienteAdmin(
-                        whatsapp,
-                        nome
-                    );
-
-                }
-            );
-
-        }
-
-        container.appendChild(item);
-
-    });
-
-}
-
-
-// ==========================================
-// PAINEL ADMIN - GERAR CÓDIGO
-// ==========================================
-
-async function gerarCodigoAdmin(
-    whatsapp,
-    nome
-) {
-
-    let pin =
-        pinAdminAtual;
-
-    if (!pin) {
-
-        pin =
-            prompt(
-                "Confirme a senha Admin:"
-            );
-
-        if (!pin) {
-            return;
-        }
-
-    }
-
-    try {
-
-        const url =
-            `${API_URL}?action=generate_token` +
-            `&whatsapp=${encodeURIComponent(whatsapp)}` +
-            `&pin=${encodeURIComponent(pin)}` +
-            `&_ts=${Date.now()}`;
-
-        const response =
-            await fetch(
-                url,
-                {
-                    method: "GET",
-                    cache: "no-store"
-                }
-            );
-
-        if (!response.ok) {
-
-            throw new Error(
-                "HTTP " + response.status
-            );
-
-        }
-
-        const data =
-            await response.json();
-
-        if (!data.success) {
-
-            alert(
-                data.error ||
-                "Erro ao gerar código."
-            );
-
-            return;
-        }
-
-        alert(
-            `🔑 Código gerado para ${nome}:\n\n` +
-            `【 ${data.codigo} 】\n\n` +
-            `Este código expira em 60 segundos.`
-        );
-
-        await atualizarPainelAdmin();
-
-    } catch (error) {
-
-        console.error(
-            "Erro gerando código:",
-            error
-        );
-
-        alert(
-            "Erro de conexão ao gerar código."
-        );
-
-    }
-
-}
-
-
-// ==========================================
-// PAINEL ADMIN - CARIMBO DIRETO
-// ==========================================
-
-async function carimboDiretoAdmin(
-    whatsapp,
-    nome
-) {
-
-    let pin =
-        pinAdminAtual;
-
-    if (!pin) {
-
-        pin =
-            prompt(
-                "Confirme a senha Admin:"
-            );
-
-        if (!pin) {
-            return;
-        }
-
-    }
-
-    try {
-
-        const url =
-            `${API_URL}?action=add_stamp` +
-            `&whatsapp=${encodeURIComponent(whatsapp)}` +
-            `&nome=${encodeURIComponent(nome)}` +
-            `&pin=${encodeURIComponent(pin)}` +
-            `&_ts=${Date.now()}`;
-
-        const response =
-            await fetch(
-                url,
-                {
-                    method: "GET",
-                    cache: "no-store"
-                }
-            );
-
-        if (!response.ok) {
-
-            throw new Error(
-                "HTTP " + response.status
-            );
-
-        }
-
-        const data =
-            await response.json();
-
-        if (!data.success) {
-
-            alert(
-                data.error ||
-                "Senha incorreta!"
-            );
-
-            return;
-        }
-
-        // ==========================================
-        // MENSAGEM DO CARIMBO
-        // ==========================================
-
-        if (data.cicloResetado) {
-
-            alert(
-                `🎉 Desconto resgatado para ${nome}!\n` +
-                `O cartão foi reiniciado para o próximo ciclo.`
-            );
-
-        } else if (data.descontoLiberado) {
-
-            alert(
-                `🎉 Carimbo adicionado para ${nome}!\n` +
-                `10% de desconto liberado!`
-            );
-
-        } else {
-
-            alert(
-                `✅ Carimbo adicionado com sucesso para ${nome}!`
-            );
-
-        }
-
-        // ==========================================
-        // ATUALIZA PAINEL DO TATUADOR
-        // ==========================================
-
-        await atualizarPainelAdmin();
-
-        // ==========================================
-        // SE O CLIENTE ESTIVER ABERTO
-        // NO MESMO NAVEGADOR, ATUALIZA TAMBÉM
-        // ==========================================
-
-        if (
-            clienteAtual &&
-            clienteAtual.whatsapp === whatsapp
-        ) {
-
-            clienteAtual.carimbos =
-                Number(data.carimbos) || 0;
-
-            atualizarInterfaceCartao(
-                clienteAtual.nome,
-                clienteAtual.carimbos
-            );
-
-        }
-
-        // ==========================================
-        // IMPORTANTE:
-        // NÃO EXISTE reload AQUI.
-        //
-        // O OUTRO CELULAR DO CLIENTE
-        // SERÁ ATUALIZADO PELO MONITORAMENTO.
-        // ==========================================
-
-    } catch (error) {
-
-        console.error(
-            "Erro carimbo admin:",
-            error
-        );
-
-        alert(
-            "Erro ao registrar carimbo."
-        );
-
-    }
-
-}
-
-
-// ==========================================
-// PAINEL ADMIN - EXCLUIR CLIENTE
-// ==========================================
-
-async function excluirClienteAdmin(
-    whatsapp,
-    nome
-) {
-
-    if (
-        !confirm(
-            `Tem certeza que deseja excluir o cliente "${nome}" (${whatsapp})?`
-        )
-    ) {
-
-        return;
-    }
-
-    let pin =
-        pinAdminAtual;
-
-    if (!pin) {
-
-        pin =
-            prompt(
-                "Confirme a senha Admin:"
-            );
-
-        if (!pin) {
-            return;
-        }
-
-    }
-
-    try {
-
-        const url =
-            `${API_URL}?action=delete_client` +
-            `&whatsapp=${encodeURIComponent(whatsapp)}` +
-            `&pin=${encodeURIComponent(pin)}` +
-            `&_ts=${Date.now()}`;
-
-        const response =
-            await fetch(
-                url,
-                {
-                    method: "GET",
-                    cache: "no-store"
-                }
-            );
-
-        if (!response.ok) {
-
-            throw new Error(
-                "HTTP " + response.status
-            );
-
-        }
-
-        const data =
-            await response.json();
-
-        if (!data.success) {
-
-            alert(
-                data.error ||
-                "Erro ao excluir cliente."
-            );
-
-            return;
-        }
-
-        // ==========================================
-        // SE EXCLUIR O CLIENTE QUE ESTÁ LOGADO
-        // ==========================================
-
-        if (
-            clienteAtual &&
-            clienteAtual.whatsapp === whatsapp
-        ) {
-
-            limparSessaoCliente();
-
-        }
-
-        alert(
-            `🗑️ Cliente ${nome} excluído com sucesso!`
-        );
-
-        await atualizarPainelAdmin();
-
-    } catch (error) {
-
-        console.error(
-            "Erro ao excluir cliente:",
-            error
-        );
-
-        alert(
-            "Erro de conexão ao tentar excluir."
-        );
-
-    }
-
-}
-
-
-// ==========================================
-// ATUALIZAR PAINEL ADMIN
-// ==========================================
-
-async function atualizarPainelAdmin() {
-
-    if (!pinAdminAtual) {
-        return;
-    }
-
-    try {
-
-        const url =
-            `${API_URL}?action=get_all` +
-            `&pin=${encodeURIComponent(pinAdminAtual)}` +
-            `&_ts=${Date.now()}`;
-
-        const response =
-            await fetch(
-                url,
-                {
-                    method: "GET",
-                    cache: "no-store"
-                }
-            );
-
-        if (!response.ok) {
-
-            throw new Error(
-                "HTTP " + response.status
-            );
-
-        }
-
-        const data =
-            await response.json();
-
-        if (data.success) {
-
-            todosClientes =
-                Array.isArray(data.clients)
-                    ? data.clients
-                    : [];
-
-            filtrarClientes();
-
-        }
-
-    } catch (error) {
-
-        console.error(
-            "Erro atualizando admin:",
-            error
-        );
-
-    }
-
-}
-
-
-// ==========================================
-// FILTRAR CLIENTES
-// ==========================================
-
-function filtrarClientes() {
-
-    const adminSearch =
-        document.getElementById(
-            "admin-search"
-        );
-
-    if (!adminSearch) {
-        return;
-    }
-
-    const termo =
-        adminSearch.value
-            .toLowerCase()
-            .trim();
-
-    const filtrados =
-        todosClientes.filter(
-            (cliente) => {
-
-                const nome =
-                    String(
-                        cliente.nome || ""
-                    ).toLowerCase();
-
-                const whatsapp =
-                    String(
-                        cliente.whatsapp || ""
-                    );
-
-                return (
-                    nome.includes(termo) ||
-                    whatsapp.includes(termo)
-                );
-
-            }
-        );
-
-    renderizarClientesAdmin(
-        filtrados
-    );
-
-}
-
-
-// ==========================================
-// FECHAR ADMIN
-// ==========================================
-
-function fecharAdmin() {
-
-    const secAdmin =
-        document.getElementById(
-            "sec-admin"
-        );
-
-    if (secAdmin) {
-
-        secAdmin.classList.add(
-            "hidden"
-        );
-
-    }
-
-}
-
-
-// ==========================================
-// LIMPAR SESSÃO DO CLIENTE
-// ==========================================
-
-function limparSessaoCliente() {
-
-    // Para o monitoramento
     pararMonitorCartao();
 
-    // Limpa armazenamento
+
+    clienteAtual =
+        null;
+
+
     localStorage.removeItem(
         "fidelidade_whatsapp"
     );
@@ -1866,102 +1289,993 @@ function limparSessaoCliente() {
         "fidelidade_sessao_ativa"
     );
 
-    // Limpa estado
-    clienteAtual = null;
 
-    // Fecha modal se estiver aberto
-    fecharModalResgate();
-
-    // Volta para login
-    alternarSecao("login");
-
-    // Limpa inputs
-    const inputPhone =
+    const inputTelefone =
         document.getElementById(
             "cli-phone"
         );
 
-    const inputName =
+    const inputNome =
         document.getElementById(
             "cli-name"
         );
 
-    if (inputPhone) {
-        inputPhone.value = "";
+
+    if (inputTelefone) {
+        inputTelefone.value = "";
     }
 
-    if (inputName) {
-        inputName.value = "";
+
+    if (inputNome) {
+        inputNome.value = "";
     }
 
+
+    alternarSecao(
+        "login"
+    );
 }
 
 
 // ==========================================
-// SAIR
+// LIMPAR SESSÃO DO CLIENTE
 // ==========================================
 
-function sair() {
+function limparSessaoCliente() {
 
-    limparSessaoCliente();
+    pararMonitorCartao();
 
+
+    clienteAtual =
+        null;
+
+
+    localStorage.removeItem(
+        "fidelidade_whatsapp"
+    );
+
+    localStorage.removeItem(
+        "fidelidade_nome"
+    );
+
+    localStorage.removeItem(
+        "fidelidade_sessao_ativa"
+    );
 }
 
 
 // ==========================================
-// ALTERNAR SEÇÃO
+// ALTERNAR SEÇÕES
 // ==========================================
 
-function alternarSecao(secao) {
+function alternarSecao(
+    secao
+) {
 
-    const secLogin =
+    const secaoLogin =
         document.getElementById(
             "sec-login"
         );
 
-    const secCard =
+    const secaoCartao =
         document.getElementById(
             "sec-cartao"
         );
 
-    if (secao === "login") {
+    const secaoAdmin =
+        document.getElementById(
+            "sec-admin"
+        );
 
-        if (secLogin) {
 
-            secLogin.classList.remove(
-                "hidden"
-            );
+    if (secaoLogin) {
 
-        }
-
-        if (secCard) {
-
-            secCard.classList.add(
-                "hidden"
-            );
-
-        }
-
-    } else if (secao === "cartao") {
-
-        if (secLogin) {
-
-            secLogin.classList.add(
-                "hidden"
-            );
-
-        }
-
-        if (secCard) {
-
-            secCard.classList.remove(
-                "hidden"
-            );
-
-        }
-
+        secaoLogin.style.display =
+            secao === "login"
+                ? ""
+                : "none";
     }
 
+
+    if (secaoCartao) {
+
+        secaoCartao.style.display =
+            secao === "cartao"
+                ? ""
+                : "none";
+    }
+
+
+    if (secaoAdmin) {
+
+        secaoAdmin.style.display =
+            secao === "admin"
+                ? ""
+                : "none";
+    }
+}
+
+
+// ==========================================
+// ABRIR ADMIN
+// ==========================================
+
+async function abrirAdmin() {
+
+    const senha =
+        prompt(
+            "Digite a senha do estúdio:"
+        );
+
+
+    if (senha === null) {
+        return;
+    }
+
+
+    if (
+        senha !== "1183"
+    ) {
+
+        alert(
+            "Senha incorreta."
+        );
+
+        return;
+    }
+
+
+    pinAdminAtual =
+        senha;
+
+
+    alternarSecao(
+        "admin"
+    );
+
+
+    await carregarClientesAdmin();
+}
+
+
+// ==========================================
+// FECHAR ADMIN
+// ==========================================
+
+function fecharAdmin() {
+
+    pinAdminAtual =
+        null;
+
+
+    alternarSecao(
+        clienteAtual
+            ? "cartao"
+            : "login"
+    );
+}
+
+
+// ==========================================
+// CARREGAR CLIENTES ADMIN
+// ==========================================
+
+async function carregarClientesAdmin() {
+
+    if (!pinAdminAtual) {
+        return;
+    }
+
+
+    const lista =
+        document.getElementById(
+            "lista-clientes-admin"
+        );
+
+
+    if (lista) {
+
+        lista.innerHTML =
+            `
+                <div class="admin-loading">
+                    Carregando clientes...
+                </div>
+            `;
+    }
+
+
+    try {
+
+        const url =
+            `${API_URL}` +
+            `?action=get_all` +
+            `&pin=${encodeURIComponent(pinAdminAtual)}` +
+            `&_ts=${Date.now()}`;
+
+
+        const response =
+            await fetch(
+                url,
+                {
+                    method: "GET",
+                    cache: "no-store"
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Erro ao consultar clientes."
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            data.success === false
+        ) {
+
+            alert(
+                data.error ||
+                "Não foi possível carregar os clientes."
+            );
+
+            return;
+        }
+
+
+        todosClientes =
+            Array.isArray(
+                data.clients
+            )
+                ? data.clients
+                : [];
+
+
+        renderizarClientesAdmin();
+
+    } catch (error) {
+
+        console.error(
+            "Erro no painel admin:",
+            error
+        );
+
+
+        if (lista) {
+
+            lista.innerHTML =
+                `
+                    <div class="admin-loading">
+                        Não foi possível carregar os clientes.
+                    </div>
+                `;
+        }
+
+
+        alert(
+            "Erro ao carregar a lista de clientes."
+        );
+    }
+}
+
+
+// ==========================================
+// RENDERIZAR CLIENTES ADMIN
+// ==========================================
+
+function renderizarClientesAdmin() {
+
+    const lista =
+        document.getElementById(
+            "lista-clientes-admin"
+        );
+
+
+    if (!lista) {
+        return;
+    }
+
+
+    const pesquisa =
+        (
+            document.getElementById(
+                "admin-search"
+            )?.value ||
+            ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    let clientes =
+        todosClientes.slice();
+
+
+    // ------------------------------------------
+    // Filtrar
+    // ------------------------------------------
+
+    if (pesquisa) {
+
+        clientes =
+            clientes.filter(
+                cliente => {
+
+                    const nome =
+                        String(
+                            cliente.nome ||
+                            ""
+                        )
+                            .toLowerCase();
+
+
+                    const whatsapp =
+                        String(
+                            cliente.whatsapp ||
+                            ""
+                        )
+                            .toLowerCase();
+
+
+                    return (
+                        nome.includes(
+                            pesquisa
+                        ) ||
+                        whatsapp.includes(
+                            pesquisa
+                        )
+                    );
+                }
+            );
+    }
+
+
+    // ------------------------------------------
+    // Ordenar
+    // ------------------------------------------
+
+    clientes.sort(
+        (a, b) => {
+
+            const nomeA =
+                String(
+                    a.nome ||
+                    ""
+                ).toLowerCase();
+
+
+            const nomeB =
+                String(
+                    b.nome ||
+                    ""
+                ).toLowerCase();
+
+
+            return nomeA.localeCompare(
+                nomeB,
+                "pt-BR"
+            );
+        }
+    );
+
+
+    // ------------------------------------------
+    // Nenhum cliente
+    // ------------------------------------------
+
+    if (!clientes.length) {
+
+        lista.innerHTML =
+            `
+                <div class="admin-loading">
+                    Nenhum cliente encontrado.
+                </div>
+            `;
+
+        return;
+    }
+
+
+    // ------------------------------------------
+    // Montar lista
+    // ------------------------------------------
+
+    lista.innerHTML =
+        clientes
+            .map(
+                cliente =>
+                    criarCardAdmin(
+                        cliente
+                    )
+            )
+            .join("");
+}
+
+
+// ==========================================
+// CRIAR CARD ADMIN
+// ==========================================
+
+function criarCardAdmin(
+    cliente
+) {
+
+    const whatsapp =
+        String(
+            cliente.whatsapp ||
+            ""
+        );
+
+
+    const nome =
+        cliente.nome ||
+        "Cliente";
+
+
+    const carimbos =
+        Number(
+            cliente.carimbos
+        ) || 0;
+
+
+    const ultimaVisita =
+        cliente.ultimaVisita ||
+        "Primeira visita";
+
+
+    return `
+        <div class="admin-client-card">
+
+            <div class="admin-client-info">
+
+                <div class="admin-client-name">
+                    ${escapeHTML(nome)}
+                </div>
+
+                <div class="admin-client-phone">
+                    ${escapeHTML(
+                        formatarWhatsApp(
+                            whatsapp
+                        )
+                    )}
+                </div>
+
+                <div class="admin-client-visit">
+                    Última visita:
+                    ${escapeHTML(
+                        ultimaVisita
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="admin-client-stamps">
+
+                <div class="admin-stamp-count">
+                    ${carimbos}/2
+                </div>
+
+                <div class="admin-stamp-label">
+                    carimbos
+                </div>
+
+            </div>
+
+
+            <div class="admin-client-actions">
+
+                <button
+                    type="button"
+                    class="admin-action-btn"
+                    onclick="gerarCodigoAdmin('${escapeJS(whatsapp)}')"
+                >
+                    Código
+                </button>
+
+
+                <button
+                    type="button"
+                    class="admin-action-btn"
+                    onclick="carimboDiretoAdmin('${escapeJS(whatsapp)}', '${escapeJS(nome)}')"
+                >
+                    + Carimbo
+                </button>
+
+
+                <button
+                    type="button"
+                    class="admin-action-btn danger"
+                    onclick="excluirClienteAdmin('${escapeJS(whatsapp)}')"
+                >
+                    Excluir
+                </button>
+
+            </div>
+
+        </div>
+    `;
+}
+
+
+// ==========================================
+// GERAR CÓDIGO PELO ADMIN
+// ==========================================
+
+async function gerarCodigoAdmin(
+    whatsapp
+) {
+
+    if (!pinAdminAtual) {
+
+        alert(
+            "Painel administrativo não está autenticado."
+        );
+
+        return;
+    }
+
+
+    try {
+
+        const url =
+            `${API_URL}` +
+            `?action=generate_token` +
+            `&whatsapp=${encodeURIComponent(whatsapp)}` +
+            `&pin=${encodeURIComponent(pinAdminAtual)}` +
+            `&_ts=${Date.now()}`;
+
+
+        const response =
+            await fetch(
+                url,
+                {
+                    method: "GET",
+                    cache: "no-store"
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Erro ao gerar código."
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            data.success === false
+        ) {
+
+            alert(
+                data.error ||
+                "Não foi possível gerar o código."
+            );
+
+            return;
+        }
+
+
+        // --------------------------------------
+        // Mostrar código
+        // --------------------------------------
+
+        alert(
+            `Código do estúdio: ${data.codigo}\n\n` +
+            `Válido por 60 segundos.`
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao gerar código:",
+            error
+        );
+
+
+        alert(
+            "Não foi possível gerar o código."
+        );
+    }
+}
+
+
+// ==========================================
+// CARIMBO DIRETO PELO ADMIN
+// ==========================================
+
+async function carimboDiretoAdmin(
+    whatsapp,
+    nome
+) {
+
+    if (!pinAdminAtual) {
+
+        alert(
+            "Painel administrativo não está autenticado."
+        );
+
+        return;
+    }
+
+
+    const confirmar =
+        confirm(
+            `Adicionar carimbo para ${nome}?`
+        );
+
+
+    if (!confirmar) {
+        return;
+    }
+
+
+    try {
+
+        const url =
+            `${API_URL}` +
+            `?action=add_stamp` +
+            `&whatsapp=${encodeURIComponent(whatsapp)}` +
+            `&nome=${encodeURIComponent(nome || "")}` +
+            `&pin=${encodeURIComponent(pinAdminAtual)}` +
+            `&_ts=${Date.now()}`;
+
+
+        const response =
+            await fetch(
+                url,
+                {
+                    method: "GET",
+                    cache: "no-store"
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Erro ao adicionar carimbo."
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            data.success === false
+        ) {
+
+            alert(
+                data.error ||
+                "Não foi possível adicionar o carimbo."
+            );
+
+            return;
+        }
+
+
+        // --------------------------------------
+        // Atualizar lista admin imediatamente
+        // --------------------------------------
+
+        const cliente =
+            todosClientes.find(
+                item =>
+                    limparWhatsApp(
+                        item.whatsapp
+                    ) ===
+                    limparWhatsApp(
+                        whatsapp
+                    )
+            );
+
+
+        if (cliente) {
+
+            cliente.carimbos =
+                Number(
+                    data.carimbos
+                ) || 0;
+
+            cliente.ultimaVisita =
+                data.ultimaVisita ||
+                cliente.ultimaVisita;
+        }
+
+
+        renderizarClientesAdmin();
+
+
+        // --------------------------------------
+        // Se for o mesmo cliente neste navegador,
+        // atualizar imediatamente também.
+        // --------------------------------------
+
+        if (
+            clienteAtual &&
+            limparWhatsApp(
+                clienteAtual.whatsapp
+            ) ===
+            limparWhatsApp(
+                whatsapp
+            )
+        ) {
+
+            clienteAtual.carimbos =
+                Number(
+                    data.carimbos
+                ) || 0;
+
+
+            atualizarInterfaceCartao(
+                clienteAtual.nome,
+                clienteAtual.carimbos
+            );
+        }
+
+
+        // --------------------------------------
+        // Mensagem
+        // --------------------------------------
+
+        if (
+            data.cicloResetado
+        ) {
+
+            alert(
+                data.mensagem ||
+                "Desconto resgatado! Novo ciclo iniciado."
+            );
+
+        } else {
+
+            alert(
+                "Carimbo adicionado com sucesso!"
+            );
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao adicionar carimbo:",
+            error
+        );
+
+
+        alert(
+            "Não foi possível adicionar o carimbo."
+        );
+    }
+}
+
+
+// ==========================================
+// EXCLUIR CLIENTE PELO ADMIN
+// ==========================================
+
+async function excluirClienteAdmin(
+    whatsapp
+) {
+
+    if (!pinAdminAtual) {
+
+        alert(
+            "Painel administrativo não está autenticado."
+        );
+
+        return;
+    }
+
+
+    const cliente =
+        todosClientes.find(
+            item =>
+                limparWhatsApp(
+                    item.whatsapp
+                ) ===
+                limparWhatsApp(
+                    whatsapp
+                )
+        );
+
+
+    const nome =
+        cliente?.nome ||
+        "este cliente";
+
+
+    const confirmar =
+        confirm(
+            `Tem certeza que deseja excluir ${nome}?\n\n` +
+            `O cliente não será recriado automaticamente ao atualizar a página.`
+        );
+
+
+    if (!confirmar) {
+        return;
+    }
+
+
+    try {
+
+        const url =
+            `${API_URL}` +
+            `?action=delete_client` +
+            `&whatsapp=${encodeURIComponent(whatsapp)}` +
+            `&pin=${encodeURIComponent(pinAdminAtual)}` +
+            `&_ts=${Date.now()}`;
+
+
+        const response =
+            await fetch(
+                url,
+                {
+                    method: "GET",
+                    cache: "no-store"
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Erro ao excluir cliente."
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            data.success === false
+        ) {
+
+            alert(
+                data.error ||
+                "Não foi possível excluir o cliente."
+            );
+
+            return;
+        }
+
+
+        // --------------------------------------
+        // Remover da lista local
+        // --------------------------------------
+
+        todosClientes =
+            todosClientes.filter(
+                item =>
+                    limparWhatsApp(
+                        item.whatsapp
+                    ) !==
+                    limparWhatsApp(
+                        whatsapp
+                    )
+            );
+
+
+        renderizarClientesAdmin();
+
+
+        // --------------------------------------
+        // Se era o cliente logado neste navegador,
+        // encerrar sessão.
+        // --------------------------------------
+
+        if (
+            clienteAtual &&
+            limparWhatsApp(
+                clienteAtual.whatsapp
+            ) ===
+            limparWhatsApp(
+                whatsapp
+            )
+        ) {
+
+            limparSessaoCliente();
+
+            alternarSecao(
+                "login"
+            );
+        }
+
+
+        alert(
+            "Cliente excluído com sucesso."
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao excluir cliente:",
+            error
+        );
+
+
+        alert(
+            "Não foi possível excluir o cliente."
+        );
+    }
+}
+
+
+// ==========================================
+// LIMPAR WHATSAPP
+// ==========================================
+
+function limparWhatsApp(
+    valor
+) {
+
+    if (!valor) {
+        return "";
+    }
+
+    return String(valor)
+        .replace(/\D/g, "");
+}
+
+
+// ==========================================
+// FORMATAR WHATSAPP
+// ==========================================
+
+function formatarWhatsApp(
+    valor
+) {
+
+    const numero =
+        limparWhatsApp(
+            valor
+        );
+
+
+    if (
+        numero.length === 11
+    ) {
+
+        return (
+            "(" +
+            numero.substring(0, 2) +
+            ") " +
+            numero.substring(2, 7) +
+            "-" +
+            numero.substring(7)
+        );
+    }
+
+
+    if (
+        numero.length === 10
+    ) {
+
+        return (
+            "(" +
+            numero.substring(0, 2) +
+            ") " +
+            numero.substring(2, 6) +
+            "-" +
+            numero.substring(6)
+        );
+    }
+
+
+    return numero;
 }
 
 
@@ -1969,33 +2283,61 @@ function alternarSecao(secao) {
 // ESCAPE HTML
 // ==========================================
 
-function escapeHTML(value) {
+function escapeHTML(
+    value
+) {
 
     return String(value)
-
         .replace(
             /&/g,
             "&amp;"
         )
-
         .replace(
             /</g,
             "&lt;"
         )
-
         .replace(
             />/g,
             "&gt;"
         )
-
         .replace(
             /"/g,
             "&quot;"
         )
-
         .replace(
             /'/g,
             "&#039;"
         );
+}
 
+
+// ==========================================
+// ESCAPE PARA JAVASCRIPT INLINE
+// ==========================================
+
+function escapeJS(
+    value
+) {
+
+    return String(value)
+        .replace(
+            /\\/g,
+            "\\\\"
+        )
+        .replace(
+            /'/g,
+            "\\'"
+        )
+        .replace(
+            /"/g,
+            '\\"'
+        )
+        .replace(
+            /\r/g,
+            "\\r"
+        )
+        .replace(
+            /\n/g,
+            "\\n"
+        );
 }

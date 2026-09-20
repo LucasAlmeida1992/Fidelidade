@@ -1,0 +1,24 @@
+{
+  "name": "Lucas Franca Tattoo - Cartão Fidelidade",
+  "short_name": "Lucas Franca",
+  "description": "Cartão Fidelidade VIP Lucas Franca Tattoo",
+  "lang": "pt-BR",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b0f17",
+  "theme_color": "#ff1744",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

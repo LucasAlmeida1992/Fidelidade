@@ -7,199 +7,12 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyI0svNzI2nIktgvCNTm76F
 
 // SVGs Configuráveis
 const SVG_CHECK = `<svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="currentColor"><path d="m424-312 282-282-56-56-226 226-114-114-56 56 170 170ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z"/></svg>`;
-
 const SVG_CIRCLE = `<svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>`;
 
-// ==========================================
-// VARIÁVEIS GLOBAIS
-// ==========================================
-
+// Variáveis Globais
 let clienteAtual = null;
 let pinAdminAtual = null;
 let todosClientes = [];
-
-// ==========================================
-// PWA - INSTALAÇÃO DO APLICATIVO
-// ==========================================
-
-let deferredInstallPrompt = null;
-
-// Detecta quando o navegador oferece a instalação do PWA
-window.addEventListener("beforeinstallprompt", (event) => {
-
-    event.preventDefault();
-
-    deferredInstallPrompt = event;
-
-    const btnInstalar =
-        document.getElementById("btn-instalar-app");
-
-    if (btnInstalar) {
-        btnInstalar.style.display = "block";
-    }
-});
-
-// Detecta quando o aplicativo foi instalado
-window.addEventListener("appinstalled", () => {
-
-    deferredInstallPrompt = null;
-
-    const btnInstalar =
-        document.getElementById("btn-instalar-app");
-
-    if (btnInstalar) {
-        btnInstalar.style.display = "none";
-    }
-
-    const ajudaIOS =
-        document.getElementById("ios-install-help");
-
-    if (ajudaIOS) {
-        ajudaIOS.classList.add("hidden");
-    }
-
-    console.log("Aplicativo instalado com sucesso.");
-});
-
-// Verifica se é iPhone/iPad
-function ehIOS() {
-
-    return /iphone|ipad|ipod/i.test(
-        navigator.userAgent
-    );
-}
-
-// Verifica se o site já está aberto como aplicativo
-function estaNoModoApp() {
-
-    return (
-        window.matchMedia(
-            "(display-mode: standalone)"
-        ).matches ||
-        window.navigator.standalone === true
-    );
-}
-
-// ==========================================
-// INSTALAR APLICATIVO
-// ==========================================
-
-async function instalarAplicativo() {
-
-    const btnInstalar =
-        document.getElementById("btn-instalar-app");
-
-    const ajudaIOS =
-        document.getElementById("ios-install-help");
-
-    // ------------------------------------------
-    // IPHONE / IPAD
-    // ------------------------------------------
-
-    if (ehIOS()) {
-
-        if (estaNoModoApp()) {
-
-            alert(
-                "O cartão já está salvo como aplicativo neste aparelho."
-            );
-
-            return;
-        }
-
-        if (ajudaIOS) {
-            ajudaIOS.classList.remove("hidden");
-        }
-
-        return;
-    }
-
-    // ------------------------------------------
-    // ANDROID / CHROME / NAVEGADORES COMPATÍVEIS
-    // ------------------------------------------
-
-    if (!deferredInstallPrompt) {
-
-        alert(
-            "A instalação ainda não está disponível neste navegador.\n\n" +
-            "Se estiver no celular, tente abrir o site pelo Google Chrome."
-        );
-
-        return;
-    }
-
-    deferredInstallPrompt.prompt();
-
-    try {
-
-        const resultado =
-            await deferredInstallPrompt.userChoice;
-
-        if (resultado.outcome === "accepted") {
-
-            console.log(
-                "Usuário aceitou instalar o aplicativo."
-            );
-
-        } else {
-
-            console.log(
-                "Usuário cancelou a instalação."
-            );
-        }
-
-    } catch (error) {
-
-        console.error(
-            "Erro durante a instalação:",
-            error
-        );
-    }
-
-    deferredInstallPrompt = null;
-
-    if (btnInstalar) {
-        btnInstalar.style.display = "none";
-    }
-}
-
-// ==========================================
-// REGISTRO DO SERVICE WORKER
-// ==========================================
-
-function registrarServiceWorker() {
-
-    if (!("serviceWorker" in navigator)) {
-
-        console.log(
-            "Service Worker não é suportado neste navegador."
-        );
-
-        return;
-    }
-
-    navigator.serviceWorker.register(
-        "./service-worker.js"
-    )
-
-        .then((registration) => {
-
-            console.log(
-                "Service Worker registrado com sucesso:",
-                registration.scope
-            );
-
-        })
-
-        .catch((error) => {
-
-            console.error(
-                "Erro ao registrar Service Worker:",
-                error
-            );
-
-        });
-}
 
 // ==========================================
 // INICIALIZAÇÃO
@@ -207,24 +20,15 @@ function registrarServiceWorker() {
 
 window.addEventListener("DOMContentLoaded", () => {
 
-    // Registrar PWA
-    registrarServiceWorker();
+    const inputPhone = document.getElementById("cli-phone");
+    const inputName = document.getElementById("cli-name");
 
-    const inputPhone =
-        document.getElementById("cli-phone");
+    const localPhone = localStorage.getItem("fidelidade_whatsapp");
+    const localName = localStorage.getItem("fidelidade_nome");
 
-    const inputName =
-        document.getElementById("cli-name");
-
-    const localPhone =
-        localStorage.getItem(
-            "fidelidade_whatsapp"
-        );
-
-    const localName =
-        localStorage.getItem(
-            "fidelidade_nome"
-        );
+    // ==========================================
+    // RECUPERAR SESSÃO SALVA
+    // ==========================================
 
     if (localPhone) {
 
@@ -250,54 +54,9 @@ window.addEventListener("DOMContentLoaded", () => {
         document.getElementById("btn-acessar");
 
     if (btnAcessar) {
-
         btnAcessar.addEventListener(
             "click",
             acessarCartao
-        );
-    }
-
-    // ==========================================
-    // ENTER NO WHATSAPP
-    // ==========================================
-
-    if (inputPhone) {
-
-        inputPhone.addEventListener(
-            "keydown",
-            (event) => {
-
-                if (event.key === "Enter") {
-
-                    event.preventDefault();
-
-                    if (btnAcessar) {
-                        btnAcessar.click();
-                    }
-                }
-            }
-        );
-    }
-
-    // ==========================================
-    // ENTER NO NOME
-    // ==========================================
-
-    if (inputName) {
-
-        inputName.addEventListener(
-            "keydown",
-            (event) => {
-
-                if (event.key === "Enter") {
-
-                    event.preventDefault();
-
-                    if (btnAcessar) {
-                        btnAcessar.click();
-                    }
-                }
-            }
         );
     }
 
@@ -309,7 +68,6 @@ window.addEventListener("DOMContentLoaded", () => {
         document.getElementById("btn-sair");
 
     if (btnSair) {
-
         btnSair.addEventListener(
             "click",
             sair
@@ -324,7 +82,6 @@ window.addEventListener("DOMContentLoaded", () => {
         document.getElementById("btn-admin-toggle");
 
     if (btnAdmin) {
-
         btnAdmin.addEventListener(
             "click",
             promptAdmin
@@ -339,7 +96,6 @@ window.addEventListener("DOMContentLoaded", () => {
         document.getElementById("btn-fechar-admin");
 
     if (btnFecharAdmin) {
-
         btnFecharAdmin.addEventListener(
             "click",
             fecharAdmin
@@ -354,7 +110,6 @@ window.addEventListener("DOMContentLoaded", () => {
         document.getElementById("admin-search");
 
     if (adminSearch) {
-
         adminSearch.addEventListener(
             "input",
             filtrarClientes
@@ -362,14 +117,13 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================
-    // BOTÃO DO MODAL DE RESGATE
+    // MODAL DE RESGATE
     // ==========================================
 
     const btnAbrirResgate =
         document.getElementById("btn-abrir-resgate");
 
     if (btnAbrirResgate) {
-
         btnAbrirResgate.addEventListener(
             "click",
             abrirModalResgate
@@ -377,12 +131,9 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     const btnCancelarResgate =
-        document.getElementById(
-            "btn-cancelar-resgate"
-        );
+        document.getElementById("btn-cancelar-resgate");
 
     if (btnCancelarResgate) {
-
         btnCancelarResgate.addEventListener(
             "click",
             fecharModalResgate
@@ -390,62 +141,14 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     const btnConfirmarResgate =
-        document.getElementById(
-            "btn-confirmar-resgate"
-        );
+        document.getElementById("btn-confirmar-resgate");
 
     if (btnConfirmarResgate) {
-
         btnConfirmarResgate.addEventListener(
             "click",
             confirmarResgateCodigo
         );
     }
-
-    // ==========================================
-    // ENTER NO CÓDIGO DO MODAL
-    // ==========================================
-
-    const inputCodigo =
-        document.getElementById(
-            "input-codigo-resgate"
-        );
-
-    if (inputCodigo) {
-
-        inputCodigo.addEventListener(
-            "keydown",
-            (event) => {
-
-                if (event.key === "Enter") {
-
-                    event.preventDefault();
-
-                    if (btnConfirmarResgate) {
-                        btnConfirmarResgate.click();
-                    }
-                }
-            }
-        );
-    }
-
-    // ==========================================
-    // BOTÃO INSTALAR APLICATIVO
-    // ==========================================
-
-    const btnInstalarApp =
-        document.getElementById(
-            "btn-instalar-app"
-        );
-
-    if (btnInstalarApp) {
-
-        btnInstalarApp.addEventListener(
-            "click",
-            instalarAplicativo
-        );
-    }
-
 });
 
 // ==========================================
@@ -538,32 +241,39 @@ async function carregarDadosCliente(
             await response.json();
 
         // ==========================================
-        // ERRO DA API
-        // ==========================================
-        //
-        // Não tratamos mais "deleted" como bloqueio.
-        // O Backend agora permite novo cadastro após
-        // exclusão.
+        // CLIENTE NÃO ENCONTRADO / EXCLUÍDO
         // ==========================================
 
         if (data.success === false) {
 
+            /*
+             * IMPORTANTE:
+             * Se o cliente foi excluído no painel admin,
+             * este navegador ainda pode possuir o WhatsApp
+             * salvo no localStorage.
+             *
+             * Portanto, limpamos a sessão local aqui também.
+             */
+
+            limparSessaoCliente();
+
             alert(
                 data.error ||
-                "Erro ao consultar cliente."
+                "Este cliente não está mais cadastrado."
             );
 
             return;
         }
 
         // ==========================================
-        // CLIENTE CARREGADO COM SUCESSO
+        // CLIENTE ENCONTRADO
         // ==========================================
 
         clienteAtual = {
 
             whatsapp:
-                data.whatsapp || phone,
+                data.whatsapp ||
+                phone,
 
             nome:
                 data.nome ||
@@ -571,7 +281,8 @@ async function carregarDadosCliente(
                 "Cliente",
 
             carimbos:
-                Number(data.carimbos) || 0
+                Number(data.carimbos) ||
+                0
         };
 
         atualizarInterfaceCartao(
@@ -579,7 +290,9 @@ async function carregarDadosCliente(
             clienteAtual.carimbos
         );
 
-        alternarSecao("cartao");
+        alternarSecao(
+            "cartao"
+        );
 
     } catch (error) {
 
@@ -617,16 +330,53 @@ function atualizarInterfaceCartao(
         Number(carimbos) || 0;
 
     const dispNome =
-        document.getElementById("disp-nome");
+        document.getElementById(
+            "disp-nome"
+        );
 
     const dispDesconto =
-        document.getElementById("disp-desconto");
+        document.getElementById(
+            "disp-desconto"
+        );
+
+    const btnCodigo =
+        document.getElementById(
+            "btn-abrir-resgate"
+        );
 
     if (dispNome) {
 
         dispNome.innerText =
             nome || "Cliente";
     }
+
+    // ==========================================
+    // BOTÃO DO CÓDIGO / REINICIAR
+    // ==========================================
+
+    if (btnCodigo) {
+
+        if (carimbos >= 2) {
+
+            btnCodigo.innerText =
+                "🔄 Reiniciar Cartão";
+
+            btnCodigo.title =
+                "Digite o código do estúdio para resgatar o desconto e reiniciar o cartão.";
+
+        } else {
+
+            btnCodigo.innerText =
+                "🔑 Digitar Código do Estúdio";
+
+            btnCodigo.title =
+                "Digite o código temporário fornecido pelo tatuador.";
+        }
+    }
+
+    // ==========================================
+    // STATUS DO DESCONTO
+    // ==========================================
 
     if (dispDesconto) {
 
@@ -648,25 +398,8 @@ function atualizarInterfaceCartao(
     }
 
     // ==========================================
-    // ALTERA O TEXTO DO BOTÃO CONFORME O STATUS
+    // SLOTS
     // ==========================================
-
-    const btnAbrirResgate =
-        document.getElementById("btn-abrir-resgate");
-
-    if (btnAbrirResgate) {
-
-        if (carimbos >= 2) {
-
-            btnAbrirResgate.innerText =
-                "🔄 Reiniciar Cartão";
-
-        } else {
-
-            btnAbrirResgate.innerText =
-                "🔑 Digitar Código do Estúdio";
-        }
-    }
 
     atualizarSlot(
         "slot-1",
@@ -700,9 +433,7 @@ function atualizarSlot(
     const slot =
         document.getElementById(id);
 
-    if (!slot) {
-        return;
-    }
+    if (!slot) return;
 
     slot.className =
         ativo
@@ -722,7 +453,7 @@ function atualizarSlot(
 }
 
 // ==========================================
-// MODAL DE RESGATE POR CÓDIGO (CLIENTE)
+// MODAL DE RESGATE POR CÓDIGO
 // ==========================================
 
 function abrirModalResgate() {
@@ -736,6 +467,66 @@ function abrirModalResgate() {
         document.getElementById(
             "input-codigo-resgate"
         );
+
+    const titulo =
+        document.getElementById(
+            "titulo-resgate"
+        );
+
+    const descricao =
+        modal
+            ? modal.querySelector(
+                ".modal-description"
+            )
+            : null;
+
+    const aviso =
+        modal
+            ? modal.querySelector(
+                ".modal-expire"
+            )
+            : null;
+
+    const botaoConfirmar =
+        document.getElementById(
+            "btn-confirmar-resgate"
+        );
+
+    const cicloCompleto =
+        !!clienteAtual &&
+        Number(clienteAtual.carimbos) >= 2;
+
+    if (titulo) {
+
+        titulo.innerText =
+            cicloCompleto
+                ? "Reiniciar Cartão"
+                : "Código do Estúdio";
+    }
+
+    if (descricao) {
+
+        descricao.innerText =
+            cicloCompleto
+
+                ? "Digite o código de 4 dígitos fornecido pelo tatuador para resgatar seu desconto e reiniciar o cartão."
+
+                : "Digite o código de 4 dígitos fornecido pelo tatuador para registrar sua tattoo.";
+    }
+
+    if (aviso) {
+
+        aviso.innerText =
+            "O código é temporário e pode ser usado uma única vez.";
+    }
+
+    if (botaoConfirmar) {
+
+        botaoConfirmar.innerText =
+            cicloCompleto
+                ? "Reiniciar Cartão"
+                : "Confirmar Código";
+    }
 
     if (modal) {
 
@@ -766,6 +557,10 @@ function fecharModalResgate() {
         );
     }
 }
+
+// ==========================================
+// CONFIRMAR RESGATE
+// ==========================================
 
 async function confirmarResgateCodigo() {
 
@@ -833,15 +628,13 @@ async function confirmarResgateCodigo() {
         if (data.cicloResetado) {
 
             alert(
-                "🎉 Desconto resgatado com sucesso!\n" +
-                "O seu cartão foi reiniciado para o próximo ciclo."
+                "🎉 Desconto resgatado com sucesso!\nO seu cartão foi reiniciado para o próximo ciclo."
             );
 
         } else if (data.descontoLiberado) {
 
             alert(
-                "🎉 Carimbo adicionado!\n" +
-                "Você liberou 10% de desconto para a próxima tattoo!"
+                "🎉 Carimbo adicionado!\nVocê liberou 10% de desconto para a próxima tattoo!"
             );
 
         } else {
@@ -883,9 +676,7 @@ async function promptAdmin() {
             "Digite a senha de Administrador:"
         );
 
-    if (!pin) {
-        return;
-    }
+    if (!pin) return;
 
     try {
 
@@ -956,16 +747,16 @@ async function promptAdmin() {
 // PAINEL ADMIN - RENDERIZAR LISTA
 // ==========================================
 
-function renderizarClientesAdmin(lista) {
+function renderizarClientesAdmin(
+    lista
+) {
 
     const container =
         document.getElementById(
             "lista-clientes-admin"
         );
 
-    if (!container) {
-        return;
-    }
+    if (!container) return;
 
     container.innerHTML = "";
 
@@ -980,137 +771,129 @@ function renderizarClientesAdmin(lista) {
         return;
     }
 
-    lista.forEach((cliente) => {
+    lista.forEach(
+        (cliente) => {
 
-        const item =
-            document.createElement("div");
+            const item =
+                document.createElement(
+                    "div"
+                );
 
-        item.className =
-            "client-item";
+            item.className =
+                "client-item";
 
-        const nome =
-            cliente.nome ||
-            "Cliente";
+            const nome =
+                cliente.nome ||
+                "Cliente";
 
-        const whatsapp =
-            String(
-                cliente.whatsapp || ""
-            );
+            const whatsapp =
+                String(
+                    cliente.whatsapp ||
+                    ""
+                );
 
-        const carimbos =
-            Number(
-                cliente.carimbos
-            ) || 0;
+            const carimbos =
+                Number(
+                    cliente.carimbos
+                ) || 0;
 
-        item.innerHTML = `
-            <div class="client-info">
-                <strong>${escapeHTML(nome)}</strong>
-                <span>${escapeHTML(whatsapp)} | ${carimbos}/2 carimbos</span>
-            </div>
+            item.innerHTML = `
+                <div class="client-info">
+                    <strong>${escapeHTML(nome)}</strong>
+                    <span>${escapeHTML(whatsapp)} | ${carimbos}/2 carimbos</span>
+                </div>
 
-            <div style="display: flex; gap: 4px;">
+                <div style="display: flex; gap: 4px;">
 
-                <button
-                    type="button"
-                    class="btn-sm btn-code-admin"
-                    title="Gerar código de 60s"
-                >
-                    🔑 Código
-                </button>
+                    <button
+                        type="button"
+                        class="btn-sm btn-code-admin"
+                        title="Gerar código de 60s"
+                    >
+                        🔑 Código
+                    </button>
 
-                <button
-                    type="button"
-                    class="btn-sm btn-add-admin"
-                    title="Carimbo direto"
-                >
-                    + Carimbo
-                </button>
+                    <button
+                        type="button"
+                        class="btn-sm btn-add-admin"
+                        title="Carimbo direto"
+                    >
+                        + Carimbo
+                    </button>
 
-                <button
-                    type="button"
-                    class="btn-sm btn-delete-admin"
-                    title="Excluir"
-                >
-                    Excluir
-                </button>
+                    <button
+                        type="button"
+                        class="btn-sm btn-delete-admin"
+                        title="Excluir"
+                    >
+                        Excluir
+                    </button>
 
-            </div>
-        `;
+                </div>
+            `;
 
-        // ==========================================
-        // BOTÃO GERAR CÓDIGO
-        // ==========================================
+            const botaoCodigo =
+                item.querySelector(
+                    ".btn-code-admin"
+                );
 
-        const botaoCodigo =
-            item.querySelector(
-                ".btn-code-admin"
-            );
+            if (botaoCodigo) {
 
-        if (botaoCodigo) {
+                botaoCodigo.addEventListener(
+                    "click",
+                    () => {
 
-            botaoCodigo.addEventListener(
-                "click",
-                () => {
+                        gerarCodigoAdmin(
+                            whatsapp,
+                            nome
+                        );
+                    }
+                );
+            }
 
-                    gerarCodigoAdmin(
-                        whatsapp,
-                        nome
-                    );
+            const botaoCarimbo =
+                item.querySelector(
+                    ".btn-add-admin"
+                );
 
-                }
-            );
-        }
+            if (botaoCarimbo) {
 
-        // ==========================================
-        // BOTÃO CARIMBO DIRETO
-        // ==========================================
+                botaoCarimbo.addEventListener(
+                    "click",
+                    () => {
 
-        const botaoCarimbo =
-            item.querySelector(
-                ".btn-add-admin"
-            );
+                        carimboDiretoAdmin(
+                            whatsapp,
+                            nome
+                        );
+                    }
+                );
+            }
 
-        if (botaoCarimbo) {
+            const botaoExcluir =
+                item.querySelector(
+                    ".btn-delete-admin"
+                );
 
-            botaoCarimbo.addEventListener(
-                "click",
-                () => {
+            if (botaoExcluir) {
 
-                    carimboDiretoAdmin(
-                        whatsapp,
-                        nome
-                    );
+                botaoExcluir.addEventListener(
+                    "click",
+                    () => {
 
-                }
-            );
-        }
+                        excluirClienteAdmin(
+                            whatsapp,
+                            nome
+                        );
+                    }
+                );
+            }
 
-        // ==========================================
-        // BOTÃO EXCLUIR
-        // ==========================================
-
-        const botaoExcluir =
-            item.querySelector(
-                ".btn-delete-admin"
-            );
-
-        if (botaoExcluir) {
-
-            botaoExcluir.addEventListener(
-                "click",
-                () => {
-
-                    excluirClienteAdmin(
-                        whatsapp,
-                        nome
-                    );
-
-                }
+            container.appendChild(
+                item
             );
         }
-
-        container.appendChild(item);
-    });
+    );
 }
 
 // ==========================================
@@ -1132,9 +915,7 @@ async function gerarCodigoAdmin(
                 "Confirme a senha Admin:"
             );
 
-        if (!pin) {
-            return;
-        }
+        if (!pin) return;
     }
 
     try {
@@ -1203,9 +984,7 @@ async function carimboDiretoAdmin(
                 "Confirme a senha Admin:"
             );
 
-        if (!pin) {
-            return;
-        }
+        if (!pin) return;
     }
 
     try {
@@ -1239,15 +1018,15 @@ async function carimboDiretoAdmin(
         if (data.cicloResetado) {
 
             alert(
-                `🎉 Desconto resgatado para ${nome}!\n` +
-                `O cartão foi reiniciado para o próximo ciclo.`
+                `🎉 Desconto resgatado para ${nome}!\nO cartão foi reiniciado para o próximo ciclo.`
             );
 
-        } else if (data.descontoLiberado) {
+        } else if (
+            data.descontoLiberado
+        ) {
 
             alert(
-                `🎉 Carimbo adicionado para ${nome}!\n` +
-                `10% de desconto liberado!`
+                `🎉 Carimbo adicionado para ${nome}!\n10% de desconto liberado!`
             );
 
         } else {
@@ -1314,9 +1093,7 @@ async function excluirClienteAdmin(
                 "Confirme a senha Admin:"
             );
 
-        if (!pin) {
-            return;
-        }
+        if (!pin) return;
     }
 
     try {
@@ -1348,103 +1125,49 @@ async function excluirClienteAdmin(
         }
 
         // ==========================================
-        // LIMPA O CAMPO DE BUSCA DO ADMIN
+        // VERIFICAR SE O CLIENTE EXCLUÍDO
+        // É O CLIENTE LOGADO NESTE NAVEGADOR
         // ==========================================
-
-        const adminSearch =
-            document.getElementById(
-                "admin-search"
-            );
-
-        if (adminSearch) {
-            adminSearch.value = "";
-        }
-
-        // ==========================================
-        // VERIFICA SE O CLIENTE EXCLUÍDO
-        // É O CLIENTE SALVO NO NAVEGADOR
-        // ==========================================
-
-        const whatsappSalvo =
-            limparWhatsAppLocal(
-                localStorage.getItem(
-                    "fidelidade_whatsapp"
-                )
-            );
 
         const whatsappExcluido =
-            limparWhatsAppLocal(
-                whatsapp
-            );
+            String(whatsapp)
+                .replace(/\D/g, "");
 
-        const clienteAberto =
+        const whatsappLogado =
             clienteAtual &&
-            limparWhatsAppLocal(
-                clienteAtual.whatsapp
-            ) === whatsappExcluido;
+            clienteAtual.whatsapp
+                ? String(
+                    clienteAtual.whatsapp
+                ).replace(/\D/g, "")
+                : String(
+                    localStorage.getItem(
+                        "fidelidade_whatsapp"
+                    ) || ""
+                ).replace(/\D/g, "");
 
-        const clienteSalvo =
-            whatsappSalvo === whatsappExcluido;
+        const mesmoCliente =
+            whatsappExcluido !== "" &&
+            whatsappExcluido === whatsappLogado;
 
         // ==========================================
-        // SE O CLIENTE EXCLUÍDO ESTAVA LOGADO,
-        // DESLOGA COMPLETAMENTE
+        // SE FOR O CLIENTE LOGADO:
+        // ENCERRA A SESSÃO E LIMPA OS DADOS
         // ==========================================
 
-        if (
-            clienteAberto ||
-            clienteSalvo
-        ) {
+        if (mesmoCliente) {
 
-            // Limpa memória da sessão
-            clienteAtual = null;
+            limparSessaoCliente();
 
-            // Limpa dados persistidos
-            localStorage.removeItem(
-                "fidelidade_whatsapp"
+            alert(
+                `🗑️ Cliente ${nome} excluído com sucesso!\n\nA sessão deste cliente foi encerrada e os dados locais foram apagados.`
             );
 
-            localStorage.removeItem(
-                "fidelidade_nome"
+        } else {
+
+            alert(
+                `🗑️ Cliente ${nome} excluído com sucesso!`
             );
-
-            // Limpa campos do login
-            const inputPhone =
-                document.getElementById(
-                    "cli-phone"
-                );
-
-            const inputName =
-                document.getElementById(
-                    "cli-name"
-                );
-
-            if (inputPhone) {
-                inputPhone.value = "";
-            }
-
-            if (inputName) {
-                inputName.value = "";
-            }
-
-            // Fecha modal de código caso esteja aberto
-            fecharModalResgate();
-
-            // Volta para o login
-            alternarSecao("login");
         }
-
-        // ==========================================
-        // MENSAGEM DE SUCESSO
-        // ==========================================
-
-        alert(
-            `🗑️ Cliente ${nome} excluído com sucesso!`
-        );
-
-        // ==========================================
-        // ATUALIZA LISTA DO PAINEL
-        // ==========================================
 
         await atualizarPainelAdmin();
 
@@ -1462,28 +1185,12 @@ async function excluirClienteAdmin(
 }
 
 // ==========================================
-// UTILITÁRIO - LIMPAR WHATSAPP LOCAL
-// ==========================================
-
-function limparWhatsAppLocal(numero) {
-
-    if (!numero) {
-        return "";
-    }
-
-    return String(numero)
-        .replace(/\D/g, "");
-}
-
-// ==========================================
 // ATUALIZAR PAINEL ADMIN
 // ==========================================
 
 async function atualizarPainelAdmin() {
 
-    if (!pinAdminAtual) {
-        return;
-    }
+    if (!pinAdminAtual) return;
 
     try {
 
@@ -1506,7 +1213,9 @@ async function atualizarPainelAdmin() {
         if (data.success) {
 
             todosClientes =
-                Array.isArray(data.clients)
+                Array.isArray(
+                    data.clients
+                )
                     ? data.clients
                     : [];
 
@@ -1533,9 +1242,7 @@ function filtrarClientes() {
             "admin-search"
         );
 
-    if (!adminSearch) {
-        return;
-    }
+    if (!adminSearch) return;
 
     const termo =
         adminSearch.value
@@ -1548,17 +1255,23 @@ function filtrarClientes() {
 
                 const nome =
                     String(
-                        cliente.nome || ""
+                        cliente.nome ||
+                        ""
                     ).toLowerCase();
 
                 const whatsapp =
                     String(
-                        cliente.whatsapp || ""
+                        cliente.whatsapp ||
+                        ""
                     );
 
                 return (
-                    nome.includes(termo) ||
-                    whatsapp.includes(termo)
+                    nome.includes(
+                        termo
+                    ) ||
+                    whatsapp.includes(
+                        termo
+                    )
                 );
             }
         );
@@ -1588,10 +1301,33 @@ function fecharAdmin() {
 }
 
 // ==========================================
-// SAIR
+// SAIR NORMALMENTE
 // ==========================================
 
 function sair() {
+
+    limparSessaoCliente();
+}
+
+// ==========================================
+// LIMPAR SESSÃO DO CLIENTE
+// ==========================================
+// Esta função centraliza tudo que precisa ser
+// apagado quando o cliente sai ou é excluído.
+//
+// Isso impede que:
+// - o WhatsApp continue salvo;
+// - o nome continue salvo;
+// - clienteAtual continue ativo;
+// - a página faça login automático novamente;
+// - os campos permaneçam preenchidos.
+// ==========================================
+
+function limparSessaoCliente() {
+
+    // ==========================================
+    // APAGAR DADOS SALVOS NO NAVEGADOR
+    // ==========================================
 
     localStorage.removeItem(
         "fidelidade_whatsapp"
@@ -1601,9 +1337,21 @@ function sair() {
         "fidelidade_nome"
     );
 
+    // ==========================================
+    // LIMPAR VARIÁVEL DA SESSÃO
+    // ==========================================
+
     clienteAtual = null;
 
-    alternarSecao("login");
+    // ==========================================
+    // FECHAR MODAL DE RESGATE
+    // ==========================================
+
+    fecharModalResgate();
+
+    // ==========================================
+    // LIMPAR CAMPOS DE LOGIN
+    // ==========================================
 
     const inputPhone =
         document.getElementById(
@@ -1616,19 +1364,31 @@ function sair() {
         );
 
     if (inputPhone) {
+
         inputPhone.value = "";
     }
 
     if (inputName) {
+
         inputName.value = "";
     }
+
+    // ==========================================
+    // VOLTAR PARA LOGIN
+    // ==========================================
+
+    alternarSecao(
+        "login"
+    );
 }
 
 // ==========================================
 // ALTERNAR SEÇÕES
 // ==========================================
 
-function alternarSecao(secao) {
+function alternarSecao(
+    secao
+) {
 
     const secLogin =
         document.getElementById(
@@ -1656,7 +1416,9 @@ function alternarSecao(secao) {
             );
         }
 
-    } else if (secao === "cartao") {
+    } else if (
+        secao === "cartao"
+    ) {
 
         if (secLogin) {
 
@@ -1681,27 +1443,22 @@ function alternarSecao(secao) {
 function escapeHTML(value) {
 
     return String(value)
-
         .replace(
             /&/g,
             "&amp;"
         )
-
         .replace(
             /</g,
             "&lt;"
         )
-
         .replace(
             />/g,
             "&gt;"
         )
-
         .replace(
             /"/g,
             "&quot;"
         )
-
         .replace(
             /'/g,
             "&#039;"

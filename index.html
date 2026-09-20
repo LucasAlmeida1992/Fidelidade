@@ -6,6 +6,14 @@
 
     <title>Cartão Fidelidade VIP</title>
 
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Lucas França Tattoo">
+
     <link
         href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Poppins:wght@400;600&display=swap"
         rel="stylesheet"
@@ -184,15 +192,7 @@
 
 
         <!-- =================================================
-             ÚNICO BOTÃO DE AÇÃO DO CLIENTE
-
-             0 ou 1 carimbo:
-             🔑 Digitar Código do Estúdio
-
-             2 carimbos:
-             🔄 Reiniciar Cartão
-
-             O JavaScript altera o texto automaticamente.
+             BOTÃO DE CÓDIGO
              ================================================= -->
         <button
             class="btn-gold btn-code-client"
@@ -201,6 +201,41 @@
         >
             🔑 Digitar Código do Estúdio
         </button>
+
+
+        <!-- =================================================
+             SALVAR COMO APLICATIVO
+             ================================================= -->
+        <button
+            class="btn-gold"
+            id="btn-instalar-app"
+            type="button"
+            style="margin-top: 10px;"
+        >
+            📲 Salvar Cartão no Celular
+        </button>
+
+
+        <!-- INSTRUÇÃO PARA IPHONE -->
+        <div
+            id="ios-install-help"
+            class="hidden"
+            style="
+                margin-top: 12px;
+                padding: 12px;
+                border-radius: 10px;
+                background: rgba(255,255,255,0.06);
+                font-size: 13px;
+                line-height: 1.5;
+                text-align: center;
+            "
+        >
+            📱 <strong>iPhone</strong><br><br>
+
+            Toque em <strong>Compartilhar</strong>
+            ⬆️ e depois em
+            <strong>Adicionar à Tela de Início</strong>.
+        </div>
 
 
         <!-- TROCAR DE CONTA -->
@@ -230,7 +265,6 @@
             aria-modal="true"
             aria-labelledby="titulo-resgate"
         >
-
 
             <!-- FECHAR -->
             <button
@@ -343,10 +377,6 @@
             id="lista-clientes-admin"
             class="admin-client-list"
         >
-            <!--
-                Os clientes serão inseridos
-                automaticamente pelo JavaScript.
-            -->
         </div>
 
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = "lucas-franca-tattoo-v1";
+const CACHE_NAME = "lucas-franca-tattoo-v2";
 
 const ARQUIVOS = [
     "./",

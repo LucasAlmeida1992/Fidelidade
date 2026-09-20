@@ -54,6 +54,38 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const btnConfirmarResgate = document.getElementById("btn-confirmar-resgate");
     if (btnConfirmarResgate) btnConfirmarResgate.addEventListener("click", confirmarResgateCodigo);
+
+    // ==========================================
+    // ENTER - ACIONAR BOTÕES PRINCIPAIS
+    // ==========================================
+    document.addEventListener("keydown", function(event) {
+        if (event.key !== "Enter") return;
+
+        const elemento = event.target;
+
+        // ENTER no campo de WhatsApp ou Nome = Acessar Cartão
+        if (
+            elemento &&
+            (
+                elemento.id === "cli-phone" ||
+                elemento.id === "cli-name"
+            )
+        ) {
+            event.preventDefault();
+            acessarCartao(event);
+            return;
+        }
+
+        // ENTER no campo do código = Confirmar Código
+        if (
+            elemento &&
+            elemento.id === "input-codigo-resgate"
+        ) {
+            event.preventDefault();
+            confirmarResgateCodigo();
+            return;
+        }
+    });
 });
 
 // ==========================================
@@ -167,7 +199,9 @@ function atualizarSlot(id, ativo, iconeAtivo, iconeInativo) {
 function abrirModalResgate() {
     const modal = document.getElementById("modal-resgate");
     const inputCodigo = document.getElementById("input-codigo-resgate");
+
     if (modal) modal.classList.remove("hidden");
+
     if (inputCodigo) {
         inputCodigo.value = "";
         inputCodigo.focus();
@@ -176,6 +210,7 @@ function abrirModalResgate() {
 
 function fecharModalResgate() {
     const modal = document.getElementById("modal-resgate");
+
     if (modal) modal.classList.add("hidden");
 }
 
@@ -196,7 +231,7 @@ async function confirmarResgateCodigo() {
     try {
         const url = `${API_URL}?action=redeem_token&whatsapp=${encodeURIComponent(clienteAtual.whatsapp)}&codigo=${encodeURIComponent(codigo)}`;
         const response = await fetch(url);
-        
+
         if (!response.ok) throw new Error("HTTP " + response.status);
 
         const data = await response.json();
@@ -230,12 +265,13 @@ async function confirmarResgateCodigo() {
 // ==========================================
 async function promptAdmin() {
     const pin = prompt("Digite a senha de Administrador:");
+
     if (!pin) return;
 
     try {
         const url = `${API_URL}?action=get_all&pin=${encodeURIComponent(pin)}`;
         const response = await fetch(url);
-        
+
         if (!response.ok) throw new Error("HTTP " + response.status);
 
         const data = await response.json();
@@ -247,10 +283,11 @@ async function promptAdmin() {
 
         pinAdminAtual = pin;
         todosClientes = Array.isArray(data.clients) ? data.clients : [];
-        
+
         renderizarClientesAdmin(todosClientes);
-        
+
         const secAdmin = document.getElementById("sec-admin");
+
         if (secAdmin) secAdmin.classList.remove("hidden");
 
     } catch (error) {
@@ -264,6 +301,7 @@ async function promptAdmin() {
 // ==========================================
 function renderizarClientesAdmin(lista) {
     const container = document.getElementById("lista-clientes-admin");
+
     if (!container) return;
 
     container.innerHTML = "";
@@ -286,28 +324,55 @@ function renderizarClientesAdmin(lista) {
                 <strong>${escapeHTML(nome)}</strong>
                 <span>${escapeHTML(whatsapp)} | ${carimbos}/2 carimbos</span>
             </div>
+
             <div style="display: flex; gap: 4px;">
-                <button type="button" class="btn-sm btn-code-admin" title="Gerar código de 60s">🔑 Código</button>
-                <button type="button" class="btn-sm btn-add-admin" title="Carimbo direto">+ Carimbo</button>
-                <button type="button" class="btn-sm btn-delete-admin" title="Excluir">Excluir</button>
+                <button
+                    type="button"
+                    class="btn-sm btn-code-admin"
+                    title="Gerar código de 60s"
+                >
+                    🔑 Código
+                </button>
+
+                <button
+                    type="button"
+                    class="btn-sm btn-add-admin"
+                    title="Carimbo direto"
+                >
+                    + Carimbo
+                </button>
+
+                <button
+                    type="button"
+                    class="btn-sm btn-delete-admin"
+                    title="Excluir"
+                >
+                    Excluir
+                </button>
             </div>
         `;
 
+        // Botão para gerar código temporário de 60s
         const botaoCodigo = item.querySelector(".btn-code-admin");
+
         if (botaoCodigo) {
             botaoCodigo.addEventListener("click", () => {
                 gerarCodigoAdmin(whatsapp, nome);
             });
         }
 
+        // Botão de carimbo direto
         const botaoCarimbo = item.querySelector(".btn-add-admin");
+
         if (botaoCarimbo) {
             botaoCarimbo.addEventListener("click", () => {
                 carimboDiretoAdmin(whatsapp, nome);
             });
         }
 
+        // Botão excluir
         const botaoExcluir = item.querySelector(".btn-delete-admin");
+
         if (botaoExcluir) {
             botaoExcluir.addEventListener("click", () => {
                 excluirClienteAdmin(whatsapp, nome);
@@ -323,15 +388,17 @@ function renderizarClientesAdmin(lista) {
 // ==========================================
 async function gerarCodigoAdmin(whatsapp, nome) {
     let pin = pinAdminAtual;
+
     if (!pin) {
         pin = prompt("Confirme a senha Admin:");
+
         if (!pin) return;
     }
 
     try {
         const url = `${API_URL}?action=generate_token&whatsapp=${encodeURIComponent(whatsapp)}&pin=${encodeURIComponent(pin)}`;
         const response = await fetch(url);
-        
+
         if (!response.ok) throw new Error("HTTP " + response.status);
 
         const data = await response.json();
@@ -341,7 +408,10 @@ async function gerarCodigoAdmin(whatsapp, nome) {
             return;
         }
 
-        alert(`🔑 Código gerado para ${nome}:\n\n【 ${data.codigo} 】\n\nEste código expira em 60 segundos.`);
+        alert(
+            `🔑 Código gerado para ${nome}:\n\n【 ${data.codigo} 】\n\nEste código expira em 60 segundos.`
+        );
+
         await atualizarPainelAdmin();
 
     } catch (error) {
@@ -355,15 +425,17 @@ async function gerarCodigoAdmin(whatsapp, nome) {
 // ==========================================
 async function carimboDiretoAdmin(whatsapp, nome) {
     let pin = pinAdminAtual;
+
     if (!pin) {
         pin = prompt("Confirme a senha Admin:");
+
         if (!pin) return;
     }
 
     try {
         const url = `${API_URL}?action=add_stamp&whatsapp=${encodeURIComponent(whatsapp)}&nome=${encodeURIComponent(nome)}&pin=${encodeURIComponent(pin)}`;
         const response = await fetch(url);
-        
+
         if (!response.ok) throw new Error("HTTP " + response.status);
 
         const data = await response.json();
@@ -374,18 +446,27 @@ async function carimboDiretoAdmin(whatsapp, nome) {
         }
 
         if (data.cicloResetado) {
-            alert(`🎉 Desconto resgatado para ${nome}!\nO cartão foi reiniciado para o próximo ciclo.`);
+            alert(
+                `🎉 Desconto resgatado para ${nome}!\nO cartão foi reiniciado para o próximo ciclo.`
+            );
         } else if (data.descontoLiberado) {
-            alert(`🎉 Carimbo adicionado para ${nome}!\n10% de desconto liberado!`);
+            alert(
+                `🎉 Carimbo adicionado para ${nome}!\n10% de desconto liberado!`
+            );
         } else {
-            alert(`✅ Carimbo adicionado com sucesso para ${nome}!`);
+            alert(
+                `✅ Carimbo adicionado com sucesso para ${nome}!`
+            );
         }
 
         await atualizarPainelAdmin();
 
         if (clienteAtual && clienteAtual.whatsapp === whatsapp) {
             clienteAtual.carimbos = data.carimbos;
-            atualizarInterfaceCartao(clienteAtual.nome, clienteAtual.carimbos);
+            atualizarInterfaceCartao(
+                clienteAtual.nome,
+                clienteAtual.carimbos
+            );
         }
 
     } catch (error) {
@@ -398,13 +479,20 @@ async function carimboDiretoAdmin(whatsapp, nome) {
 // PAINEL ADMIN - EXCLUIR CLIENTE
 // ==========================================
 async function excluirClienteAdmin(whatsapp, nome) {
-    if (!confirm(`Tem certeza que deseja excluir o cliente "${nome}" (${whatsapp})?`)) {
+
+    if (
+        !confirm(
+            `Tem certeza que deseja excluir o cliente "${nome}" (${whatsapp})?`
+        )
+    ) {
         return;
     }
 
     let pin = pinAdminAtual;
+
     if (!pin) {
         pin = prompt("Confirme a senha Admin:");
+
         if (!pin) return;
     }
 
@@ -421,7 +509,10 @@ async function excluirClienteAdmin(whatsapp, nome) {
             return;
         }
 
-        alert(`🗑️ Cliente ${nome} excluído com sucesso!`);
+        alert(
+            `🗑️ Cliente ${nome} excluído com sucesso!`
+        );
+
         await atualizarPainelAdmin();
 
     } catch (error) {
@@ -431,19 +522,25 @@ async function excluirClienteAdmin(whatsapp, nome) {
 }
 
 async function atualizarPainelAdmin() {
+
     if (!pinAdminAtual) return;
 
     try {
         const url = `${API_URL}?action=get_all&pin=${encodeURIComponent(pinAdminAtual)}`;
         const response = await fetch(url);
-        
+
         if (!response.ok) throw new Error("HTTP " + response.status);
 
         const data = await response.json();
+
         if (data.success) {
-            todosClientes = Array.isArray(data.clients) ? data.clients : [];
+            todosClientes = Array.isArray(data.clients)
+                ? data.clients
+                : [];
+
             filtrarClientes();
         }
+
     } catch (error) {
         console.error("Erro atualizando admin:", error);
     }
@@ -454,13 +551,19 @@ async function atualizarPainelAdmin() {
 // ==========================================
 function filtrarClientes() {
     const adminSearch = document.getElementById("admin-search");
+
     if (!adminSearch) return;
 
     const termo = adminSearch.value.toLowerCase().trim();
+
     const filtrados = todosClientes.filter((cliente) => {
         const nome = String(cliente.nome || "").toLowerCase();
         const whatsapp = String(cliente.whatsapp || "");
-        return nome.includes(termo) || whatsapp.includes(termo);
+
+        return (
+            nome.includes(termo) ||
+            whatsapp.includes(termo)
+        );
     });
 
     renderizarClientesAdmin(filtrados);
@@ -468,12 +571,16 @@ function filtrarClientes() {
 
 function fecharAdmin() {
     const secAdmin = document.getElementById("sec-admin");
-    if (secAdmin) secAdmin.classList.add("hidden");
+
+    if (secAdmin) {
+        secAdmin.classList.add("hidden");
+    }
 }
 
 function sair() {
     localStorage.removeItem("fidelidade_whatsapp");
     localStorage.removeItem("fidelidade_nome");
+
     clienteAtual = null;
 
     alternarSecao("login");
@@ -490,11 +597,24 @@ function alternarSecao(secao) {
     const secCard = document.getElementById("sec-cartao");
 
     if (secao === "login") {
-        if (secLogin) secLogin.classList.remove("hidden");
-        if (secCard) secCard.classList.add("hidden");
+
+        if (secLogin) {
+            secLogin.classList.remove("hidden");
+        }
+
+        if (secCard) {
+            secCard.classList.add("hidden");
+        }
+
     } else if (secao === "cartao") {
-        if (secLogin) secLogin.classList.add("hidden");
-        if (secCard) secCard.classList.remove("hidden");
+
+        if (secLogin) {
+            secLogin.classList.add("hidden");
+        }
+
+        if (secCard) {
+            secCard.classList.remove("hidden");
+        }
     }
 }
 

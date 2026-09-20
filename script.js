@@ -199,6 +199,50 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================
+    // ENTER NO WHATSAPP
+    // ==========================================
+
+    if (inputPhone) {
+
+        inputPhone.addEventListener(
+            "keydown",
+            (event) => {
+
+                if (event.key === "Enter") {
+
+                    event.preventDefault();
+
+                    if (btnAcessar) {
+                        btnAcessar.click();
+                    }
+                }
+            }
+        );
+    }
+
+    // ==========================================
+    // ENTER NO NOME
+    // ==========================================
+
+    if (inputName) {
+
+        inputName.addEventListener(
+            "keydown",
+            (event) => {
+
+                if (event.key === "Enter") {
+
+                    event.preventDefault();
+
+                    if (btnAcessar) {
+                        btnAcessar.click();
+                    }
+                }
+            }
+        );
+    }
+
+    // ==========================================
     // BOTÃO SAIR
     // ==========================================
 
@@ -282,6 +326,30 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================
+    // ENTER NO CÓDIGO DO MODAL
+    // ==========================================
+
+    const inputCodigo = document.getElementById("input-codigo-resgate");
+
+    if (inputCodigo) {
+
+        inputCodigo.addEventListener(
+            "keydown",
+            (event) => {
+
+                if (event.key === "Enter") {
+
+                    event.preventDefault();
+
+                    if (btnConfirmarResgate) {
+                        btnConfirmarResgate.click();
+                    }
+                }
+            }
+        );
+    }
+
+    // ==========================================
     // BOTÃO INSTALAR APLICATIVO
     // ==========================================
 
@@ -295,55 +363,6 @@ window.addEventListener("DOMContentLoaded", () => {
         );
 
     }
-
-    // ==========================================
-    // ENTER - ACIONAR BOTÕES PRINCIPAIS
-    // ==========================================
-
-    document.addEventListener("keydown", function(event) {
-
-        if (event.key !== "Enter") {
-            return;
-        }
-
-        const elemento = event.target;
-
-        // ------------------------------------------
-        // ENTER NO WHATSAPP OU NOME
-        // ------------------------------------------
-
-        if (
-            elemento &&
-            (
-                elemento.id === "cli-phone" ||
-                elemento.id === "cli-name"
-            )
-        ) {
-
-            event.preventDefault();
-
-            acessarCartao(event);
-
-            return;
-        }
-
-        // ------------------------------------------
-        // ENTER NO CÓDIGO
-        // ------------------------------------------
-
-        if (
-            elemento &&
-            elemento.id === "input-codigo-resgate"
-        ) {
-
-            event.preventDefault();
-
-            confirmarResgateCodigo();
-
-            return;
-        }
-
-    });
 
 });
 
@@ -1200,9 +1219,90 @@ async function excluirClienteAdmin(
             return;
         }
 
+        // ==========================================
+        // LIMPA O CAMPO DE BUSCA DO ADMIN
+        // ==========================================
+
+        const adminSearch =
+            document.getElementById("admin-search");
+
+        if (adminSearch) {
+            adminSearch.value = "";
+        }
+
+        // ==========================================
+        // VERIFICA SE O CLIENTE EXCLUÍDO
+        // ERA O CLIENTE SALVO
+        // ==========================================
+
+        const whatsappSalvo =
+            localStorage.getItem("fidelidade_whatsapp");
+
+        if (whatsappSalvo === whatsapp) {
+
+            localStorage.removeItem(
+                "fidelidade_whatsapp"
+            );
+
+            localStorage.removeItem(
+                "fidelidade_nome"
+            );
+
+            const inputPhone =
+                document.getElementById("cli-phone");
+
+            const inputName =
+                document.getElementById("cli-name");
+
+            if (inputPhone) {
+                inputPhone.value = "";
+            }
+
+            if (inputName) {
+                inputName.value = "";
+            }
+        }
+
+        // ==========================================
+        // SE ERA O CLIENTE ATUALMENTE ABERTO,
+        // ENCERRA A SESSÃO DO CLIENTE
+        // ==========================================
+
+        if (
+            clienteAtual &&
+            clienteAtual.whatsapp === whatsapp
+        ) {
+
+            clienteAtual = null;
+
+            alternarSecao("login");
+
+            const inputPhone =
+                document.getElementById("cli-phone");
+
+            const inputName =
+                document.getElementById("cli-name");
+
+            if (inputPhone) {
+                inputPhone.value = "";
+            }
+
+            if (inputName) {
+                inputName.value = "";
+            }
+        }
+
+        // ==========================================
+        // MENSAGEM DE SUCESSO
+        // ==========================================
+
         alert(
             `🗑️ Cliente ${nome} excluído com sucesso!`
         );
+
+        // ==========================================
+        // ATUALIZA LISTA DO PAINEL
+        // ==========================================
 
         await atualizarPainelAdmin();
 

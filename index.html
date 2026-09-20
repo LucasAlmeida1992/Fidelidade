@@ -1,36 +1,94 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Cartão Fidelidade VIP</title>
 
-    <!-- PWA -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#ff1744">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="Lucas Franca">
+
+    <!-- ==========================================
+         PWA
+         ========================================== -->
+
+    <link
+        rel="manifest"
+        href="manifest.json"
+    >
+
+    <meta
+        name="theme-color"
+        content="#ff1744"
+    >
+
+    <meta
+        name="mobile-web-app-capable"
+        content="yes"
+    >
+
+    <meta
+        name="apple-mobile-web-app-capable"
+        content="yes"
+    >
+
+    <meta
+        name="apple-mobile-web-app-status-bar-style"
+        content="black"
+    >
+
+    <meta
+        name="apple-mobile-web-app-title"
+        content="Lucas Franca"
+    >
+
+
+    <!-- ==========================================
+         FONTES
+         ========================================== -->
 
     <link
         href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Poppins:wght@400;600&display=swap"
         rel="stylesheet"
     >
 
-    <link rel="stylesheet" href="style.css">
 
-    <script src="script.js?v=7" defer></script>
+    <!-- ==========================================
+         CSS
+         ========================================== -->
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+
+    <!-- ==========================================
+         JAVASCRIPT
+         ========================================== -->
+
+    <script
+        src="script.js?v=9"
+        defer
+    ></script>
+
 </head>
+
 
 <body>
 
 <div class="app-container">
 
-    <!-- =====================================================
+
+    <!-- ==========================================
          CABEÇALHO
-         ===================================================== -->
+         ========================================== -->
+
     <div class="header">
 
         <button
@@ -42,20 +100,25 @@
             ⚙️
         </button>
 
+
         <img
             src="Lg Lucas Franca.svg"
             alt="Lucas Franca"
             class="header-logo"
         >
 
-        <p>CARTÃO FIDELIDADE VIP</p>
+
+        <p>
+            CARTÃO FIDELIDADE VIP
+        </p>
 
     </div>
 
 
-    <!-- =====================================================
+    <!-- ==========================================
          LOGIN DO CLIENTE
-         ===================================================== -->
+         ========================================== -->
+
     <div
         id="sec-login"
         class="card-box"
@@ -105,24 +168,36 @@
     </div>
 
 
-    <!-- =====================================================
+    <!-- ==========================================
          CARTÃO DO CLIENTE
-         ===================================================== -->
+         ========================================== -->
+
     <div
         id="sec-cartao"
         class="hidden"
     >
 
+
         <p class="greeting-text">
+
             Olá,
-            <strong id="disp-nome">---</strong>!
+
+            <strong id="disp-nome">
+                ---
+            </strong>!
+
         </p>
 
 
-        <!-- CARIMBOS -->
+        <!-- ==========================================
+             CARIMBOS
+             ========================================== -->
+
         <div class="stamps-grid">
 
+
             <!-- 1º CARIMBO -->
+
             <div
                 class="stamp-slot"
                 id="slot-1"
@@ -140,6 +215,7 @@
 
 
             <!-- 2º CARIMBO -->
+
             <div
                 class="stamp-slot"
                 id="slot-2"
@@ -157,6 +233,7 @@
 
 
             <!-- BENEFÍCIO -->
+
             <div
                 class="stamp-slot"
                 id="slot-3"
@@ -175,9 +252,10 @@
         </div>
 
 
-        <!-- =================================================
+        <!-- ==========================================
              STATUS DO BENEFÍCIO
-             ================================================= -->
+             ========================================== -->
+
         <div class="discount-banner">
 
             <span class="discount-label">
@@ -191,9 +269,10 @@
         </div>
 
 
-        <!-- =================================================
+        <!-- ==========================================
              BOTÃO DE CÓDIGO
-             ================================================= -->
+             ========================================== -->
+
         <button
             class="btn-gold btn-code-client"
             id="btn-abrir-resgate"
@@ -203,9 +282,10 @@
         </button>
 
 
-        <!-- =================================================
+        <!-- ==========================================
              SALVAR COMO APLICATIVO
-             ================================================= -->
+             ========================================== -->
+
         <button
             class="btn-gold"
             id="btn-instalar-app"
@@ -216,7 +296,10 @@
         </button>
 
 
-        <!-- INSTRUÇÃO PARA IPHONE -->
+        <!-- ==========================================
+             INSTRUÇÕES IPHONE
+             ========================================== -->
+
         <div
             id="ios-install-help"
             class="hidden"
@@ -231,16 +314,34 @@
             "
         >
 
-            📱 <strong>iPhone</strong><br><br>
+            📱
+            <strong>
+                iPhone
+            </strong>
 
-            Toque em <strong>Compartilhar</strong>
-            ⬆️ e depois em
-            <strong>Adicionar à Tela de Início</strong>.
+            <br>
+            <br>
+
+            Toque em
+            <strong>
+                Compartilhar
+            </strong>
+
+            ⬆️
+
+            e depois em
+
+            <strong>
+                Adicionar à Tela de Início
+            </strong>.
 
         </div>
 
 
-        <!-- TROCAR DE CONTA -->
+        <!-- ==========================================
+             TROCAR DE CONTA
+             ========================================== -->
+
         <button
             class="btn-link"
             id="btn-sair"
@@ -252,9 +353,10 @@
     </div>
 
 
-    <!-- =====================================================
-         MODAL DO CÓDIGO DO ESTÚDIO
-         ===================================================== -->
+    <!-- ==========================================
+         MODAL DO CÓDIGO
+         ========================================== -->
+
     <div
         id="modal-resgate"
         class="modal-overlay hidden"
@@ -268,7 +370,9 @@
             aria-labelledby="titulo-resgate"
         >
 
+
             <!-- FECHAR -->
+
             <button
                 type="button"
                 class="modal-close"
@@ -280,24 +384,28 @@
 
 
             <!-- ÍCONE -->
+
             <div class="modal-icon">
                 🔑
             </div>
 
 
             <!-- TÍTULO -->
+
             <h3 id="titulo-resgate">
                 Código do Estúdio
             </h3>
 
 
             <!-- DESCRIÇÃO -->
+
             <p class="modal-description">
                 Digite o código de 4 dígitos fornecido pelo tatuador.
             </p>
 
 
-            <!-- INPUT DO CÓDIGO -->
+            <!-- INPUT -->
+
             <div class="code-input-wrap">
 
                 <input
@@ -316,12 +424,14 @@
 
 
             <!-- AVISO -->
+
             <p class="modal-expire">
                 O código é temporário e pode ser usado uma única vez.
             </p>
 
 
             <!-- BOTÕES -->
+
             <div class="modal-actions">
 
                 <button
@@ -348,9 +458,10 @@
     </div>
 
 
-    <!-- =====================================================
+    <!-- ==========================================
          PAINEL DO TATUADOR
-         ===================================================== -->
+         ========================================== -->
+
     <div
         id="sec-admin"
         class="admin-panel hidden"
@@ -362,6 +473,7 @@
 
 
         <!-- BUSCA -->
+
         <div class="input-group">
 
             <input
@@ -374,7 +486,8 @@
         </div>
 
 
-        <!-- LISTA DE CLIENTES -->
+        <!-- LISTA -->
+
         <div
             id="lista-clientes-admin"
             class="admin-client-list"
@@ -382,7 +495,8 @@
         </div>
 
 
-        <!-- FECHAR PAINEL -->
+        <!-- FECHAR -->
+
         <button
             class="btn-sm btn-full"
             id="btn-fechar-admin"

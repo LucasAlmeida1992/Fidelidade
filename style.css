@@ -867,3 +867,6 @@ body::before {
         font-size: 28px;
     }
 }
+a[href="regras.html"] {
+    color: #ffffff !important;
+}
